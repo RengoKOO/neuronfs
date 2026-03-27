@@ -105,6 +105,35 @@ touch brain/cortex/frontend/react/hooks_pattern/1.neuron
 
 The scanner compiles the folder tree into whatever format your AI agent needs: `.cursorrules`, `GEMINI.md`, `AGENTS.md`, or plain text.
 
+## NeuronFS vs RAG
+
+NeuronFS is **not** a RAG replacement. They solve different problems.
+
+| | NeuronFS | RAG / Vector DB |
+|---|---|---|
+| **What it stores** | Rules, constraints, priorities | Documents, data, facts |
+| **What it tells AI** | "Behave this way" | "Here's reference information" |
+| **Analogy** | Constitution | Encyclopedia |
+| **Priority control** | Structural hierarchy (deterministic) | Similarity score (probabilistic) |
+| **Self-growth** | AI runs `mkdir` → new rule | Manual document update |
+| **Semantic search** | ❌ Exact path only | ✅ Fuzzy / similar |
+| **Scale** | ~500 rules (governance scope) | 100K+ documents |
+| **Cost** | ₩0 | ~$70-200/mo (vector DB + embeddings) |
+
+```
+┌─────────────────────────────────┐
+│  AI Agent                       │
+├─────────────────────────────────┤
+│  RAG / Vector DB                │  ← "What to know" (knowledge)
+├─────────────────────────────────┤
+│  NeuronFS                       │  ← "How to behave" (governance) ★
+├─────────────────────────────────┤
+│  OS File System                 │
+└─────────────────────────────────┘
+```
+
+> Use both: AI gets the **right knowledge** (RAG) and uses it the **right way** (NeuronFS).
+
 ## Status
 
 This is a **working concept** in daily production use with one AI agent (Gemini/Antigravity).

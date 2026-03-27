@@ -260,16 +260,18 @@ NeuronFS is not a **replacement**. It's the **layer beneath.**
 
 ---
 
-## 🔥 Core Principle: "Where You Place It" Is Everything
+## 🔥 Core Principle: Text to Structure
 
-The same text produces completely different results depending on **where you place it** — this is the entirety of NeuronFS.
+When issuing dozens of instructions to an AI, the legacy approach is dumping everything into a single massive text file (`CLAUDE.md`, `.cursorrules`).
+But text inside a file is 1-dimensional. Priorities get mixed up, context is lost, and eventually, the AI ignores the heavy constraints (Fallback).
 
-- Place in `.cursorrules`? Recognized as **intentional project configuration by the developer.**
-- Place in chat window? Recognized as **unverified user input.**
+NeuronFS entirely flips this paradigm. **It expresses instructions not as flat text, but as the topology of the file system itself.**
 
-Same text. Structural position determines trust level.
+- **The hierarchy of the folder** dictates the Context in which the rule applies.
+- **The depth of the folder** limits the Specificity of the rule.
+- **The name of the file** dictates the absolute Weight of the rule.
 
-> **"It's not about how you say it, but where you place it"** that determines AI behavior.
+> **"It's not what you write, but within what structure you place it"** that determines the rule's absolute authority.
 
 ## 🛡️ Stress Test: 16-Round Verdict (AI vs AI)
 

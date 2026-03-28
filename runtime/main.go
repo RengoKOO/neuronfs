@@ -1502,7 +1502,7 @@ func runIdleLoop(brainRoot string) {
 // It scans prefrontal/todo and injects the next task into the chat input,
 // forcing the AI to work continuously (Boil the Lake pattern).
 func runHeartbeatLoop(brainRoot string) {
-	pulseScript := filepath.Join(filepath.Dir(brainRoot), "runtime", "pulse.ps1")
+	pulseScript := filepath.Join(filepath.Dir(brainRoot), "runtime", "pulse.mjs")
 	todoDir := filepath.Join(brainRoot, "prefrontal", "todo")
 
 	for {
@@ -1533,11 +1533,10 @@ func runHeartbeatLoop(brainRoot string) {
 					time.Now().Format("15:04"), nextTask)
 				fmt.Printf("[HEARTBEAT] ⚡ AI 강제 기상 및 주입: %s\n", nextTask)
 				
-				// pulse.ps1을 호출해 실제 입력창에 타이핑 후 엔터 (UI 자동화)
-				// 또는 n8n 웹훅 등 원하는 엔드포인트에 쏴줌
-				cmd := exec.Command("powershell", "-ExecutionPolicy", "Bypass", "-File", pulseScript, prompt)
+				// pulse.mjs (CDP 기반 Node.js 주입기) 호출해 IDE 채팅창에 정확히 입력/전송
+				cmd := exec.Command("node", pulseScript, prompt)
 				if err := cmd.Run(); err != nil {
-					fmt.Printf("[HEARTBEAT] ⚠️ SendKey failed: %v\n", err)
+					fmt.Printf("[HEARTBEAT] ⚠️ CDP Node injection failed: %v\n", err)
 				}
 				// 과도한 연속 주입 방지를 위해 Activity 갱신 (의사-입력)
 				touchActivity()

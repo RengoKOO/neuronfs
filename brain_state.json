@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-28T23:57:27",
+  "generated": "2026-03-29T00:01:19",
   "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
-  "totalNeurons": 250,
-  "firedNeurons": 250,
-  "totalCounter": 737,
+  "totalNeurons": 251,
+  "firedNeurons": 251,
+  "totalCounter": 726,
   "regions": [
     {
       "name": "brainstem",
@@ -709,7 +709,7 @@
         },
         {
           "path": "frontend\\coding\\禁console_log",
-          "counter": 21,
+          "counter": 9,
           "depth": 2,
           "dopamine": 1
         },
@@ -1274,6 +1274,12 @@
         },
         {
           "path": "neuronfs\\wargame\\brainstem_양심_10of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\禁자작극_검증",
           "counter": 1,
           "depth": 2,
           "dopamine": 0

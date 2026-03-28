@@ -495,22 +495,27 @@ function selectRegion(name) {
   // Neurons
   let nHtml = '';
   if (region.neurons) {
-    const sorted = [...region.neurons].sort((a,b) => b.counter - a.counter);
+    const sorted = [...region.neurons].sort((a,b) => (b.intensity||b.counter) - (a.intensity||a.counter));
     sorted.forEach(n => {
-      const pct = Math.min(100, n.counter * 5);
-      let barColor = '#475569';
-      if (n.counter >= 10) barColor = '#f59e0b';
-      else if (n.counter >= 5) barColor = '#22c55e';
-      else if (n.counter >= 2) barColor = '#3b82f6';
+      const intensity = n.intensity || (n.counter + (n.dopamine||0));
+      const pct = Math.min(100, intensity * 4);
+      const pol = n.polarity !== undefined ? n.polarity : 0.5;
+      let barColor;
+      if (pol > 0.6) barColor = '#22c55e';
+      else if (pol < 0.3) barColor = '#ef4444';
+      else if (intensity >= 10) barColor = '#f59e0b';
+      else barColor = '#3b82f6';
 
       let signals = '';
       if (n.dopamine > 0) signals += '🟢';
       if (n.hasBomb) signals += '💀';
       if (n.isDormant) signals += '💤';
+      if (pol > 0.6) signals += '↑';
+      else if (pol < 0.3 && intensity > 3) signals += '↓';
 
       let strengthHtml = '';
-      if (n.counter >= 10) strengthHtml = '<span class="n-strength n-str-abs">절대</span>';
-      else if (n.counter >= 5) strengthHtml = '<span class="n-strength n-str-must">반드시</span>';
+      if (intensity >= 10) strengthHtml = '<span class="n-strength n-str-abs">절대</span>';
+      else if (intensity >= 5) strengthHtml = '<span class="n-strength n-str-must">반드시</span>';
 
       const path = n.path.replace(/\//g, ' > ');
       const regionName = selectedRegion;
@@ -518,7 +523,7 @@ function selectRegion(name) {
         strengthHtml +
         '<div class="n-name">' + path + '</div>' +
         '<div class="n-bar"><div class="n-fill" style="width:' + pct + '%;background:' + barColor + '"></div></div>' +
-        '<div class="n-counter">' + n.counter + '</div>' +
+        '<div class="n-counter">' + intensity + '</div>' +
         '<div class="n-signals">' + signals + '</div>' +
         '<button class="n-fire" onclick="event.stopPropagation();fireNeuron(\'' + regionName + '\',\'' + n.path.replace(/'/g,"\\'" ) + '\')">▲</button>' +
         '</div>';

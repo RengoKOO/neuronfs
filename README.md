@@ -12,6 +12,12 @@
 > *Folders are neurons. Paths are sentences. Counters are synaptic weights.*  
 > *Your AI learns, remembers, and evolves — using nothing but `mkdir`.*
 
+<p align="center">
+  <img src="docs/dashboard.png" alt="NeuronFS 3D Brain Dashboard" width="800" />
+  <br/>
+  <em>Real-time 3D brain visualization — 251 neurons across 7 cognitive regions</em>
+</p>
+
 ---
 
 ## The Problem

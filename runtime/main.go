@@ -82,8 +82,10 @@ type Neuron struct {
 	Name      string    // folder name
 	Path      string    // relative path from region root (e.g. "frontend/css/glass_blur20")
 	FullPath  string    // absolute path
-	Counter   int       // from N.neuron filename
-	Dopamine  int       // from dopamineN.neuron filename
+	Counter   int       // from N.neuron filename (correction count)
+	Dopamine  int       // from dopamineN.neuron filename (reward count)
+	Intensity int       // Counter + Dopamine (total activation)
+	Polarity  float64   // Dopamine / Intensity (0.0=pure correction, 1.0=pure reward)
 	HasBomb   bool      // bomb.neuron exists
 	HasMemory bool      // memoryN.neuron exists
 	HasGoal   bool      // .goal file exists (todo/objective)
@@ -419,6 +421,14 @@ func scanBrain(root string) Brain {
 				neuron.IsDormant = true
 			}
 
+				// Compute derived fields
+			neuron.Intensity = neuron.Counter + neuron.Dopamine
+			if neuron.Intensity > 0 {
+				neuron.Polarity = float64(neuron.Dopamine) / float64(neuron.Intensity)
+			} else {
+				neuron.Polarity = 0.5 // neutral
+			}
+
 			region.Neurons = append(region.Neurons, neuron)
 			return nil
 		})
@@ -647,13 +657,15 @@ func printDiag(brain Brain, result SubsumptionResult) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 func generateBrainJSON(brainRoot string, _ Brain, result SubsumptionResult) {
 	type JsNeuron struct {
-		Path     string `json:"path"`
-		Counter  int    `json:"counter"`
-		Depth    int    `json:"depth"`
-		Dopamine int    `json:"dopamine"`
-		HasBomb  bool   `json:"hasBomb,omitempty"`
-		Memory   bool   `json:"memory,omitempty"`
-		Dormant  bool   `json:"dormant,omitempty"`
+		Path      string  `json:"path"`
+		Counter   int     `json:"counter"`
+		Depth     int     `json:"depth"`
+		Dopamine  int     `json:"dopamine"`
+		Intensity int     `json:"intensity"`
+		Polarity  float64 `json:"polarity"`
+		HasBomb   bool    `json:"hasBomb,omitempty"`
+		Memory    bool    `json:"memory,omitempty"`
+		Dormant   bool    `json:"dormant,omitempty"`
 	}
 	type JsRegion struct {
 		Name     string     `json:"name"`
@@ -698,7 +710,8 @@ func generateBrainJSON(brainRoot string, _ Brain, result SubsumptionResult) {
 		for _, n := range r.Neurons {
 			jr.Neurons = append(jr.Neurons, JsNeuron{
 				Path: n.Path, Counter: n.Counter, Depth: n.Depth,
-				Dopamine: n.Dopamine, HasBomb: n.HasBomb, Memory: n.HasMemory, Dormant: n.IsDormant,
+				Dopamine: n.Dopamine, Intensity: n.Intensity, Polarity: n.Polarity,
+				HasBomb: n.HasBomb, Memory: n.HasMemory, Dormant: n.IsDormant,
 			})
 		}
 		state.Regions = append(state.Regions, jr)

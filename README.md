@@ -151,6 +151,7 @@ Agent A chat receives → 🤖 [agent_b→agent_a] response
 ```
 
 **Real result:** Agent B independently discovered a promotion threshold bug that Agent A missed.  
+Agent B also built a Go-native MCP server (368 lines) and confirmed 17/17 harness ALL PASS.  
 [See evidence →](./evidence/)
 
 ---

@@ -749,7 +749,9 @@ func getNonFlagArg(n int) string {
 // tokenize splits a snake_case neuron name into stemmed lowercase tokens
 // "no_console_logging" → {"no", "console", "log"}
 func tokenize(name string) []string {
-	parts := strings.Split(strings.ToLower(name), "_")
+	// 밑줄과 공백 모두 분리자로 처리
+	normalized := strings.ReplaceAll(strings.ToLower(name), "_", " ")
+	parts := strings.Fields(normalized) // Fields는 연속 공백도 처리
 	var tokens []string
 	for _, p := range parts {
 		p = strings.TrimSpace(p)

@@ -183,8 +183,11 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 				leafName := filepath.Base(n.Path)
 				leafName = strings.ReplaceAll(leafName, "_", " ")
 
-				// 동어반복 방지: 그룹명과 leaf가 같으면 스킵
-				if leafName == groupName {
+				// 동어반복 방지: 서브패스가 있는 뉴런에서 그룹명과 leaf가 같으면 스킵
+				// (1레벨 뉴런은 제거하지 않음 — ego 영역 등)
+				pathParts := strings.Split(n.Path, string(filepath.Separator))
+				hasSubPath := len(pathParts) > 1
+				if hasSubPath && leafName == groupName {
 					continue
 				}
 

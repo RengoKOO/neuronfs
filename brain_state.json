@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-28T23:03:40",
+  "generated": "2026-03-28T23:09:00",
   "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
-  "totalNeurons": 197,
-  "firedNeurons": 197,
-  "totalCounter": 231,
+  "totalNeurons": 196,
+  "firedNeurons": 196,
+  "totalCounter": 232,
   "regions": [
     {
       "name": "brainstem",
@@ -1159,14 +1159,8 @@
           "dopamine": 0
         },
         {
-          "path": "한국어로 사고하고 응답",
-          "counter": 1,
-          "depth": 0,
-          "dopamine": 0
-        },
-        {
           "path": "한국어로_사고하고_응답",
-          "counter": 4,
+          "counter": 6,
           "depth": 0,
           "dopamine": 0
         }

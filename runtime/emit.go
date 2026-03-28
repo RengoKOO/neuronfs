@@ -124,6 +124,10 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 			if n.IsDormant {
 				continue
 			}
+			// cortex는 뉴런이 많아 bootstrap에는 절대(>=10)만 포함. 나머지는 _rules.md
+			if region.Name == "cortex" && n.Counter < 10 {
+				continue
+			}
 			if n.Counter >= emitThreshold || n.ModTime.After(spotlightCutoff) {
 				mounted = append(mounted, n)
 			}

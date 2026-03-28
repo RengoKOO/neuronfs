@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-28T23:52:33",
+  "generated": "2026-03-28T23:57:27",
   "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
-  "totalNeurons": 246,
-  "firedNeurons": 246,
-  "totalCounter": 688,
+  "totalNeurons": 250,
+  "firedNeurons": 250,
+  "totalCounter": 737,
   "regions": [
     {
       "name": "brainstem",
@@ -389,6 +389,30 @@
           "dopamine": 0
         },
         {
+          "path": "environment\\OS_Windows_11",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "environment\\encoding_CP949_default",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "environment\\path_backslash",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "environment\\shell_PowerShell_UTF8_BOM",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
           "path": "nas\\推robocopy_MT",
           "counter": 3,
           "depth": 1,
@@ -685,7 +709,7 @@
         },
         {
           "path": "frontend\\coding\\禁console_log",
-          "counter": 12,
+          "counter": 21,
           "depth": 2,
           "dopamine": 1
         },
@@ -697,7 +721,7 @@
         },
         {
           "path": "frontend\\coding\\禁인라인스타일",
-          "counter": 3,
+          "counter": 12,
           "depth": 2,
           "dopamine": 6
         },
@@ -799,7 +823,7 @@
         },
         {
           "path": "methodology\\plan_then_execute",
-          "counter": 7,
+          "counter": 16,
           "depth": 1,
           "dopamine": 0
         },
@@ -991,7 +1015,7 @@
         },
         {
           "path": "neuronfs\\design\\실재_온톨로지",
-          "counter": 3,
+          "counter": 12,
           "depth": 2,
           "dopamine": 0
         },
@@ -1298,7 +1322,7 @@
         },
         {
           "path": "security\\禁평문_토큰",
-          "counter": 7,
+          "counter": 16,
           "depth": 1,
           "dopamine": 0
         },

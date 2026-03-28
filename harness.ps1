@@ -80,10 +80,10 @@ $r = Check "F03" "禁평문 API 키" {
 }
 if ($r) { Fire "cortex/security\禁평문_토큰" }
 
-# 4. 禁context stuffing (GEMINI.md < 10KB)
-$r = Check "F04" "禁context stuffing (GEMINI.md < 10KB)" {
+# 4. 禁context stuffing (GEMINI.md < 15KB — 한글 UTF-8 3bytes/char 감안)
+$r = Check "F04" "禁context stuffing (GEMINI.md < 15KB)" {
     $size = (Get-Item "C:\Users\BASEMENT_ADMIN\.gemini\GEMINI.md" -ErrorAction SilentlyContinue).Length
-    $size -lt 10000
+    $size -lt 15000
 }
 if ($r) { Fire "cortex/neuronfs\design\실재_온톨로지" }
 
@@ -93,10 +93,10 @@ Check "F05" "禁인위적 카운터 (max < 20)" {
     $high.Count -eq 0
 } | Out-Null
 
-# 6. 禁cognitive drift (brainstem 뉴런 변경 없음)
+# 6. 禁cognitive drift (brainstem 뉴런 변경 없음 — _rules.md는 자동생성이므로 제외)
 $r = Check "F06" "禁brainstem 무단 변경" {
     $bs = "$brain\brainstem"
-    $recent = Get-ChildItem $bs -Recurse -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-1) }
+    $recent = Get-ChildItem $bs -Recurse -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-1) -and $_.Name -ne "_rules.md" }
     $recent.Count -eq 0
 }
 if ($r) { Fire "cortex/neuronfs/defense/brainstem_읽기전용" }
@@ -160,9 +160,12 @@ Check "P05" "dormant 파일 존재 (가지치기 작동)" {
 Write-Host ""
 Write-Host "── 빌드 검증 ──" -ForegroundColor Yellow
 
-$r = Check "B01" "Go 빌드 성공" {
-    $out = & go build -o NUL "$runtime\." 2>&1
-    $LASTEXITCODE -eq 0
+$r = Check "B01" "Go build" {
+    $tmpExe = "$env:TEMP\neuronfs_harness_test.exe"
+    & go build -o $tmpExe "$runtime" 2>&1 | Out-Null
+    $result = $LASTEXITCODE -eq 0
+    Remove-Item $tmpExe -Force -ErrorAction SilentlyContinue
+    $result
 }
 
 $r = Check "B02" "API 응답 정상" {

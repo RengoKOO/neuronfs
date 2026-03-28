@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-28T23:34:32",
+  "generated": "2026-03-28T23:37:44",
   "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
-  "totalNeurons": 244,
-  "firedNeurons": 244,
-  "totalCounter": 1028,
+  "totalNeurons": 245,
+  "firedNeurons": 245,
+  "totalCounter": 1029,
   "regions": [
     {
       "name": "brainstem",
@@ -973,6 +973,12 @@
         },
         {
           "path": "neuronfs\\defense\\서버DB_스냅샷",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\design\\3tier_priority_summary",
           "counter": 1,
           "depth": 2,
           "dopamine": 0

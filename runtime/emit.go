@@ -507,7 +507,7 @@ func renderTree(sb *strings.Builder, node *treeNode, depth int, prefix string) {
 		name := strings.ReplaceAll(child.key, "_", " ")
 
 		if n.isLeaf && len(n.children) == 0 {
-			// Pure leaf — show with counter
+			// Pure leaf — show with counter + intensity prefix
 			signals := ""
 			if n.dopamine > 0 {
 				signals += " 🟢"
@@ -515,14 +515,26 @@ func renderTree(sb *strings.Builder, node *treeNode, depth int, prefix string) {
 			if n.hasBomb {
 				signals += " 💣"
 			}
-			sb.WriteString(fmt.Sprintf("%s- **%s** (%d)%s\n", indent, name, n.counter, signals))
+			strength := ""
+			if n.counter >= 10 {
+				strength = "절대 "
+			} else if n.counter >= 5 {
+				strength = "반드시 "
+			}
+			sb.WriteString(fmt.Sprintf("%s- %s**%s** (%d)%s\n", indent, strength, name, n.counter, signals))
 		} else if n.isLeaf && len(n.children) > 0 {
 			// Leaf but also a branch — show counter then children
 			signals := ""
 			if n.dopamine > 0 {
 				signals += " 🟢"
 			}
-			sb.WriteString(fmt.Sprintf("%s- **%s** (%d)%s\n", indent, name, n.counter, signals))
+			strength := ""
+			if n.counter >= 10 {
+				strength = "절대 "
+			} else if n.counter >= 5 {
+				strength = "반드시 "
+			}
+			sb.WriteString(fmt.Sprintf("%s- %s**%s** (%d)%s\n", indent, strength, name, n.counter, signals))
 			renderTree(sb, n, depth+1, prefix+child.key+"/")
 		} else {
 			// Pure branch — show as group header

@@ -172,16 +172,22 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 			groups[groupKey] = append(groups[groupKey], n)
 		}
 
-		// Render each group as prose
+		// Render each group as a separate line (서브그룹 분리로 가독성 확보)
 		for _, groupKey := range groupOrder {
 			neurons := groups[groupKey]
 			groupName := strings.ReplaceAll(groupKey, "_", " ")
 
-			// Build prose sentence from neurons in this group
+			// Build entries for this group
 			var parts []string
 			for _, n := range neurons {
 				leafName := filepath.Base(n.Path)
 				leafName = strings.ReplaceAll(leafName, "_", " ")
+
+				// 동어반복 방지: 그룹명과 leaf가 같으면 스킵
+				if leafName == groupName {
+					continue
+				}
+
 				signals := ""
 				if n.Dopamine > 0 {
 					signals += " 🟢"
@@ -200,7 +206,11 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 				}
 			}
 
-			// Determine strength prefix based on max counter in group
+			if len(parts) == 0 {
+				continue
+			}
+
+			// 그룹 내 뉴런 수에 따라 렌더링 방식 결정
 			maxCounter := 0
 			for _, n := range neurons {
 				if n.Counter > maxCounter {
@@ -215,8 +225,21 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 				strength = "반드시 "
 			}
 
-			// Render as prose: "그룹명: 항목1(N), 항목2(N) [강도]준수."
-			sb.WriteString(fmt.Sprintf("%s%s: %s.\n", strength, groupName, strings.Join(parts, ", ")))
+			if len(parts) <= 5 {
+				// 5개 이하: 한 줄
+				sb.WriteString(fmt.Sprintf("%s%s: %s.\n", strength, groupName, strings.Join(parts, ", ")))
+			} else {
+				// 6개 이상: 서브그룹별 줄바꿈 (5개씩 끊기)
+				sb.WriteString(fmt.Sprintf("%s%s: %s", strength, groupName, parts[0]))
+				for i := 1; i < len(parts); i++ {
+					if i%5 == 0 {
+						sb.WriteString(fmt.Sprintf(".\n%s(cont): %s", groupName, parts[i]))
+					} else {
+						sb.WriteString(fmt.Sprintf(", %s", parts[i]))
+					}
+				}
+				sb.WriteString(".\n")
+			}
 		}
 		sb.WriteString("\n")
 	}

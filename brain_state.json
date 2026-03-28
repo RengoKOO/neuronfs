@@ -1,9 +1,9 @@
 {
-  "generated": "2026-03-28T22:50:14",
+  "generated": "2026-03-28T23:03:40",
   "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
-  "totalNeurons": 200,
-  "firedNeurons": 200,
-  "totalCounter": 223,
+  "totalNeurons": 197,
+  "firedNeurons": 197,
+  "totalCounter": 231,
   "regions": [
     {
       "name": "brainstem",
@@ -15,7 +15,7 @@
       ],
       "neurons": [
         {
-          "path": "_sandbox\\모든_응답_첫_줄에_꽃_넣기",
+          "path": "_sandbox\\모든_응답_첫_줄에_별_넣기",
           "counter": 1,
           "depth": 1,
           "dopamine": 0
@@ -224,13 +224,6 @@
         {
           "path": "session_log",
           "counter": 0,
-          "depth": 0,
-          "dopamine": 0,
-          "memory": true
-        },
-        {
-          "path": "도파민_로그",
-          "counter": 1,
           "depth": 0,
           "dopamine": 0,
           "memory": true
@@ -505,8 +498,14 @@
           "dopamine": 0
         },
         {
-          "path": "frontend\\coding\\禁console_log",
+          "path": "community\\github\\AI_agent_memory",
           "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\coding\\禁console_log",
+          "counter": 8,
           "depth": 2,
           "dopamine": 1
         },
@@ -794,7 +793,7 @@
         },
         {
           "path": "neuronfs\\growth\\가지치기_휴면",
-          "counter": 1,
+          "counter": 3,
           "depth": 2,
           "dopamine": 0
         },
@@ -938,9 +937,10 @@
         },
         {
           "path": "neuronfs\\runtime\\도파민_로그",
-          "counter": 1,
+          "counter": 3,
           "depth": 2,
-          "dopamine": 0
+          "dopamine": 0,
+          "memory": true
         },
         {
           "path": "neuronfs\\runtime\\스캐너_트리읽기",
@@ -981,12 +981,6 @@
         {
           "path": "neuronfs\\signals\\카운터가_파일명",
           "counter": 2,
-          "depth": 2,
-          "dopamine": 0
-        },
-        {
-          "path": "neuronfs\\signals\\휴면_가지치기",
-          "counter": 1,
           "depth": 2,
           "dopamine": 0
         },
@@ -1084,6 +1078,12 @@
           "path": "skills\\supanova\\취향_스킬",
           "counter": 1,
           "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "testing\\fsnotify_실전검증",
+          "counter": 1,
+          "depth": 1,
           "dopamine": 0
         },
         {
@@ -1252,7 +1252,8 @@
           "path": "todo\\Groq_배치분석_실전검증",
           "counter": 1,
           "depth": 1,
-          "dopamine": 0
+          "dopamine": 0,
+          "dormant": true
         },
         {
           "path": "todo\\git_diff_진화판정",
@@ -1272,7 +1273,8 @@
           "path": "todo\\긍정형_뉴런을_부정형으로_전환",
           "counter": 1,
           "depth": 1,
-          "dopamine": 0
+          "dopamine": 0,
+          "dormant": true
         },
         {
           "path": "todo\\대시보드_404_수정",
@@ -1304,7 +1306,8 @@
           "path": "todo\\프로세스_자동재시작",
           "counter": 1,
           "depth": 1,
-          "dopamine": 0
+          "dopamine": 0,
+          "dormant": true
         },
         {
           "path": "미래_작업",

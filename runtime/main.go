@@ -1487,7 +1487,11 @@ func runIdleLoop(brainRoot string) {
 		fmt.Println("[IDLE] 💤 Running auto-decay (30 days)...")
 		runDecay(brainRoot, 30)
 
-		// 3. Git snapshot
+		// 3. Dedup (merge semantically similar neurons, Jaccard >= 0.6)
+		fmt.Println("[IDLE] 🔀 Running dedup (Jaccard similarity)...")
+		deduplicateNeurons(brainRoot)
+
+		// 4. Git snapshot
 		fmt.Println("[IDLE] 📸 Git snapshot...")
 		gitSnapshot(brainRoot)
 
@@ -1514,6 +1518,126 @@ func runIdleLoop(brainRoot string) {
 		lastEvolveTime = time.Now()
 		idleEvolveRunning = false
 		fmt.Printf("[IDLE] ✅ Autonomous cycle complete at %s\n\n", lastEvolveTime.Format("15:04:05"))
+	}
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DEDUP: 중복 뉴런 폴더 병합 (카운터 합산)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// deduplicateNeurons scans brain for semantically similar neuron folders
+// and merges them: keeps the deeper/higher-counter one, sums counters +1 bonus
+// Uses Jaccard similarity (>= 0.6) on tokenized+stemmed folder names
+func deduplicateNeurons(brainRoot string) {
+	brain := scanBrain(brainRoot)
+
+	type neuronRef struct {
+		fullPath string
+		counter  int
+		region   string
+		relPath  string
+		tokens   []string
+		depth    int
+	}
+
+	// Collect all active leaf neurons
+	var allRefs []neuronRef
+	for _, region := range brain.Regions {
+		if region.Name == "brainstem" {
+			continue // brainstem은 읽기 전용 — 건드리지 않음
+		}
+		for _, n := range region.Neurons {
+			if n.IsDormant {
+				continue
+			}
+			leafName := filepath.Base(n.FullPath)
+			tokens := tokenize(leafName)
+			allRefs = append(allRefs, neuronRef{
+				fullPath: n.FullPath,
+				counter:  n.Counter,
+				region:   region.Name,
+				relPath:  n.Path,
+				tokens:   tokens,
+				depth:    n.Depth,
+			})
+		}
+	}
+
+	// Compare all pairs (O(n²) — 200 뉴런이면 ~20,000 비교, 무시할 수준)
+	merged := make(map[int]bool) // index of already-merged victims
+	mergeCount := 0
+
+	for i := 0; i < len(allRefs); i++ {
+		if merged[i] {
+			continue
+		}
+		for j := i + 1; j < len(allRefs); j++ {
+			if merged[j] {
+				continue
+			}
+
+			sim := jaccardSimilarity(allRefs[i].tokens, allRefs[j].tokens)
+			if sim < 0.6 {
+				continue
+			}
+
+			// 유사도 0.6 이상 — 병합 대상
+			// 생존자: 더 깊거나 카운터가 높은 쪽
+			survivor := &allRefs[i]
+			victim := &allRefs[j]
+			if victim.depth > survivor.depth || (victim.depth == survivor.depth && victim.counter > survivor.counter) {
+				survivor, victim = victim, survivor
+				// swap indices for merged tracking
+				if survivor == &allRefs[j] {
+					merged[i] = true
+				}
+			} else {
+				merged[j] = true
+			}
+
+			// 카운터 합산 + 보너스 (+1)
+			totalCounter := survivor.counter + victim.counter + 1
+			fmt.Printf("[DEDUP] 🔀 병합 (sim=%.2f): %s/%s (%d) ← %s/%s (%d) → %d\n",
+				sim,
+				survivor.region, filepath.Base(survivor.fullPath), survivor.counter,
+				victim.region, filepath.Base(victim.fullPath), victim.counter,
+				totalCounter)
+
+			// 생존자 카운터 갱신
+			surviveFiles, _ := filepath.Glob(filepath.Join(survivor.fullPath, "*.neuron"))
+			for _, f := range surviveFiles {
+				base := filepath.Base(f)
+				if counterRegex.MatchString(base) {
+					os.Remove(f)
+				}
+			}
+			newCounterFile := filepath.Join(survivor.fullPath, fmt.Sprintf("%d.neuron", totalCounter))
+			os.WriteFile(newCounterFile, []byte(""), 0644)
+
+			// victim의 dopamine/memory 시그널을 생존자로 이동
+			victimFiles, _ := filepath.Glob(filepath.Join(victim.fullPath, "*.neuron"))
+			for _, f := range victimFiles {
+				base := filepath.Base(f)
+				if strings.HasPrefix(base, "dopamine") || strings.HasPrefix(base, "memory") {
+					destFile := filepath.Join(survivor.fullPath, base)
+					if _, err := os.Stat(destFile); os.IsNotExist(err) {
+						os.Rename(f, destFile)
+					}
+				}
+			}
+
+			// victim 폴더 삭제
+			os.RemoveAll(victim.fullPath)
+			survivor.counter = totalCounter
+			mergeCount++
+		}
+	}
+
+	if mergeCount > 0 {
+		fmt.Printf("[DEDUP] ✅ %d 건 중복 뉴런 병합 완료 (카운터 합산+보너스)\n", mergeCount)
+		writeAllTiers(brainRoot)
+	} else {
+		fmt.Println("[DEDUP] ✓ 중복 뉴런 없음")
 	}
 }
 
@@ -1679,6 +1803,23 @@ func startAPI(brainRoot string, port int) {
 
 	// POST /api/evolve  {"dry_run": false}
 	mux.HandleFunc("/api/evolve", withCORS(handleEvolveAPI(brainRoot)))
+
+	// POST /api/dedup — 중복 뉴런 Jaccard 병합
+	mux.HandleFunc("/api/dedup", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		deduplicateNeurons(brainRoot)
+		brain := scanBrain(brainRoot)
+		result := runSubsumption(brain)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":  "ok",
+			"neurons": result.TotalNeurons,
+			"activation": result.TotalCounter,
+		})
+	}))
 
 	// GET /api/read?region=cortex — read region rules + auto-fire top neurons (RAG retrieval)
 	mux.HandleFunc("/api/read", withCORS(handleReadRegion(brainRoot)))

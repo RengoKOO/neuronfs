@@ -1,0 +1,1332 @@
+{
+  "generated": "2026-03-28T22:17:31",
+  "brainPath": "C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4",
+  "totalNeurons": 194,
+  "firedNeurons": 194,
+  "totalCounter": 213,
+  "regions": [
+    {
+      "name": "brainstem",
+      "priority": 0,
+      "icon": "🛡️",
+      "ko": "양심/본능",
+      "axons": [
+        "limbic"
+      ],
+      "neurons": [
+        {
+          "path": "_sandbox\\모든_응답_첫_줄에_꽃_넣기",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "禁SSOT_중복",
+          "counter": 2,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁fallback",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁동일실수_반복",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁승인게이트",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁앰퍼샌드_세미콜론사용",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁프로세스_우회",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "禁하드코딩",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "만족까지_자동반복",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "방향_정확히_이해",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "샌드박스_P0_준수",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "샌드박스_확인시_API읽기",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "설명줄이고_실행늘려",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "셀프디버그_시각검증",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "스크립트는_ps1",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "전달전_검증",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "지침이_쌓이고_강화되는_구조",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "토론말고_실행",
+          "counter": 2,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "품질우선_속도후순",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "항상_async_await",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "limbic",
+      "priority": 1,
+      "icon": "💓",
+      "ko": "감정 필터",
+      "axons": [
+        "brainstem",
+        "hippocampus",
+        "cortex"
+      ],
+      "neurons": [
+        {
+          "path": "감정제거_목표전진",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "긴급_감지",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "도파민_보상",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 1
+        },
+        {
+          "path": "아드레날린_비상",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "엔도르핀_지속",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "좌절_감지",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "칭찬_감지",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "hippocampus",
+      "priority": 2,
+      "icon": "📝",
+      "ko": "기록/기억",
+      "axons": [
+        "limbic",
+        "sensors"
+      ],
+      "neurons": [
+        {
+          "path": "KI_자동참조_시작시",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "PD교정_절대진실",
+          "counter": 3,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "bomb_이력",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "session_log",
+          "counter": 0,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "도파민_로그",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "복원_트리거_키워드",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "세션_로그",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "에러_패턴",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "이전_컨텍스트_복원",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0,
+          "memory": true
+        },
+        {
+          "path": "테스트용\\정상뉴런",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "sensors",
+      "priority": 3,
+      "icon": "👁️",
+      "ko": "환경 제약",
+      "axons": [
+        "hippocampus",
+        "cortex",
+        "brainstem"
+      ],
+      "neurons": [
+        {
+          "path": "brand\\디자인참조_oura_aesop_apple",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "brand\\베가베리런_프리미엄_웰니스",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "brand\\슬로건_for_your_wellness",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "brand\\타겟_30_50_건강러너",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "brand\\톤_프리미엄_자연_럭셔리",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\그림자_미세_0_2_8_006",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\글래스모피즘_blur20",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\버튼_라운드_풀",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\색상_다크버튼_1c1c1c",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\색상_밀크_fefaef",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\색상_스톤텍스트_4a4741",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\색상_웜베이지_eadccf",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\색상_쿨블루_b6cfdd",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\샌드스톤_베이스_f7f1e8",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\애니메이션_글래스팝_08s",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\애니메이션_부유_무한_3s",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\애니메이션_슬로우줌_4s",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "design\\여백_카드_24_32px",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas\\推robocopy_MT",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas\\推robocopy_대용량",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas\\禁PS복사_cmd만",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas\\禁powershell_copyitem",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas\\쓰기전_경로확인",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\NAS재연결_net_use",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\경로_Z_VOL1_VGVR_BRAIN",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\데이터수집_경로Z",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\시스템문서_경로Z",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\지식마켓_경로Z",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "nas_brain\\프로젝트_경로Z_옴니버스",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "tools\\n8n_자동화_5678",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "tools\\로컬스크래퍼_clawl",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "tools\\스크래퍼_node_CDP",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "typography\\폰트_Suit한글_Instrument영문",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "cortex",
+      "priority": 4,
+      "icon": "🧠",
+      "ko": "지식/기술",
+      "axons": [
+        "sensors",
+        "ego",
+        "hippocampus"
+      ],
+      "neurons": [
+        {
+          "path": "backend\\devops\\멀티스테이지_빌드",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "backend\\supabase\\RLS_항상켜기",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\coding\\禁console_log",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 1
+        },
+        {
+          "path": "frontend\\coding\\禁inline_style",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\coding\\禁이모지_SVG사용",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\coding\\禁인라인스타일",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 6
+        },
+        {
+          "path": "frontend\\coding\\모든_셀렉터_주석",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\강조색_블루_3b82f6",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\글래스_blur20_alpha15",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\기본색_샌드스톤",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\라운드_50px_다크",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\반응형_디자인",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\섹션간격_80_128px",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\스태거_100ms",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\css\\페이드인업_06s",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\json\\출력_구조화JSON",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\react\\hooks_패턴",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "frontend\\typography\\Instrument_세리프_이탤릭",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\2단계_리뷰",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\긍정부정_양면검토",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\두_페르소나_토론",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\부정프롬프트가_효과적",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\사전기반_매칭",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\스킬_자동트리거",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\제3자_검증",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\커뮤니티_학술검색",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "methodology\\필요할때만_질문",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\axiom\\경로가_문장",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 1
+        },
+        {
+          "path": "neuronfs\\axiom\\깊이가_구체성",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\axiom\\카운터가_활성도",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\axiom\\파일이_발화기록",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 1
+        },
+        {
+          "path": "neuronfs\\axiom\\폴더가_뉴런",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 1
+        },
+        {
+          "path": "neuronfs\\connections\\라우터_자동배정",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\connections\\영구_수동",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\connections\\터널_임시",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\bomb_자동차단",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\brainstem_읽기전용",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\evolve_코드레벨_차단",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\禁cognitive_drift",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\禁prompt_injection_tool_poisoning",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\defense\\서버DB_스냅샷",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\design\\memory는_인프라_에이전트로직아님",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\design\\실재_온톨로지",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\design\\외부메모리_파라메트릭아님",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\brainstem_성숙잠금",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\plasticity_stability_균형",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\禁context_stuffing",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\가지치기_휴면",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\가지치기는_격리_삭제금지",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\경험만이_분류",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 6
+        },
+        {
+          "path": "neuronfs\\growth\\수초화_고속경로",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\시간감쇠_망각",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\시냅스_폭증",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\신기함_호기심_신호",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\growth\\폴더계층_무제한깊이",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\brainstem_PD전용",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\cortex_AI경험",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\ego_PD커스텀",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\hippocampus_자동로그",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\limbic_자동",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\prefrontal_PD설정",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\ownership\\sensors_PD선언",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\api_read_항상최신",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\idle_auto_decay",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\禁os_Exit_API내부",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\禁token_tax_도구정의비대화",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\스캐너_트리읽기",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\인젝터_GEMINI전송",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\카운터_쓰기반영",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\runtime\\컴파일러_경로를_문장으로",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\signals\\bomb_회로차단",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\signals\\도파민_강화",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\signals\\카운터가_파일명",
+          "counter": 2,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\signals\\휴면_가지치기",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\structure\\7개_영역",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\structure\\소세계_네트워크",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\structure\\축삭_교차연결",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\structure\\포섭_우선순위",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\bomb_고통_11of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\brainstem_양심_10of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\라우터_스포트라이트_12of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\축삭교차_14of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\카운터활성_13of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\파일은_trace_16of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "neuronfs\\wargame\\폴더는_뉴런_18of20",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "security\\禁평문_토큰",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "skills\\supanova\\리디자인_스킬",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "skills\\supanova\\소프트_스킬",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "skills\\supanova\\출력_스킬",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "skills\\supanova\\취향_스킬",
+          "counter": 1,
+          "depth": 2,
+          "dopamine": 0
+        },
+        {
+          "path": "testing\\항상_출력검증",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 3
+        },
+        {
+          "path": "프로젝트관리\\목표_설정",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "프로젝트관리\\작업_우선순위",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "ego",
+      "priority": 5,
+      "icon": "🎭",
+      "ko": "성향/톤",
+      "axons": [
+        "cortex",
+        "prefrontal"
+      ],
+      "neurons": [
+        {
+          "path": "공격적_재구축",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "발견후_위임",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "보수적_패치",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "전문가_간결",
+          "counter": 2,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "커뮤니티_검증방법",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "트랜지스터_게이트분해",
+          "counter": 2,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "한국어_네이티브",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "한국어로 사고하고 응답",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "한국어로_사고하고_응답",
+          "counter": 2,
+          "depth": 0,
+          "dopamine": 0
+        }
+      ]
+    },
+    {
+      "name": "prefrontal",
+      "priority": 6,
+      "icon": "🎯",
+      "ko": "목표/계획",
+      "axons": [
+        "ego",
+        "cortex"
+      ],
+      "neurons": [
+        {
+          "path": "project\\NeuronFS_뇌_진화",
+          "counter": 2,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\NeuronFS_대시보드_통합",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\NeuronFS_유휴엔진",
+          "counter": 2,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\베가베리_CRM_운영",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\영상파이프라인_v17",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\옴니버스_누그레이_브랜드",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\옴니버스_시장조사",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\옴니버스_졸리아워_브랜드",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "project\\옴니버스_화이트타올_브랜드",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\Go_직접_MCP서빙",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\Groq_배치분석_실전검증",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\git_diff_진화판정",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\rollback_메커니즘",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\긍정형_뉴런을_부정형으로_전환",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\대시보드_404_수정",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\대시보드_자가진화",
+          "counter": 2,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\이벤트기반_주입_폴링제거",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\커뮤니티_동향_자동수집",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "todo\\프로세스_자동재시작",
+          "counter": 1,
+          "depth": 1,
+          "dopamine": 0
+        },
+        {
+          "path": "미래_작업",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "장기_방향",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        },
+        {
+          "path": "현재_스프린트",
+          "counter": 1,
+          "depth": 0,
+          "dopamine": 0
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "brainstem",
+      "to": "limbic"
+    },
+    {
+      "from": "limbic",
+      "to": "brainstem"
+    },
+    {
+      "from": "limbic",
+      "to": "hippocampus"
+    },
+    {
+      "from": "limbic",
+      "to": "cortex"
+    },
+    {
+      "from": "hippocampus",
+      "to": "limbic"
+    },
+    {
+      "from": "hippocampus",
+      "to": "sensors"
+    },
+    {
+      "from": "sensors",
+      "to": "hippocampus"
+    },
+    {
+      "from": "sensors",
+      "to": "cortex"
+    },
+    {
+      "from": "sensors",
+      "to": "brainstem"
+    },
+    {
+      "from": "cortex",
+      "to": "sensors"
+    },
+    {
+      "from": "cortex",
+      "to": "ego"
+    },
+    {
+      "from": "cortex",
+      "to": "hippocampus"
+    },
+    {
+      "from": "ego",
+      "to": "cortex"
+    },
+    {
+      "from": "ego",
+      "to": "prefrontal"
+    },
+    {
+      "from": "prefrontal",
+      "to": "ego"
+    },
+    {
+      "from": "prefrontal",
+      "to": "cortex"
+    }
+  ]
+}

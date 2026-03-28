@@ -1,0 +1,29 @@
+﻿=== RUN   TestNormal_AllRegionsActive
+    main_test.go:63: OK: 15/15 neurons active, 7 regions
+--- PASS: TestNormal_AllRegionsActive (0.12s)
+=== RUN   TestP0Bomb_AllBlocked
+    main_test.go:89: OK: bomb in P0, all 16 neurons blocked
+--- PASS: TestP0Bomb_AllBlocked (0.08s)
+=== RUN   TestP1Bomb_BrainstemSurvives
+    main_test.go:123: OK: P0 alive (3 neurons), P1~P6 blocked (6 regions)
+--- PASS: TestP1Bomb_BrainstemSurvives (0.09s)
+=== RUN   TestAddNeuron_CountIncreases
+    main_test.go:151: OK: 15 -> 16 neurons, NEW RULE visible in emit
+--- PASS: TestAddNeuron_CountIncreases (0.18s)
+=== RUN   TestDeleteNeuron_CountDecreases
+    main_test.go:178: OK: 15 -> 14 neurons, HOOKS PATTERN gone
+--- PASS: TestDeleteNeuron_CountDecreases (0.11s)
+=== RUN   TestEmitFormat_MarkersAndOrder
+    main_test.go:217: OK: markers present, order correct, types render properly
+--- PASS: TestEmitFormat_MarkersAndOrder (0.08s)
+=== RUN   TestRecoveryFlow_BombAndRestore
+    main_test.go:254: OK: Phase A blocked (16 total), Phase B recovered (15/15)
+--- PASS: TestRecoveryFlow_BombAndRestore (0.09s)
+=== RUN   TestAxonCrosslinks
+    main_test.go:286: OK: 2 axons, brainstem->limbic link verified
+--- PASS: TestAxonCrosslinks (0.07s)
+=== RUN   TestInvalidFolders_Ignored
+    main_test.go:310: OK: invalid folders ignored, 7 valid regions
+--- PASS: TestInvalidFolders_Ignored (0.07s)
+PASS
+ok  	neuronfs	(cached)

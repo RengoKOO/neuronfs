@@ -1,0 +1,29 @@
+# NeuronFS — Folder-as-Neuron Cognitive Engine
+# 빌드 산물
+*.exe
+*.exe~
+
+# Node.js 의존성
+runtime/node_modules/
+
+# 디버그/임시 파일
+runtime/debug_out.txt
+runtime/test_output.txt
+runtime/diag*.mjs
+runtime/test_cdp.mjs
+runtime/inject_cdp.mjs
+runtime/list_targets.mjs
+
+# 시스템
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# 뇌 상태 (로컬 전용)
+brain_state.json
+brain_dashboard.html
+brain_mesh.obj
+
+# 환경 변수
+.env

@@ -7,10 +7,6 @@
 //   4. Counter = Activation (higher = stronger/myelinated path)
 //   5. AI writes back (counter increment = experience growth)
 //
-// USAGE:
-//   neuronfs <brain_path>              — diagnostics
-//   neuronfs <brain_path> --evolve     — Groq-powered autonomous evolution
-//   neuronfs <brain_path> --evolve --dry-run — suggestions only
 // NeuronFS Runtime v4.0 — Folder-as-Neuron Cognitive Engine
 //
 // AXIOMS:
@@ -1401,6 +1397,29 @@ func gitSnapshot(brainRoot string) {
 		return
 	}
 	fmt.Printf("[GIT] 📸 %s\n", msg)
+
+	// ── git diff 진화판정: 뉴런 순감소이면 자동 rollback ──
+	diffCmd := exec.Command("git", "diff", "HEAD~1", "--stat")
+	diffCmd.Dir = brainRoot
+	diffOut, err := diffCmd.Output()
+	if err == nil {
+		diffStr := string(diffOut)
+		deletions := strings.Count(diffStr, "deletion")
+		insertions := strings.Count(diffStr, "insertion")
+		if deletions > insertions*2 && deletions > 5 {
+			// 삭제가 삽입의 2배 이상이고 5건 초과이면 퇴화로 판정
+			fmt.Printf("[GIT] ⚠️ 퇴화 감지 (삭제 %d > 삽입 %d×2) — 자동 rollback\n", deletions, insertions)
+			revertCmd := exec.Command("git", "revert", "HEAD", "--no-edit")
+			revertCmd.Dir = brainRoot
+			if err := revertCmd.Run(); err != nil {
+				fmt.Printf("[GIT] ❌ rollback 실패: %v\n", err)
+			} else {
+				fmt.Println("[GIT] ✅ 퇴화 commit이 revert 되었습니다")
+			}
+		} else {
+			fmt.Printf("[GIT] ✅ 진화 판정 통과 (ins:%d, del:%d)\n", insertions, deletions)
+		}
+	}
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

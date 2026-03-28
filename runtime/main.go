@@ -164,6 +164,8 @@ func main() {
 			mode = "decay"
 		case "--api":
 			mode = "api"
+		case "--mcp":
+			mode = "mcp"
 		case "--snapshot":
 			mode = "snapshot"
 		case "--evolve":
@@ -261,6 +263,17 @@ func main() {
 		gitSnapshot(brainRoot)
 	case "evolve":
 		runEvolve(brainRoot, dryRun)
+	case "mcp":
+		// MCP stdio server + background loops
+		// REST API on fallback port (9091) to avoid conflict with existing --api on 9090
+		go func() {
+			mcpAPIPort := port + 1 // 9091
+			fmt.Fprintf(os.Stderr, "[MCP] REST API on :%d (fallback)\n", mcpAPIPort)
+			startAPI(brainRoot, mcpAPIPort)
+		}()
+		go runInjectionLoop(brainRoot)
+		go runIdleLoop(brainRoot)
+		startMCPServer(brainRoot) // blocking: stdio loop
 	}
 }
 

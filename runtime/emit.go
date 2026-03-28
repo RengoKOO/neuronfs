@@ -124,8 +124,8 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 			if n.IsDormant {
 				continue
 			}
-			// cortex는 뉴런이 많아 bootstrap에는 절대(>=10)만 포함. 나머지는 _rules.md
-			if region.Name == "cortex" && n.Counter < 10 {
+			// cortex는 뉴런이 많아 bootstrap에는 절대(counter+dopamine>=10)만 포함. 나머지는 _rules.md
+			if region.Name == "cortex" && (n.Counter+n.Dopamine) < 10 {
 				continue
 			}
 			if n.Counter >= emitThreshold || n.ModTime.After(spotlightCutoff) {
@@ -208,7 +208,7 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 				parts = append(parts, fmt.Sprintf("%s%s", leafName, signals))
 
 				// Track top anchors for bottom repetition
-				if n.Counter >= 10 {
+				if (n.Counter + n.Dopamine) >= 10 {
 					topAnchors = append(topAnchors, fmt.Sprintf("%s > %s", groupName, leafName))
 				}
 			}
@@ -218,17 +218,18 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 			}
 
 			// 그룹 내 뉴런 수에 따라 렌더링 방식 결정
-			maxCounter := 0
+			maxIntensity := 0
 			for _, n := range neurons {
-				if n.Counter > maxCounter {
-					maxCounter = n.Counter
+				intensity := n.Counter + n.Dopamine
+				if intensity > maxIntensity {
+					maxIntensity = intensity
 				}
 			}
 
 			strength := ""
-			if maxCounter >= 10 {
+			if maxIntensity >= 10 {
 				strength = "절대 "
-			} else if maxCounter >= 5 {
+			} else if maxIntensity >= 5 {
 				strength = "반드시 "
 			}
 

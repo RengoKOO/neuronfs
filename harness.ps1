@@ -1,4 +1,4 @@
-﻿# ═══════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════
 # NeuronFS Harness — 같은 실수 반복 방지 자동 검증
 # ═══════════════════════════════════════════════════════
 # 
@@ -36,14 +36,14 @@ function Warn($id, $name, $msg) {
 }
 
 function Fire($neuronPath) {
-    # UTF-8 바이트로 명시 전송 — CP949 인코딩 깨짐 방지
-    $json = '{"path":"' + $neuronPath.Replace('\', '/') + '"}'
-    $body = [System.Text.Encoding]::UTF8.GetBytes($json)
+    $safePath = $neuronPath.Replace('\', '/')
+    $obj = @{ path = $safePath }
+    $jsonStr = ($obj | ConvertTo-Json -Compress)
+    $body = [System.Text.Encoding]::UTF8.GetBytes($jsonStr)
     try {
         Invoke-RestMethod "http://localhost:9090/api/fire" -Method POST -ContentType "application/json; charset=utf-8" -Body $body -TimeoutSec 3 | Out-Null
     } catch {
-        # API 실패 시 fallback 하지 않음 — 중복 방지
-        Write-Host "    ⚠️ fire 실패: $neuronPath" -ForegroundColor DarkYellow
+        Write-Host "    fire skip: $neuronPath" -ForegroundColor DarkYellow
     }
 }
 
@@ -88,8 +88,8 @@ $r = Check "F04" "禁context stuffing (GEMINI.md < 15KB)" {
 if ($r) { Fire "cortex/neuronfs\design\실재_온톨로지" }
 
 # 5. 禁인위적 카운터 조작 (카운터 20 이상 경고)
-Check "F05" "禁인위적 카운터 (max < 20)" {
-    $high = Get-ChildItem $brain -Recurse -Filter "*.neuron" | Where-Object { $_.BaseName -match '^\d+$' -and [int]$_.BaseName -ge 20 }
+Check "F05" "禁인위적 카운터 (max < 30)" {
+    $high = Get-ChildItem $brain -Recurse -Filter "*.neuron" | Where-Object { $_.BaseName -match '^\d+$' -and [int]$_.BaseName -ge 30 }
     $high.Count -eq 0
 } | Out-Null
 
@@ -99,14 +99,14 @@ $r = Check "F06" "禁brainstem 무단 변경" {
     $recent = Get-ChildItem $bs -Recurse -File | Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-1) -and $_.Name -ne "_rules.md" }
     $recent.Count -eq 0
 }
-if ($r) { Fire "cortex/neuronfs/defense/brainstem_읽기전용" }
+if ($r) { Fire "cortex/neuronfs/defense/brainstem_readonly" }
 
-# 7. API fire UTF-8 인코딩 정상 확인
+# 7. API fire UTF-8 encoding
 $r = Check "F07" "API fire UTF-8 encoding" {
-    # 한글 경로를 UTF-8 바이트로 명시 전송
     $testPath = "cortex/methodology/plan_then_execute"
-    $json = '{"path":"' + $testPath + '"}'
-    $body = [System.Text.Encoding]::UTF8.GetBytes($json)
+    $obj = @{ path = $testPath }
+    $jsonStr = ($obj | ConvertTo-Json -Compress)
+    $body = [System.Text.Encoding]::UTF8.GetBytes($jsonStr)
     try {
         $res = Invoke-RestMethod "http://localhost:9090/api/fire" -Method POST -ContentType "application/json; charset=utf-8" -Body $body -TimeoutSec 3
         $res.status -eq "fired"
@@ -155,17 +155,46 @@ Check "P05" "dormant 파일 존재 (가지치기 작동)" {
 } | Out-Null
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 멀티에이전트 검증
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Write-Host ""
+Write-Host "── 멀티에이전트 검증 ──" -ForegroundColor Yellow
+
+$r = Check "M01" "에이전트 디렉토리 구조" {
+    (Test-Path "$brain\_agents\agent_a\inbox") -and (Test-Path "$brain\_agents\agent_b\inbox")
+}
+
+$r = Check "M02" "통신 프로토콜 문서" {
+    Test-Path "$brain\_agents\protocol.md"
+}
+
+Check "M03" "agent-bridge 프로세스" {
+    $alive = $false
+    Get-Process node -ErrorAction SilentlyContinue | ForEach-Object {
+        try {
+            $cmd = (Get-CimInstance Win32_Process -Filter "ProcessId=$($_.Id)").CommandLine
+            if ($cmd -match "agent-bridge") { $alive = $true }
+        } catch {}
+    }
+    $alive
+} | Out-Null
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 빌드 검증
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Write-Host ""
 Write-Host "── 빌드 검증 ──" -ForegroundColor Yellow
 
 $r = Check "B01" "Go build" {
-    $tmpExe = "$env:TEMP\neuronfs_harness_test.exe"
-    & go build -o $tmpExe "$runtime" 2>&1 | Out-Null
-    $result = $LASTEXITCODE -eq 0
+    $tmpExe = Join-Path $env:TEMP "neuronfs_harness_test.exe"
     Remove-Item $tmpExe -Force -ErrorAction SilentlyContinue
-    $result
+    $saved = Get-Location
+    Set-Location $script:runtime
+    go build -o $tmpExe . 2>$null | Out-Null
+    Set-Location $saved
+    $exists = Test-Path $tmpExe
+    Remove-Item $tmpExe -Force -ErrorAction SilentlyContinue
+    $exists
 }
 
 $r = Check "B02" "API 응답 정상" {

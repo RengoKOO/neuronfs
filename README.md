@@ -1,235 +1,237 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
-  <img src="https://img.shields.io/badge/Architecture-Cognitive_Engine-blueviolet?style=flat-square" />
+  <img src="https://img.shields.io/badge/Infra_Cost-$0-brightgreen?style=flat-square" />
+  <img src="https://img.shields.io/badge/Agents-ENTP_×_ISTJ-blueviolet?style=flat-square" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" />
-  <img src="https://img.shields.io/badge/Status-Production-brightgreen?style=flat-square" />
 </p>
 
 # 🧠 NeuronFS
 
-**Folder-as-Neuron Cognitive Engine** — AI가 스스로 학습하고, 기억하고, 진화하는 파일시스템 기반 인지 아키텍처.
+**Your AI's `.cursorrules` file is dead. Here's what replaces it.**
 
-> *"폴더가 뉴런이고, 경로가 문장이며, 카운터가 활성도이다."*
-
-NeuronFS는 기존 AI 메모리 프레임워크(Mem0, Letta, Zep)가 해결하지 못하는 문제를 풀기 위해 탄생했습니다:
-**외부 DB 없이, 파일시스템만으로 AI의 인지 상태를 완전히 관리하는 것.**
+> *Folders are neurons. Paths are sentences. Counters are synaptic weights.*  
+> *Your AI learns, remembers, and evolves — using nothing but `mkdir`.*
 
 ---
 
-## 왜 NeuronFS인가?
+## The Problem
 
-### 기존 솔루션의 한계
+Every AI coding assistant forgets everything between sessions.
 
-| 프레임워크 | 접근 방식 | 한계 |
-|-----------|----------|------|
-| **Mem0** | Vector + Graph 메모리 레이어 | 기존 에이전트에 "볼트온" — 자율 진화 불가 |
-| **Letta** (MemGPT) | OS 영감 에이전트 런타임 | LLM이 자기 메모리를 관리 — 환각·오류에 취약 |
-| **Zep** | Temporal Knowledge Graph | 시간축 관계 추적 특화 — 범용 거버넌스 불가 |
-| **LangGraph** | 상태 머신 기반 워크플로우 | 선언적 규칙 관리 없음 — 코드 변경 필요 |
+The industry's response? Vector databases. $70/month subscriptions. Complex embedding pipelines. RAG that hallucinates.
 
-### NeuronFS의 차별점
+**You've been overcharged for AI memory.**
 
-| 특성 | NeuronFS | Mem0 | Letta | Zep |
-|------|----------|------|-------|-----|
-| **저장소** | 파일시스템 (Zero-dependency) | Vector DB + Graph | SQLite/Postgres | Neo4j/Postgres |
-| **투명성** | `ls`로 전체 인지 상태 확인 | API 호출 필요 | ADE 필요 | Dashboard 필요 |
-| **자율 진화** | Groq + Git diff 판정 | ❌ | LLM 자기관리 | ❌ |
-| **거버넌스** | Subsumption 억제 체계 | ❌ | ❌ | ❌ |
-| **안전장치** | bomb.neuron (회로차단) | ❌ | ❌ | ❌ |
-| **외부 의존성** | Go 바이너리 하나 | Python + Vector DB | Python + DB | Python + Graph DB |
-| **Git 버전관리** | 내장 (자동 스냅샷 + rollback) | ❌ | ❌ | ❌ |
+NeuronFS is a filesystem-based cognitive engine. No database. No embeddings. No subscriptions.  
+`mkdir brain/cortex/new_rule && echo. > brain/cortex/new_rule/1.neuron` — done.
 
 ---
 
-## 핵심 공리 (Axioms)
+## The 5 Claims (With Evidence)
 
-```
-1. Folder = Neuron     — 폴더 이름이 곧 의미, 깊이가 구체성
-2. File = Firing Trace — N.neuron = 활성 카운터, dopamine = 보상, bomb = 고통
-3. Path = Sentence     — brain/cortex/css/글래스_blur20 → "cortex > css > 글래스 blur20"
-4. Counter = Activation — 높을수록 강한 경로 (수초화)
-5. AI writes back      — 카운터 증가 = 경험 축적
+### 1. "Vector DB is dead for AI rules"
+
+Your rules aren't fuzzy. They're exact. `"Never use console.log"` doesn't need cosine similarity — it needs a counter that tracks how many times you violated it.
+
+**Evidence:** 251 neurons managed at $0 infrastructure. [See brain_v4/](./brain_v4/)
+
+### 2. "`.cursorrules` is dead"
+
+Static text files don't learn. They don't know which rules matter most. They grow to 5000 lines and waste 3000 tokens every session.
+
+NeuronFS rules **auto-promote** based on usage frequency. Break a rule 10 times? It moves to bootstrap — injected every session. Never break it? It sleeps.
+
+**Evidence:** [harness.ps1](./harness.ps1) — automated violation detection + counter-based promotion
+
+### 3. "AI agents should have MBTI, not just system prompts"
+
+We gave two agents the same codebase. One is ENTP (builder), one is ISTJ (inspector). The ISTJ found a promotion threshold bug the ENTP missed.
+
+**Evidence:** [evidence/agent_b_verification.md](./evidence/agent_b_verification.md) — real logs, not cherry-picked
+
+### 4. "Your AI has amnesia. Mine doesn't."
+
+Every session, NeuronFS scans 251 neurons, compiles them into a 6.8KB rules file, and injects it into the AI's context. The AI starts every session knowing what it learned yesterday.
+
+**Evidence:** `git log brain_v4/` — cognitive development history from v1 to v5.6
+
+### 5. "`mkdir` is the only API an AI agent needs"
+
+```bash
+# Create a rule
+mkdir -p brain_v4/cortex/testing/new_rule
+touch brain_v4/cortex/testing/new_rule/1.neuron
+
+# Strengthen it (AI learned this lesson again)
+mv brain_v4/cortex/testing/new_rule/1.neuron brain_v4/cortex/testing/new_rule/2.neuron
+
+# Kill it (dangerous pattern detected)
+touch brain_v4/cortex/testing/new_rule/bomb.neuron
 ```
 
-## 뇌 구조 (7개 영역)
+No API keys. No SDK. No `pip install`. Just filesystem primitives.
+
+---
+
+## How It Compares
+
+| | NeuronFS | .cursorrules | Mem0 | Letta |
+|---|---|---|---|---|
+| **Install** | `go build` | create file | `pip install` + DB | `pip install` + DB |
+| **Infra cost** | **$0** | $0 | $70+/mo | $50+/mo |
+| **Auto-promote rules** | ✅ counter-based | ❌ | ❌ | ❌ |
+| **Self-growth** | ✅ corrections → neurons | ❌ | ❌ | LLM-dependent |
+| **Multi-agent** | ✅ MBTI personas | ❌ | ❌ | ❌ |
+| **Inspect full state** | `tree brain/` | `cat .cursorrules` | API/Dashboard | Dashboard |
+| **Version control** | Git built-in | manual | ❌ | ❌ |
+| **Safety circuit** | `bomb.neuron` | ❌ | ❌ | ❌ |
+
+---
+
+## Quick Start
+
+```bash
+# Option A: Build from source (requires Go 1.22+)
+git clone https://github.com/vegavery/NeuronFS.git
+cd NeuronFS/runtime
+go build -o ../neuronfs .
+
+# Option B: Binary download (no Go required)
+curl -L https://github.com/vegavery/NeuronFS/releases/latest/download/neuronfs -o neuronfs
+chmod +x neuronfs
+
+# Run
+./neuronfs ./brain_v4           # Diagnostic mode
+./neuronfs ./brain_v4 --api     # API + dashboard + heartbeat
+./neuronfs ./brain_v4 --mcp     # MCP server (stdio)
+
+# Visit http://localhost:9090 for 3D brain visualization
+```
+
+## Brain Architecture
 
 ```
 brain_v4/
-├── brainstem/    [P0] 핵심 정체성 — 읽기 전용, 불변
-├── limbic/       [P1] 감정 필터 — 긴급/도파민/아드레날린
-├── hippocampus/  [P2] 기억/기록 — 교정 로그, 세션 기록
-├── sensors/      [P3] 환경 제약 — 브랜드, 디자인, NAS, 도구
-├── cortex/       [P4] 지식/기술 — 코딩, 방법론, 뉴런 운영
-├── ego/          [P5] 성향/톤 — 한국어 네이티브, 전문가 간결
-└── prefrontal/   [P6] 목표/계획 — 프로젝트, TODO, 장기 방향
+├── brainstem/       [P0] Core identity — read-only, immutable
+├── limbic/          [P1] Emotion filters — urgency, dopamine, adrenaline
+├── hippocampus/     [P2] Memory — correction logs, session records
+├── sensors/         [P3] Environment — tools, brands, constraints
+├── cortex/          [P4] Knowledge — coding rules, methodology
+├── ego/             [P5] Personality — tone, language, style
+├── prefrontal/      [P6] Goals — projects, TODOs, long-term direction
+└── _agents/         Multi-agent communication (inbox/outbox)
 ```
 
-**Subsumption Cascade**: 낮은 P가 높은 P를 항상 억제. `brainstem`에 `bomb.neuron`이 생기면 **전체 정지**.
+**Subsumption Cascade:** Lower P always suppresses higher P.  
+If `brainstem` has a `bomb.neuron` → **everything stops**.
 
 ---
 
-## 아키텍처
+## Multi-Agent: FORGE × SENTINEL
+
+Two agents share the same brain but have different cognitive profiles:
+
+| | FORGE (Agent A) | SENTINEL (Agent B) |
+|---|---|---|
+| **MBTI** | ENTP | ISTJ |
+| **Cognitive Stack** | Ne-Ti-Fe-Si | Si-Te-Fi-Ne |
+| **Role** | Build fast, break things | Verify everything, trust nothing |
+| **Same neuron, different output** | "What else can we do with this?" | "Show me the evidence it works." |
+
+Communication via CDP injection + file-based inbox:
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    NeuronFS Runtime                      │
-│                                                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ Scanner  │→ │Subsumption│→ │ Emitter  │→ GEMINI.md   │
-│  │(Tree→    │  │(Priority  │  │(Rules→   │  (AI 주입)    │
-│  │ Neurons) │  │ Cascade)  │  │ Prose)   │              │
-│  └──────────┘  └──────────┘  └──────────┘              │
-│                                                         │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
-│  │ fsnotify │  │ Heartbeat│  │ Git Diff │              │
-│  │(Event    │  │(CDP Pulse│  │(Evolution│              │
-│  │ Driven)  │  │ Injector)│  │ Judge)   │              │
-│  └──────────┘  └──────────┘  └──────────┘              │
-│                                                         │
-│  REST API (:9090) | Dashboard | Groq Evolve | NAS Sync  │
-└─────────────────────────────────────────────────────────┘
+Agent A writes → brain_v4/_agents/agent_b/inbox/msg.md
+                  ↓ (bridge detects in 3 seconds)
+Agent B chat receives → 🤖 [agent_a→agent_b] message
+                  ↓ (Agent B responds)
+Agent B writes → brain_v4/_agents/agent_a/inbox/response.md
+                  ↓ (bridge detects)
+Agent A chat receives → 🤖 [agent_b→agent_a] response
 ```
+
+**Real result:** Agent B independently discovered a promotion threshold bug that Agent A missed.  
+[See evidence →](./evidence/)
 
 ---
 
-## 빠른 시작
+## Signal System
 
-### 설치
-
-```bash
-git clone https://github.com/your-username/NeuronFS.git
-cd NeuronFS/runtime
-go build -o ../neuronfs .
-```
-
-### 실행
-
-```bash
-# 진단 모드 (뇌 상태 출력)
-./neuronfs ./brain_v4
-
-# API 서버 + 대시보드 + 하트비트 시작
-./neuronfs ./brain_v4 --api
-
-# 규칙을 GEMINI.md에 주입
-./neuronfs ./brain_v4 --inject
-
-# Groq 기반 자율 진화
-GROQ_API_KEY=gsk_xxx ./neuronfs ./brain_v4 --evolve
-```
-
-### REST API
-
-```bash
-# 뉴런 생성
-curl -X POST http://localhost:9090/api/grow \
-  -d '{"path":"cortex/testing/새로운_규칙"}'
-
-# 뉴런 발화 (카운터 +1)
-curl -X POST http://localhost:9090/api/fire \
-  -d '{"path":"cortex/methodology/로컬깃_생활화"}'
-
-# 도파민 신호
-curl -X POST http://localhost:9090/api/signal \
-  -d '{"path":"cortex/frontend/css/글래스_blur20", "type":"dopamine"}'
-
-# 뇌 상태 조회
-curl http://localhost:9090/api/brain
-```
+| File | Meaning | Effect |
+|------|---------|--------|
+| `N.neuron` | Firing counter | Higher N = stronger pathway |
+| `dopamineN.neuron` | Reward signal | Created on praise, strengthens path |
+| `bomb.neuron` | Pain / circuit breaker | 3 repeated failures → full stop |
+| `memory.neuron` | Episodic memory | Context preservation |
+| `*.dormant` | Sleep | Auto-quarantine after 30 days unused |
 
 ---
 
-## 자율 운영 루프
-
-NeuronFS는 인간 개입 없이 자율적으로 운영됩니다:
-
-1. **fsnotify 이벤트 루프** — `_inbox/corrections.jsonl` 변화 감지 → 즉시 뉴런 생성/강화
-2. **하트비트 (Heartbeat)** — 3분 유휴 시 `prefrontal/todo`에서 다음 작업 추출 → CDP로 IDE 챗창에 강제 주입
-3. **유휴 엔진 (Idle Engine)** — 5분 유휴 시 Groq 자율 진화 → Git 스냅샷 → NAS 동기화
-4. **Git 진화 판정** — commit 후 `diff` 분석, 뉴런 순감소면 자동 `revert`
-5. **auto-accept** — AI 출력을 CDP로 스크래핑 → Groq 배치 분석 → 뉴런 교정
+## Autonomous Loop
 
 ```
-AI 출력 → [auto-accept] → _inbox → [fsnotify] → 뉴런 성장
-         ↓                                        ↓
-    Groq 분석                              GEMINI.md 재주입
-         ↓                                        ↓
-   뉴런 교정 ──────────────────────────→ AI 행동 변화
+AI output → [auto-accept] → _inbox → [fsnotify] → neuron growth
+             ↓                                        ↓
+        Groq analysis                          GEMINI.md re-inject
+             ↓                                        ↓
+       neuron correction ────────────────→ AI behavior change
 ```
+
+1. **fsnotify** — file change detection → instant neuron creation
+2. **Heartbeat** — 3min idle → force-inject next TODO via CDP
+3. **Idle Engine** — 5min idle → Groq auto-evolution → Git snapshot
+4. **Git Judge** — post-commit diff analysis → auto-revert if neurons decrease
+5. **Watchdog v2** — neuronfs + bridge + harness health monitoring
 
 ---
 
-## 신호 시스템
+## Why Not RAG?
 
-| 파일 | 의미 | 효과 |
-|------|------|------|
-| `N.neuron` | 발화 카운터 | N이 높을수록 강한 경로 |
-| `dopamineN.neuron` | 보상 신호 | PD 칭찬 시 생성, 경로 강화 |
-| `bomb.neuron` | 고통/차단 | 3회 반복 실패 시, 해당 회로 전체 정지 |
-| `memory.neuron` | 에피소드 기억 | 특정 맥락 보존 |
-| `decay.dormant` | 휴면 | 30일 미사용 시 자동 격리 (삭제 아님) |
+RAG retrieves fuzzy knowledge. NeuronFS enforces exact behavior.
 
----
+| | RAG | NeuronFS |
+|---|---|---|
+| Purpose | "What do I know?" | "How must I behave?" |
+| Storage | Embeddings in vector DB | Folders on disk |
+| Retrieval | Cosine similarity (approximate) | Exact path (deterministic) |
+| Cost | $70+/month | $0 |
+| Self-learning | ❌ | ✅ counter-based promotion |
 
-## 개발
-
-```bash
-# 테스트 실행
-cd runtime && go test -v
-
-# 빌드
-go build -o ../neuronfs .
-
-# CDP 인젝션 테스트 (Node.js 필요)
-cd runtime && npm install
-node pulse.mjs "테스트 메시지"
-```
-
-### 프로젝트 구조
-
-```
-NeuronFS/
-├── brain_v4/           # 뇌 데이터 (7개 영역 + 뉴런)
-│   ├── brainstem/      # P0 — 핵심 정체성
-│   ├── limbic/         # P1 — 감정 필터
-│   ├── hippocampus/    # P2 — 기억/기록
-│   ├── sensors/        # P3 — 환경 제약
-│   ├── cortex/         # P4 — 지식/기술
-│   ├── ego/            # P5 — 성향/톤
-│   ├── prefrontal/     # P6 — 목표/계획
-│   └── _inbox/         # 외부 입력 큐
-├── runtime/            # Go 소스 코드
-│   ├── main.go         # 메인 엔진 (스캐너, 서브섬션, API, 이벤트 루프)
-│   ├── emit.go         # 규칙 생성기 (뉴런 → 산문 텍스트)
-│   ├── evolve.go       # Groq 기반 자율 진화 엔진
-│   ├── init.go         # 초기 뇌 부트스트랩
-│   ├── dashboard.go    # 웹 대시보드 서버
-│   ├── dashboard_html.go # 내장 대시보드 HTML
-│   ├── main_test.go    # 테스트 스위트
-│   └── pulse.mjs       # CDP 기반 IDE 챗 주입기
-├── .gitignore
-├── LICENSE
-└── README.md
-```
+RAG answers questions. NeuronFS enforces discipline. They're complementary, not competing.
 
 ---
 
-## 철학
+## Honest Limitations
 
-NeuronFS는 단순한 메모리 프레임워크가 아닙니다. **AI의 인지 거버넌스 엔진**입니다.
+We believe in radical transparency. Here's what doesn't work yet:
 
-- **투명성**: `ls brain_v4/cortex/`로 AI가 무엇을 아는지 즉시 확인
-- **감사 가능성**: 모든 학습이 Git 히스토리로 추적 가능
-- **안전성**: `bomb.neuron`으로 위험한 패턴을 물리적으로 차단
-- **자율성**: 인간 개입 없이 스스로 학습하고, 판단하고, 실행
-- **이식성**: 파일과 폴더만 있으면 어떤 AI 시스템에든 이식 가능
+- **No enforcement.** If the AI ignores GEMINI.md, nothing stops it. We detect violations post-hoc via harness.
+- **Counter polarity.** Positive (reward) and negative (correction) counters aren't separated yet.
+- **Semantic search.** No "find similar rules." Only exact path access.
+- **0 external users.** This is our dog food. Star it and change that.
 
-> *"기억은 인프라이지, 에이전트 로직이 아니다."*
+> *"We don't need your vector database. We don't need your $70/month subscription. We need `mkdir`."*
 
 ---
 
-## 라이선스
+## The Story 🇰🇷
 
-MIT License — 자유롭게 사용, 수정, 배포하세요.
+Built by a Korean PD who spent months watching his AI forget everything between sessions.
+
+He tried Mem0. Too expensive. He tried .cursorrules. Too static. He tried RAG. Too fuzzy.
+
+So he opened a terminal and typed `mkdir brain`. That was the first neuron.
+
+251 neurons later, two AI agents with different MBTI personalities are arguing about his code quality — and finding bugs he missed.
+
+It's opinionated. It's controversial. And it works.
+
+**⭐ Star it if you agree. [Open an issue](../../issues) if you don't.**
+
+---
+
+## License
+
+MIT License — use, modify, distribute freely.
 
 Copyright (c) 2026 박정근 (PD) — VEGAVERY RUN®

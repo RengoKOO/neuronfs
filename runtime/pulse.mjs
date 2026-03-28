@@ -20,8 +20,8 @@ async function injectPulse() {
     console.log(`[PULSE] 💉 주입 시작: ${PROMPT}`);
     try {
         const list = await getJson(`http://127.0.0.1:${CDP_PORT}/json/list`);
-        const target = list.find(t => t.url?.includes('workbench.html'));
-        if (!target) { console.error('[PULSE] workbench.html 타겟 없음'); return; }
+        const target = list.find(t => t.url?.includes('workbench.html') && t.title?.includes('BASEMENT_ADMIN'));
+        if (!target) { console.error('[PULSE] BASEMENT_ADMIN workbench 타겟 없음'); return; }
 
         const ws = new WebSocket(target.webSocketDebuggerUrl);
         await new Promise((resolve, reject) => { ws.on('open', resolve); ws.on('error', reject); });

@@ -1667,23 +1667,27 @@ func runHeartbeatLoop(brainRoot string) {
 	todoDir := filepath.Join(brainRoot, "prefrontal", "todo")
 
 	consecutiveIdle := 0 // 연속 idle 횟수
+	lastInjection := time.Time{} // 마지막 주입 시각
 
 	for {
 		time.Sleep(30 * time.Second) // 30초마다 확인 (빠른 반응)
+
+		// 쿨다운: 마지막 주입 후 5분 이내면 스킵 (과주입 방지)
+		if !lastInjection.IsZero() && time.Since(lastInjection) < 5*time.Minute {
+			continue
+		}
 
 		// CDP probe로 AI 출력 활동 확인 (2초 간 텍스트 변화 감지)
 		probeActive := true // 기본값: 활동 중 (안전 폴백)
 		probeCmd := exec.Command("node", probeScript)
 		probeOut, err := probeCmd.CombinedOutput()
 		if err == nil && len(probeOut) > 0 {
-			// JSON 파싱: {"active": true/false, ...}
 			outStr := strings.TrimSpace(string(probeOut))
 			if strings.Contains(outStr, `"active":false`) {
 				probeActive = false
 			} else if strings.Contains(outStr, `"active":true`) {
 				probeActive = true
 			}
-			// probe 자체가 에러나면 폴백으로 API 기반 유휴 체크
 		} else {
 			// probe 실패 → 기존 API 기반 폴백
 			lastAct := getLastActivity()
@@ -1726,6 +1730,7 @@ func runHeartbeatLoop(brainRoot string) {
 			}
 			touchActivity()
 			consecutiveIdle = 0
+			lastInjection = time.Now() // 쿨다운 시작
 		}
 	}
 }

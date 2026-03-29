@@ -1,7 +1,10 @@
-# Multi-Agent Wargame Report
-Time: 2026-03-29 00:13:09
-Agent A: Antigravity (Gemini) — Generator
-Agent B: Groq (Llama 3.1) — Verifier
+# Multi-Agent Wargame Report — External Verification via Groq
+
+**Time:** 2026-03-29 00:13  
+**FORGE (Gemini/ENTP)** — Generator: presents harness results  
+**External Verifier (Groq/Llama 3.1)** — Adversarial reviewer: challenges claims
+
+> **Purpose:** Test NeuronFS claims against an independent LLM that has never seen the codebase. Groq receives only the harness output and GEMINI.md. Raw responses are preserved unedited.
 
 ## ROUND 1: Agent A reports harness results
 ### Agent A says:

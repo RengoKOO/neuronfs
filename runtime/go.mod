@@ -1,4 +1,4 @@
-module neuronfs
+module github.com/vegavery/NeuronFS/runtime
 
 go 1.26.1
 

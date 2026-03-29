@@ -283,7 +283,7 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 	// ━━━ MODE SWITCH: 작업 감지 → 해당 영역 _rules.md 먼저 읽기 ━━━
 	sb.WriteString("### 🧠 작업 모드 전환 (필수)\n\n")
 	sb.WriteString("**작업 시작 전 해당 영역의 `_rules.md`를 `view_file`로 반드시 먼저 읽는다.**\n\n")
-	sb.WriteString(fmt.Sprintf("| 작업 감지 | 읽을 파일 |\n|-----------|----------|\n"))
+	sb.WriteString("| 작업 감지 | 읽을 파일 |\n|-----------|----------|\n")
 	sb.WriteString(fmt.Sprintf("| CSS/디자인/UI | `%s\\cortex\\_rules.md` |\n", brainRoot))
 	sb.WriteString(fmt.Sprintf("| 백엔드/API/DB | `%s\\cortex\\_rules.md` |\n", brainRoot))
 	sb.WriteString(fmt.Sprintf("| NAS/파일복사 | `%s\\sensors\\_rules.md` |\n", brainRoot))
@@ -410,6 +410,7 @@ type treeNode struct {
 	isLeaf   bool
 }
 
+// emitRegionRules converts a Region's neurons into a formatted markdown ruleset string.
 func emitRegionRules(region Region) string {
 	var sb strings.Builder
 
@@ -585,6 +586,129 @@ func writeAllTiers(brainRoot string) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// EMIT TARGETS — Multi-editor support
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// EmitTarget defines a target editor configuration file
+type EmitTarget struct {
+	Name     string // Human-readable name
+	FileName string // Relative file path from project root
+	SubDir   string // Subdirectory to create if needed (e.g. ".github")
+}
+
+// emitTargetMap maps CLI values to target configurations
+var emitTargetMap = map[string]EmitTarget{
+	"gemini":  {Name: "Gemini", FileName: "GEMINI.md", SubDir: ".gemini"},
+	"cursor":  {Name: "Cursor", FileName: ".cursorrules"},
+	"claude":  {Name: "Claude", FileName: "CLAUDE.md"},
+	"copilot": {Name: "Copilot", FileName: "copilot-instructions.md", SubDir: ".github"},
+	"generic": {Name: "Generic", FileName: ".neuronrc"},
+}
+
+// writeAllTiersForTargets writes brain rules to specific editor target(s)
+// target can be a single key (e.g. "cursor") or "all" for all targets
+func writeAllTiersForTargets(brainRoot string, target string) {
+	brain := scanBrain(brainRoot)
+	result := runSubsumption(brain)
+
+	// Generate bootstrap content (same for all targets)
+	bootstrap := emitBootstrap(result, brainRoot)
+
+	// Find project root (parent of brain)
+	projectRoot := filepath.Dir(brainRoot)
+
+	// Determine which targets to write
+	var targets []string
+	if target == "all" {
+		for k := range emitTargetMap {
+			targets = append(targets, k)
+		}
+		// Sort for deterministic output
+		sort.Strings(targets)
+	} else {
+		targets = []string{target}
+	}
+
+	// Write to each target
+	for _, t := range targets {
+		et, ok := emitTargetMap[t]
+		if !ok {
+			fmt.Printf("[WARN] Unknown emit target: %s\n", t)
+			continue
+		}
+
+		var targetPath string
+		if et.SubDir != "" {
+			subDir := filepath.Join(projectRoot, et.SubDir)
+			os.MkdirAll(subDir, 0755)
+			targetPath = filepath.Join(subDir, et.FileName)
+		} else {
+			targetPath = filepath.Join(projectRoot, et.FileName)
+		}
+
+		// For gemini target, use the existing inject logic (preserves non-NeuronFS content)
+		if t == "gemini" {
+			doInjectToFile(targetPath, bootstrap)
+		} else {
+			// For other targets, write the full bootstrap content directly
+			if err := os.WriteFile(targetPath, []byte(bootstrap), 0644); err != nil {
+				fmt.Printf("[ERROR] Cannot write %s: %v\n", targetPath, err)
+				continue
+			}
+		}
+
+		fmt.Printf("[EMIT] ✅ %s → %s\n", et.Name, targetPath)
+	}
+
+	// Also write Tier 2 + 3 (these are editor-independent)
+	indexContent := emitIndex(brain, result)
+	indexPath := filepath.Join(brainRoot, "_index.md")
+	if err := os.WriteFile(indexPath, []byte(indexContent), 0644); err != nil {
+		fmt.Printf("[WARN] Cannot write %s: %v\n", indexPath, err)
+	}
+
+	for _, region := range brain.Regions {
+		content := emitRegionRules(region)
+		rulesPath := filepath.Join(region.Path, "_rules.md")
+		if err := os.WriteFile(rulesPath, []byte(content), 0644); err != nil {
+			fmt.Printf("[WARN] Cannot write %s: %v\n", rulesPath, err)
+		}
+	}
+
+	generateBrainJSON(brainRoot, brain, result)
+
+	fmt.Printf("[SYNC] ♻️  emit complete: %d target(s) + _index.md + 7x _rules.md (%d neurons, activation: %d)\n",
+		len(targets), result.FiredNeurons, result.TotalCounter)
+}
+
+// doInjectToFile injects NeuronFS content into an existing file, preserving surrounding content
+func doInjectToFile(filePath string, rules string) {
+	existing, err := os.ReadFile(filePath)
+	if err != nil {
+		// File doesn't exist — create with just the rules
+		os.MkdirAll(filepath.Dir(filePath), 0755)
+		os.WriteFile(filePath, []byte(rules), 0644)
+		return
+	}
+
+	content := string(existing)
+	startMarker := "<!-- NEURONFS:START -->"
+	endMarker := "<!-- NEURONFS:END -->"
+
+	startIdx := strings.Index(content, startMarker)
+	endIdx := strings.Index(content, endMarker)
+
+	if startIdx >= 0 && endIdx >= 0 {
+		after := strings.TrimRight(content[endIdx+len(endMarker):], "\r\n\t ")
+		content = content[:startIdx] + rules + after
+	} else {
+		content = rules + "\n\n" + content
+	}
+
+	os.WriteFile(filePath, []byte(content), 0644)
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // READ = FIRE: API endpoint that reads + auto-activates
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -658,6 +782,7 @@ type neuronWithRegion struct {
 	region string
 }
 
+// collectAllNeurons aggregates neurons from all regions into a single flat slice.
 func collectAllNeurons(result SubsumptionResult) []neuronWithRegion {
 	var all []neuronWithRegion
 	for _, region := range result.ActiveRegions {
@@ -673,6 +798,7 @@ func collectAllNeurons(result SubsumptionResult) []neuronWithRegion {
 	return all
 }
 
+// sortedActiveNeurons filters out dormant/bomb neurons and returns the top N neurons sorted by counter.
 func sortedActiveNeurons(neurons []Neuron, limit int) []Neuron {
 	active := make([]Neuron, 0)
 	for _, n := range neurons {

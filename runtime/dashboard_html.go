@@ -130,6 +130,23 @@ const dashboardHTML = `<!DOCTYPE html>
     padding: 6px 14px; font-size: 11px; cursor: pointer; font-weight: 600;
   }
   .add-section button:hover { background: #047857; }
+
+  /* ── Sandbox ── */
+  .sandbox-section {
+    padding: 12px 24px; border-bottom: 1px solid #1a1a2e;
+    display: none;
+  }
+  .sandbox-section.visible { display: block; }
+  .sandbox-section textarea {
+    width: 100%; background: #111; border: 1px solid #222; border-radius: 6px;
+    padding: 8px 10px; color: #fff; font-size: 11px; font-family: monospace;
+    outline: none; resize: vertical; min-height: 60px; max-height: 150px;
+  }
+  .sandbox-section textarea:focus { border-color: #f59e0b; }
+  .sandbox-section .sandbox-row { display: flex; gap: 6px; margin-top: 8px; }
+  .sandbox-section .sandbox-row button { flex: 1; }
+  .sandbox-paths { margin-top: 8px; font-size: 10px; color: #34d399; font-family: monospace; }
+  .sandbox-paths div { padding: 2px 0; }
   .add-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; }
 
   /* ── Region list ── */
@@ -179,13 +196,13 @@ const dashboardHTML = `<!DOCTYPE html>
   /* ── 3D overlay info ── */
   .hover-tooltip {
     position: absolute; pointer-events: none;
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-    border: 1px solid #333; border-radius: 8px;
-    padding: 8px 14px; font-size: 11px; color: #fff;
-    display: none; z-index: 100; max-width: 280px;
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
+    padding: 10px 16px; font-size: 12px; color: #fff;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); display: none; z-index: 100; max-width: 320px; transition: opacity 0.2s ease;
   }
-  .hover-tooltip .tt-region { color: #3b82f6; font-weight: 700; }
-  .hover-tooltip .tt-stats { color: #888; font-size: 10px; }
+  .hover-tooltip .tt-region { color: #b6cfdd; font-weight: 700; display: block; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .hover-tooltip .tt-stats { color: #eadccf; font-size: 11px; }
 </style>
 </head>
 <body>
@@ -210,7 +227,7 @@ const dashboardHTML = `<!DOCTYPE html>
     </div>
 
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="뉴런 검색 (경로, 이름...)" oninput="filterNeurons()">
+      <input type="text" id="searchInput" placeholder="뉴런 검색 (Ctrl+K)" oninput="filterNeurons()">
     </div>
 
     <div class="detail-panel" id="detail">
@@ -234,10 +251,22 @@ const dashboardHTML = `<!DOCTYPE html>
       </div>
     </div>
 
+    <div class="sandbox-section" id="sandboxSection">
+      <div class="add-label">🧪 Sandbox — 규칙 실험</div>
+      <textarea id="sandboxText" placeholder="한 줄에 하나씩 규칙 입력&#10;예: 禁인라인스타일&#10;    항상_타입체크"></textarea>
+      <div class="sandbox-row">
+        <button class="btn btn-primary" onclick="applySandbox()" style="font-size:10px">✅ 적용</button>
+        <button class="btn btn-ghost" onclick="clearSandbox()" style="font-size:10px">🗑 초기화</button>
+      </div>
+      <div class="sandbox-paths" id="sandboxPaths"></div>
+    </div>
+
     <div class="controls">
       <button class="btn btn-primary" onclick="doInject()">⚡ INJECT</button>
       <button class="btn btn-add" onclick="toggleAdd()">+ 뉴런</button>
       <button class="btn btn-ghost" onclick="doDedup()">🔀 DEDUP</button>
+      <button class="btn btn-ghost" onclick="toggleSandbox()" style="font-size:10px">🧪</button>
+      <select id="bombRegion" style="background:#1a1a2e;color:#fca5a5;border:1px solid #7f1d1d;border-radius:6px;padding:6px 8px;font-size:10px;cursor:pointer;"><option value="">💀 영역 선택</option></select>
       <button class="btn btn-danger" onclick="doBomb()">💀 BOMB</button>
     </div>
   </div>
@@ -349,10 +378,10 @@ function createBrain(data) {
     mesh.position.set(x, y, z);
     scene.add(mesh);
 
-    // Glow ring
-    const ringGeo = new THREE.RingGeometry(sphereSize + 2, sphereSize + 4, 32);
+    // Glow ring & Pulse aura
+    const ringGeo = new THREE.RingGeometry(sphereSize + 2, sphereSize + 6, 64);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: color, transparent: true, opacity: 0.15, side: THREE.DoubleSide
+      color: color, transparent: true, opacity: 0.25, side: THREE.DoubleSide, blending: THREE.AdditiveBlending
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.position.copy(mesh.position);
@@ -366,12 +395,13 @@ function createBrain(data) {
       topN.forEach((n, j) => {
         const subAngle = (Math.PI * 2 / topN.length) * j;
         const subR = sphereSize + 8 + Math.random() * 6;
-        const dotGeo = new THREE.SphereGeometry(1 + Math.min(n.counter / 5, 3), 8, 8);
+        const dotGeo = new THREE.SphereGeometry(1.5 + Math.min(n.counter / 4, 4), 12, 12);
         const dotMat = new THREE.MeshBasicMaterial({
-          color: n.dopamine > 0 ? 0x22ff66 : n.hasBomb ? 0xff2222 : color,
-          transparent: true, opacity: 0.7
+          color: n.dopamine > 0 ? 0x659b85 : n.hasBomb ? 0xc96d63 : 0xb6cfdd,
+          transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending
         });
         const dot = new THREE.Mesh(dotGeo, dotMat);
+        dot.userData = { isNeuron: true, path: n.path, counter: n.counter, region: region.name };
         dot.position.set(
           x + Math.cos(subAngle) * subR,
           y + Math.sin(subAngle) * subR * 0.6,
@@ -409,8 +439,8 @@ function createBrain(data) {
       const points = curve.getPoints(30);
       const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
       const lineMat = new THREE.LineBasicMaterial({
-        color: regionColors[region.name] || 0x444444,
-        transparent: true, opacity: 0.15
+        color: regionColors[region.name] || 0xeadccf,
+        transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending
       });
       const line = new THREE.Line(lineGeo, lineMat);
       scene.add(line);
@@ -426,22 +456,40 @@ function onMouseMove(e) {
   mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
-  const meshes = Object.values(regionSpheres).map(s => s.mesh);
-  const hits = raycaster.intersectObjects(meshes);
+  
+  let allMeshes = [];
+  Object.values(regionSpheres).forEach(s => {
+    allMeshes.push(s.mesh);
+    allMeshes.push(...s.subDots);
+  });
+  
+  const hits = raycaster.intersectObjects(allMeshes);
 
   const tooltip = document.getElementById('tooltip');
   if (hits.length > 0) {
-    const entry = Object.values(regionSpheres).find(s => s.mesh === hits[0].object);
+    const hitObj = hits[0].object;
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX - document.getElementById('canvas3d').getBoundingClientRect().left + 15) + 'px';
+    tooltip.style.top = (e.clientY - document.getElementById('canvas3d').getBoundingClientRect().top - 10) + 'px';
+    tooltip.style.opacity = '1';
+
+    if (hitObj.userData && hitObj.userData.isNeuron) {
+      let dispPath = hitObj.userData.path.replace(/\\/g, "/");
+      tooltip.innerHTML = '<span class="tt-region">🧠 ' + hitObj.userData.region + '/' + dispPath.split('/').pop() + '</span>' +
+        '<span class="tt-stats">활성도(Synapse): ' + hitObj.userData.counter + '</span>';
+      renderer.domElement.style.cursor = 'crosshair';
+      return;
+    }
+
+    const entry = Object.values(regionSpheres).find(s => s.mesh === hitObj);
     if (entry) {
-      tooltip.style.display = 'block';
-      tooltip.style.left = (e.clientX - document.getElementById('canvas3d').getBoundingClientRect().left + 15) + 'px';
-      tooltip.style.top = (e.clientY - document.getElementById('canvas3d').getBoundingClientRect().top - 10) + 'px';
-      tooltip.innerHTML = '<span class="tt-region">' + (regionEmoji[entry.region.name]||'') + ' ' + entry.region.name + '</span><br>' +
+      tooltip.innerHTML = '<span class="tt-region">' + (regionEmoji[entry.region.name]||'') + ' ' + entry.region.name + '</span>' +
         '<span class="tt-stats">뉴런 ' + entry.neuronCount + ' | 활성도 ' + entry.totalAct + '</span>';
       renderer.domElement.style.cursor = 'pointer';
     }
   } else {
-    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
+    setTimeout(() => { if(tooltip.style.opacity==='0') tooltip.style.display = 'none'; }, 200);
     renderer.domElement.style.cursor = 'default';
   }
 }
@@ -543,7 +591,7 @@ function closeDetail() {
   Object.values(regionSpheres).forEach(s => {
     s.mesh.material.emissiveIntensity = 0.3;
     s.mesh.material.opacity = 0.85;
-    s.ring.material.opacity = 0.15;
+    s.ring.material.opacity = 0.25;
   });
   axonLines.forEach(l => { l.material.opacity = 0.15; });
   document.querySelectorAll('.region-chip').forEach(c => c.classList.remove('active'));
@@ -555,26 +603,39 @@ function animate() {
   requestAnimationFrame(animate);
   frame++;
 
-  // Slow camera orbit
+  // Slow camera orbit (Dramatic close angle)
   const t = frame * 0.001;
-  camera.position.x = Math.cos(t) * 250;
-  camera.position.z = Math.sin(t) * 250;
-  camera.position.y = 50 + Math.sin(t * 0.5) * 20;
+  camera.position.x = Math.cos(t) * 200;
+  camera.position.z = Math.sin(t) * 200;
+  camera.position.y = 80 + Math.sin(t * 0.5) * 40;
   camera.lookAt(0, 0, 0);
 
-  // Breathing spheres
+  // Organic Breathing spheres & pulsing rings with complex synthetic waves
   Object.values(regionSpheres).forEach(s => {
-    const breath = 1 + Math.sin(frame * 0.02 + s.basePos.x) * 0.03;
+    // Neural rhythm (slow + fast variation)
+    const rhythm = Math.sin(frame * 0.03 + s.basePos.x) + Math.cos(frame * 0.015 + s.basePos.z) * 0.5;
+    const breath = 1 + rhythm * 0.04;
     s.mesh.scale.set(breath, breath, breath);
+    
+    // Ring pulse (ethereal glow fluctuation)
+    const ringScale = 1 + (Math.sin(frame * 0.05 + s.basePos.y) + Math.cos(frame * 0.025)) * 0.15;
+    s.ring.scale.set(ringScale, ringScale, 1);
+    s.ring.material.opacity = 0.25 + (Math.sin(frame * 0.08 + s.basePos.z) * 0.5 + 0.5) * 0.1;
     s.ring.lookAt(camera.position);
-    // Orbit sub-dots
+
+    // Orbit sub-dots (chaotic orbital pull)
     s.subDots.forEach((dot, i) => {
-      const a = frame * 0.005 + i * 0.5;
-      const r = s.sphereSize + 10 + i * 2;
+      const a = frame * 0.004 + i * 0.6 + Math.sin(frame * 0.002) * 0.5;
+      const r = s.sphereSize + 12 + i * 2.5 + Math.cos(frame * 0.01 + i) * 2;
       dot.position.x = s.basePos.x + Math.cos(a) * r;
-      dot.position.y = s.basePos.y + Math.sin(a * 0.7) * r * 0.5;
-      dot.position.z = s.basePos.z + Math.sin(a * 1.3) * r * 0.3;
+      dot.position.y = s.basePos.y + Math.sin(a * 0.8) * r * 0.4;
+      dot.position.z = s.basePos.z + Math.sin(a * 1.2) * r * 0.4;
     });
+  });
+
+  // Axon breathing (fluctuating data stream)
+  axonLines.forEach((l, i) => {
+    l.material.opacity = 0.15 + (Math.sin(frame * 0.04 + i) + Math.cos(frame * 0.01)) * 0.1;
   });
 
   // Rotate particles
@@ -610,9 +671,12 @@ function updateUI(data) {
       '<span class="chip-count">' + nc + '</span></span>';
   });
   document.getElementById('regionChips').innerHTML = chipsHtml;
+  updateBombDropdown();
 }
 
 // ── API ──
+let previousNeuronCount = 0;
+
 async function loadBrain() {
   try {
     const res = await fetch('/api/brain');
@@ -621,7 +685,14 @@ async function loadBrain() {
     createBrain(brainData);
     updateUI(brainData);
     if (selectedRegion) selectRegion(selectedRegion);
-  } catch(e) { console.error(e); }
+    
+    // Auto-Evolution Detection
+    if (previousNeuronCount > 0 && brainData.totalNeurons > previousNeuronCount) {
+        const diff = brainData.totalNeurons - previousNeuronCount;
+        showToast('🌱 자가 진화 발생: +' + diff + ' 신규 규칙 흡수완료');
+    }
+    previousNeuronCount = brainData.totalNeurons;
+  } catch(e) { /* silent — 禁console_log */ }
 }
 
 // ── Inject ──
@@ -638,14 +709,27 @@ async function doDedup() {
   showToast('✅ Dedup 완료');
   loadBrain();
 }
+function updateBombDropdown() {
+  const sel = document.getElementById('bombRegion');
+  if (!sel || !brainData) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">💀 영역 선택</option>';
+  (brainData.regions || []).forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.name; opt.textContent = (regionEmoji[r.name]||'') + ' ' + r.name;
+    sel.appendChild(opt);
+  });
+  if (current) sel.value = current;
+}
 async function doBomb() {
-  const region = prompt('Bomb 영역:');
-  if (!region) return;
+  const region = document.getElementById('bombRegion').value;
+  if (!region) { showToast('⚠️ 영역을 먼저 선택하세요'); return; }
   await fetch('/api/signal', {
     method: 'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({path: region + '/halt', type: 'bomb'})
   });
   showToast('💀 BOMB: ' + region);
+  document.getElementById('bombRegion').value = '';
   loadBrain();
 }
 
@@ -736,7 +820,45 @@ function filterNeurons() {
   document.getElementById('detail-neurons').innerHTML = nHtml;
 }
 
-// ── Toast ──
+// ── Sandbox ──
+function toggleSandbox() {
+  const section = document.getElementById('sandboxSection');
+  section.classList.toggle('visible');
+  if (section.classList.contains('visible')) {
+    // Load current sandbox rules
+    fetch('/api/sandbox').then(r => r.json()).then(data => {
+      document.getElementById('sandboxText').value = (data.rules || []).join('\n');
+    }).catch(() => {});
+  }
+}
+async function applySandbox() {
+  const text = document.getElementById('sandboxText').value.trim();
+  if (!text) { showToast('⚠️ 규칙을 입력하세요'); return; }
+  const res = await fetch('/api/sandbox', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: text})
+  });
+  const data = await res.json();
+  const pathsDiv = document.getElementById('sandboxPaths');
+  if (data.paths && data.paths.length > 0) {
+    pathsDiv.innerHTML = data.paths.map(p => '<div>✓ ' + p + ' 생성됨</div>').join('');
+  } else {
+    pathsDiv.innerHTML = '<div>✓ ' + (data.created || 0) + '개 적용</div>';
+  }
+  showToast('🧪 Sandbox: ' + (data.created || 0) + '개 규칙 적용');
+  loadBrain();
+}
+async function clearSandbox() {
+  await fetch('/api/sandbox', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: ''})
+  });
+  document.getElementById('sandboxText').value = '';
+  document.getElementById('sandboxPaths').innerHTML = '';
+  showToast('🗑 Sandbox 초기화');
+  loadBrain();
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -747,6 +869,24 @@ function showToast(msg) {
 // ── Init ──
 loadBrain();
 setInterval(loadBrain, 10000);
+
+// ── Keyboard shortcuts ──
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    const input = document.getElementById('searchInput');
+    input.focus();
+    input.select();
+  }
+  if (e.key === 'Escape') {
+    const input = document.getElementById('searchInput');
+    if (document.activeElement === input) {
+      input.value = '';
+      input.blur();
+      closeDetail();
+    }
+  }
+});
 </script>
 </body>
 </html>` + "\n"

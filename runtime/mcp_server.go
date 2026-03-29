@@ -26,9 +26,16 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-// startMCPServer bootstraps the MCP stdio server.
-// This blocks on stdin/stdout — call REST API and background loops as goroutines before this.
+// startMCPServer bootstraps the MCP stdio server using os.Stdin/os.Stdout.
+// WARNING: Only use this when os.Stdout is clean (not redirected).
 func startMCPServer(brainRoot string) {
+	startMCPServerWithStdout(brainRoot, os.Stdout)
+}
+
+// startMCPServerWithStdout bootstraps the MCP stdio server with a specific stdout writer.
+// This is used in --mcp mode where os.Stdout is redirected to stderr to prevent
+// fmt.Print* from polluting the JSON-RPC channel.
+func startMCPServerWithStdout(brainRoot string, stdout *os.File) {
 	server := mcp.NewServer(
 		&mcp.Implementation{
 			Name:    "neuronfs",
@@ -39,10 +46,15 @@ func startMCPServer(brainRoot string) {
 
 	registerMCPTools(server, brainRoot)
 
-	fmt.Fprintf(logWriter(), "[MCP] 🧠 NeuronFS MCP server starting (stdio)...\n")
+	fmt.Fprintf(os.Stderr, "[MCP] 🧠 NeuronFS MCP server starting (stdio)...\n")
 
 	ctx := context.Background()
-	transport := &mcp.StdioTransport{}
+	// Use IOTransport instead of StdioTransport to avoid using os.Stdout
+	// (which has been redirected to stderr in --mcp mode)
+	transport := &mcp.IOTransport{
+		Reader: os.Stdin,
+		Writer: stdout,
+	}
 	if _, err := server.Connect(ctx, transport, nil); err != nil {
 		log.Fatalf("[MCP] FATAL: %v\n", err)
 	}
@@ -51,6 +63,7 @@ func startMCPServer(brainRoot string) {
 	select {}
 }
 
+// registerMCPTools registers all NeuronFS commands as tools in the MCP server.
 func registerMCPTools(server *mcp.Server, brainRoot string) {
 
 	// ─── Tool 1: read_region ───
@@ -347,6 +360,9 @@ func registerMCPTools(server *mcp.Server, brainRoot string) {
 			}, nil
 		},
 	)
+
+	// ─── Register new feature suite ───
+	RegisterNativeTools(server, brainRoot)
 }
 
 // ─── Helpers ───
@@ -358,6 +374,7 @@ func mcpError(msg string) *mcp.CallToolResult {
 	}
 }
 
+// boolPtr returns a pointer to a boolean value.
 func boolPtr(b bool) *bool {
 	return &b
 }

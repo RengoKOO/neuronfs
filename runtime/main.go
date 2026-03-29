@@ -7,18 +7,10 @@
 //   4. Counter = Activation (higher = stronger/myelinated path)
 //   5. AI writes back (counter increment = experience growth)
 //
-// NeuronFS Runtime v4.0 — Folder-as-Neuron Cognitive Engine
-//
-// AXIOMS:
-//   1. Folder = Neuron (name is meaning, depth is specificity)
-//   2. File = Firing Trace (N.neuron = counter, dopamineN = reward, bomb = pain)
-//   3. Path = Sentence (brain/cortex/quality/no_hardcoded → "cortex > quality > no_hardcoded")
-//   4. Counter = Activation (higher = stronger/myelinated path)
-//   5. AI writes back (counter increment = experience growth)
-//
 // USAGE:
 //   neuronfs <brain_path>              — diagnostics
-//   neuronfs <brain_path> --emit       — output rules as text
+//   neuronfs <brain_path> --emit       — output rules to stdout
+//   neuronfs <brain_path> --emit <target> — emit to editor file (gemini/cursor/claude/copilot/generic/all)
 //   neuronfs <brain_path> --inject     — write rules to GEMINI.md
 //   neuronfs <brain_path> --watch      — watch + auto-inject
 //   neuronfs <brain_path> --dashboard  — web dashboard on :9090
@@ -26,6 +18,7 @@
 //   neuronfs <brain_path> --fire <path> — increment neuron counter
 //   neuronfs <brain_path> --signal <type> <path> — add dopamine/bomb/memory
 //   neuronfs <brain_path> --decay [days] — move inactive neurons to dormant
+//   neuronfs <brain_path> --rollback <path> — decrement neuron counter (min=1)
 //   neuronfs <brain_path> --api        — start REST API on :9090
 package main
 
@@ -90,6 +83,7 @@ type Neuron struct {
 	HasMemory bool      // memoryN.neuron exists
 	HasGoal   bool      // .goal file exists (todo/objective)
 	GoalText  string    // content of .goal file if present
+	Geofence  string    // content of .geofence file if present
 	IsDormant bool      // .dormant file exists
 	Depth     int       // depth within region
 	ModTime   time.Time // most recent .neuron file modification
@@ -131,6 +125,7 @@ type SubsumptionResult struct {
 var counterRegex = regexp.MustCompile(`^(\d+)\.neuron$`)
 var dopamineRegex = regexp.MustCompile(`^dopamine(\d+)\.neuron$`)
 
+// main is the entry point for the NeuronFS CLI and background daemon.
 func main() {
 	brainRoot := findBrainRoot()
 	if brainRoot == "" {
@@ -142,10 +137,19 @@ func main() {
 	mode := "diag"
 	port := 9090
 	dryRun := false
-	for _, arg := range os.Args {
+	emitTarget := "" // --emit target: gemini, cursor, claude, copilot, generic, all
+	for i, arg := range os.Args {
 		switch arg {
 		case "--emit":
 			mode = "emit"
+			// Check if next arg is an emit target (not a flag)
+			if i+1 < len(os.Args) && !strings.HasPrefix(os.Args[i+1], "--") {
+				candidate := strings.ToLower(os.Args[i+1])
+				if candidate == "gemini" || candidate == "cursor" || candidate == "claude" || candidate == "copilot" || candidate == "generic" || candidate == "all" {
+					emitTarget = candidate
+					mode = "emit-target" // file output mode
+				}
+			}
 		case "--inject":
 			mode = "inject"
 		case "--watch":
@@ -172,6 +176,17 @@ func main() {
 			mode = "snapshot"
 		case "--evolve":
 			mode = "evolve"
+		case "--rollback":
+			mode = "rollback"
+		case "--stats":
+			mode = "stats"
+		case "--vacuum":
+			mode = "vacuum"
+		case "--webhook":
+			// Standby for P9 (B2B Social Pressure / Slack Shaming Hook)
+			if i+1 < len(os.Args) && !strings.HasPrefix(os.Args[i+1], "--") {
+				_ = os.Args[i+1] // webhookUrl = os.Args[i+1]
+			}
 		case "--dry-run":
 			dryRun = true
 		}
@@ -200,6 +215,9 @@ func main() {
 		brain := scanBrain(brainRoot)
 		result := runSubsumption(brain)
 		fmt.Print(emitRules(result))
+	case "emit-target":
+		processInbox(brainRoot)
+		writeAllTiersForTargets(brainRoot, emitTarget)
 	case "inject":
 		processInbox(brainRoot)
 		writeAllTiers(brainRoot)
@@ -263,10 +281,30 @@ func main() {
 		startAPI(brainRoot, port)
 	case "snapshot":
 		gitSnapshot(brainRoot)
+	case "rollback":
+		neuronPath := getNonFlagArg(1)
+		if neuronPath == "" {
+			fmt.Println("[FATAL] Usage: neuronfs <brain> --rollback <region/path/to/neuron>")
+			os.Exit(1)
+		}
+		if err := rollbackNeuron(brainRoot, neuronPath); err != nil {
+			fmt.Printf("[ERROR] rollback failed: %v\n", err)
+			os.Exit(1)
+		}
+	case "stats":
+		runStats(brainRoot)
+	case "vacuum":
+		runVacuum(brainRoot)
 	case "evolve":
 		runEvolve(brainRoot, dryRun)
 	case "mcp":
 		// MCP stdio server + background loops
+		// CRITICAL: MCP stdio protocol requires stdout to be JSON-RPC only.
+		// Redirect os.Stdout → os.Stderr so all fmt.Print* goes to stderr.
+		// Preserve the real stdout for the MCP transport.
+		realStdout := os.Stdout
+		os.Stdout = os.Stderr
+
 		// REST API on fallback port (9091) to avoid conflict with existing --api on 9090
 		go func() {
 			mcpAPIPort := port + 1 // 9091
@@ -275,7 +313,7 @@ func main() {
 		}()
 		go runInjectionLoop(brainRoot)
 		go runIdleLoop(brainRoot)
-		startMCPServer(brainRoot) // blocking: stdio loop
+		startMCPServerWithStdout(brainRoot, realStdout) // blocking: stdio loop
 	}
 }
 
@@ -415,6 +453,15 @@ func scanBrain(root string) Brain {
 				}
 			}
 
+			// Geofence files (.geofence = context masking directory prefix)
+			geofenceFiles, _ := filepath.Glob(filepath.Join(path, "*.geofence"))
+			if len(geofenceFiles) > 0 {
+				content, err := os.ReadFile(geofenceFiles[0])
+				if err == nil && len(content) > 0 {
+					neuron.Geofence = strings.TrimSpace(string(content))
+				}
+			}
+
 			// Dormant check
 			dormantFiles, _ := filepath.Glob(filepath.Join(path, "*.dormant"))
 			if len(dormantFiles) > 0 {
@@ -470,6 +517,10 @@ func runSubsumption(brain Brain) SubsumptionResult {
 			result.BombSource = region.Name
 			result.BlockedRegions = append(result.BlockedRegions, region.Name+" [BOMB]")
 			blocked = true
+			
+			// Physical Hook Trigger (e.g., ring alarm or strict kill process)
+			// Triggered when a bomb is found in the geofenced context.
+			triggerPhysicalHook(region.Name)
 			continue
 		}
 
@@ -503,6 +554,7 @@ func emitRules(result SubsumptionResult) string {
 	return emitBootstrap(result, brainRoot)
 }
 
+// activationBar visualizes a neuron's activation counter as a discrete block bar.
 func activationBar(counter int) string {
 	if counter >= 90 {
 		return "█████"
@@ -547,6 +599,7 @@ func injectToGemini(brainRoot string, rules string) {
 	fmt.Print(rules)
 }
 
+// doInject executes the injection of aggregated rules into target AI configuration files.
 func doInject(geminiPath string, rules string) {
 	existing, err := os.ReadFile(geminiPath)
 	if err != nil {
@@ -954,7 +1007,9 @@ func fireNeuron(brainRoot string, neuronPath string) {
 
 	// Delete old counter file
 	if currentFile != "" {
-		os.Remove(currentFile)
+		if err := os.Remove(currentFile); err != nil {
+			fmt.Fprintf(os.Stderr, "[WARN] fire: old counter cleanup: %v\n", err)
+		}
 	}
 
 	// Create new counter file
@@ -968,6 +1023,61 @@ func fireNeuron(brainRoot string, neuronPath string) {
 
 	logEpisode(brainRoot, "FIRE", fmt.Sprintf("%s (%d→%d)", neuronPath, currentCounter, newCounter))
 	markBrainDirty()
+}
+
+// rollbackNeuron decrements the counter of an existing neuron
+// Minimum counter is 1 (won't go below). Returns error for API usage.
+// Usage: neuronfs brain_v4 --rollback cortex/frontend/coding/no_console_log
+func rollbackNeuron(brainRoot string, neuronPath string) error {
+	neuronPath = strings.ReplaceAll(neuronPath, "/", string(filepath.Separator))
+	fullPath := filepath.Join(brainRoot, neuronPath)
+
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		err := fmt.Errorf("neuron not found: %s", neuronPath)
+		fmt.Printf("[ROLLBACK] ❌ %v\n", err)
+		return err
+	}
+
+	// Find current counter
+	currentCounter := 0
+	currentFile := ""
+	entries, _ := os.ReadDir(fullPath)
+	for _, e := range entries {
+		if m := counterRegex.FindStringSubmatch(e.Name()); m != nil {
+			n, _ := strconv.Atoi(m[1])
+			if n > currentCounter {
+				currentCounter = n
+				currentFile = filepath.Join(fullPath, e.Name())
+			}
+		}
+	}
+
+	if currentCounter <= 1 {
+		fmt.Printf("[ROLLBACK] ⚠️ %s counter already at minimum (%d)\n", neuronPath, currentCounter)
+		return fmt.Errorf("counter at minimum: %d", currentCounter)
+	}
+
+	newCounter := currentCounter - 1
+
+	// Delete old counter file
+	if currentFile != "" {
+		if err := os.Remove(currentFile); err != nil {
+			fmt.Fprintf(os.Stderr, "[WARN] rollback: old counter cleanup: %v\n", err)
+		}
+	}
+
+	// Create new counter file
+	newFile := filepath.Join(fullPath, fmt.Sprintf("%d.neuron", newCounter))
+	if err := os.WriteFile(newFile, []byte{}, 0644); err != nil {
+		fmt.Printf("[ERROR] rollback: %v\n", err)
+		return err
+	}
+
+	fmt.Printf("[ROLLBACK] ⏪ %s → %d → %d\n", neuronPath, currentCounter, newCounter)
+
+	logEpisode(brainRoot, "ROLLBACK", fmt.Sprintf("%s (%d→%d)", neuronPath, currentCounter, newCounter))
+	markBrainDirty()
+	return nil
 }
 
 // signalNeuron adds dopamine/bomb/memory signal to a neuron
@@ -1100,6 +1210,7 @@ func runDecay(brainRoot string, days int) {
 // Circular buffer: keeps only the most recent 100 episodes
 const maxEpisodes = 100
 
+// logEpisode writes an event log to the hippocampus memory store.
 func logEpisode(brainRoot string, event string, detail string) {
 	logDir := filepath.Join(brainRoot, "hippocampus", "session_log")
 	os.MkdirAll(logDir, 0755)
@@ -1153,6 +1264,7 @@ var (
 	triggerChan  = make(chan struct{}, 1)
 )
 
+// markBrainDirty signals that the brain state has changed and needs an event broadcast.
 func markBrainDirty() {
 	brainDirtyMu.Lock()
 	brainDirty = true
@@ -1165,6 +1277,7 @@ func markBrainDirty() {
 	}
 }
 
+// consumeDirty checks and clears the brain's dirty state flag.
 func consumeDirty() bool {
 	brainDirtyMu.Lock()
 	defer brainDirtyMu.Unlock()
@@ -1218,6 +1331,7 @@ type inboxEntry struct {
 	Source     string `json:"source"`  // "ai" | "auto-accept"
 	Path       string `json:"path"`    // optional: pre-computed neuron path
 	CounterAdd int    `json:"counter_add"` // optional: how much to add
+	Author     string `json:"author"`      // optional: explicit author mapping
 }
 
 // processInbox reads _inbox/corrections.jsonl, creates/fires neurons, then clears
@@ -1272,6 +1386,36 @@ func processInbox(brainRoot string) {
 			strings.Contains(neuronPath, "$") || strings.Contains(neuronPath, "&") ||
 			strings.Contains(neuronPath, "|") || strings.Contains(neuronPath, ">") {
 			fmt.Printf("[SECURITY] 🛡️ Injection blocked: %s\n", neuronPath)
+			continue
+		}
+
+		// 기계적 칭찬(Dopamine Inflation) 필터링
+		isPraise := false
+		if entry.Type == "correction" && entry.Text == "PD칭찬" {
+			isPraise = true
+		}
+		praiseRegex := regexp.MustCompile(`(?i)(칭찬|잘\s*쓰셨습니다|좋아|훌륭|완벽|최고)`)
+		if praiseRegex.MatchString(entry.Text) || strings.Contains(strings.ToLower(neuronPath), "dopamine") {
+			isPraise = true
+		}
+
+		if isPraise {
+			authorId := entry.Author
+			if authorId == "" {
+				authorId = entry.Source
+			}
+			authorId = strings.ToLower(authorId)
+
+			if authorId != "pm" && authorId != "basement_admin" && !strings.Contains(authorId, "pd") {
+				fmt.Printf("[INBOX] 🛡️ 도파민 인플레이션 차단 (침해자: %s): %s\n", authorId, entry.Text)
+				continue
+			}
+			// PM 칭찬은 바로 도파민 발화
+			fullPath := filepath.Join(brainRoot, strings.ReplaceAll(neuronPath, "/", string(filepath.Separator)))
+			_ = os.MkdirAll(fullPath, 0755)
+			_ = signalNeuron(brainRoot, neuronPath, "dopamine")
+			fmt.Printf("[INBOX] 🟢 PM 칭찬 확인 — 도파민 배포: %s\n", neuronPath)
+			processed++
 			continue
 		}
 
@@ -1463,14 +1607,22 @@ var (
 	lastAPIActivity   time.Time
 	lastAPIActivityMu sync.Mutex
 	idleEvolveRunning bool
+
+	// Heartbeat control
+	heartbeatEnabled   = true // 기본 ON
+	heartbeatInterval  = 10   // 초 (켜져 있을 때 즉각 반응)
+	heartbeatCooldown  = 3    // 분 (주입 후 쿨다운)
+	heartbeatMu        sync.Mutex
 )
 
+// touchActivity updates the system's last recorded activity timestamp.
 func touchActivity() {
 	lastAPIActivityMu.Lock()
 	lastAPIActivity = time.Now()
 	lastAPIActivityMu.Unlock()
 }
 
+// getLastActivity returns the latest timestamp among multiple tracked activity records.
 func getLastActivity() time.Time {
 	lastAPIActivityMu.Lock()
 	defer lastAPIActivityMu.Unlock()
@@ -1695,10 +1847,20 @@ func runHeartbeatLoop(brainRoot string) {
 	lastInjection := time.Time{} // 마지막 주입 시각
 
 	for {
-		time.Sleep(30 * time.Second)
+		heartbeatMu.Lock()
+		enabled := heartbeatEnabled
+		interval := heartbeatInterval
+		cooldown := time.Duration(heartbeatCooldown) * time.Minute
+		heartbeatMu.Unlock()
 
-		// 쿨다운: 주입 후 5분 이내면 스킵
-		if !lastInjection.IsZero() && time.Since(lastInjection) < 5*time.Minute {
+		time.Sleep(time.Duration(interval) * time.Second)
+
+		if !enabled {
+			continue
+		}
+
+		// 쿨다운: 주입 후 N분 이내면 스킵
+		if !lastInjection.IsZero() && time.Since(lastInjection) < cooldown {
 			continue
 		}
 
@@ -1963,6 +2125,8 @@ func startAPI(brainRoot string, port int) {
 		sandboxDir := filepath.Join(brainRoot, "brainstem", "_sandbox")
 		os.RemoveAll(sandboxDir)
 		created := 0
+		var createdPaths []string
+
 		for _, line := range strings.Split(text, "\n") {
 			line = strings.TrimSpace(line)
 			if line == "" {
@@ -1982,6 +2146,7 @@ func startAPI(brainRoot string, port int) {
 			neuronDir := filepath.Join(sandboxDir, name)
 			os.MkdirAll(neuronDir, 0755)
 			os.WriteFile(filepath.Join(neuronDir, "1.neuron"), []byte{}, 0644)
+			createdPaths = append(createdPaths, "brainstem/_sandbox/"+name)
 			created++
 		}
 
@@ -1990,7 +2155,31 @@ func startAPI(brainRoot string, port int) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"status":  "applied",
 			"created": created,
+			"paths":   createdPaths,
 		})
+	}))
+
+	// POST /api/rollback {\"path\": \"cortex/...\"} — decrement neuron counter (min=1)
+	mux.HandleFunc("/api/rollback", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Path string `json:"path"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Path == "" {
+			http.Error(w, `{"error":"path required"}`, 400)
+			return
+		}
+		if err := rollbackNeuron(brainRoot, req.Path); err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(400)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error(), "path": req.Path})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "rolled_back", "path": req.Path})
 	}))
 
 	// GET / — Dashboard HTML (same as --dashboard mode)
@@ -2101,6 +2290,55 @@ func startAPI(brainRoot string, port int) {
 		json.NewEncoder(w).Encode(data)
 	}))
 
+	// GET/POST /api/heartbeat — heartbeat 토글 + 상태 조회
+	mux.HandleFunc("/api/heartbeat", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			var req struct {
+				Enabled  *bool `json:"enabled"`
+				Interval *int  `json:"interval"`
+				Cooldown *int  `json:"cooldown"`
+			}
+			json.NewDecoder(r.Body).Decode(&req)
+
+			heartbeatMu.Lock()
+			if req.Enabled != nil {
+				heartbeatEnabled = *req.Enabled
+			}
+			if req.Interval != nil && *req.Interval >= 5 {
+				heartbeatInterval = *req.Interval
+			}
+			if req.Cooldown != nil && *req.Cooldown >= 1 {
+				heartbeatCooldown = *req.Cooldown
+			}
+			state := map[string]interface{}{
+				"enabled":  heartbeatEnabled,
+				"interval": heartbeatInterval,
+				"cooldown": heartbeatCooldown,
+			}
+			heartbeatMu.Unlock()
+
+			action := "OFF"
+			if heartbeatEnabled {
+				action = "ON"
+			}
+			fmt.Printf("[HEARTBEAT] ⚡ %s (interval=%ds, cooldown=%dm)\n", action, heartbeatInterval, heartbeatCooldown)
+
+			w.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(state)
+			return
+		}
+		// GET
+		heartbeatMu.Lock()
+		state := map[string]interface{}{
+			"enabled":  heartbeatEnabled,
+			"interval": heartbeatInterval,
+			"cooldown": heartbeatCooldown,
+		}
+		heartbeatMu.Unlock()
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(state)
+	}))
+
 	// Start injection loop (inbox processing + auto-reinject) in background
 	go runInjectionLoop(brainRoot)
 
@@ -2121,6 +2359,9 @@ func startAPI(brainRoot string, port int) {
 	fmt.Printf("  GET  /api/read    ?region=cortex  — Read region rules (RAG, auto-fire)\n")
 	fmt.Printf("  GET  /api/state                   — Brain state JSON\n")
 	fmt.Printf("  GET  /api/brain                   — Full brain state for dashboard\n")
+	fmt.Printf("  GET  /api/heartbeat               — Heartbeat status\n")
+	fmt.Printf("  POST /api/heartbeat {enabled,interval,cooldown} — Toggle heartbeat\n")
+	fmt.Printf("  💓 HEARTBEAT: %s (interval=%ds, cooldown=%dm)\n", func() string { if heartbeatEnabled { return "ON" }; return "OFF" }(), heartbeatInterval, heartbeatCooldown)
 	fmt.Printf("  🔄 IDLE ENGINE: auto evolve/snapshot/NAS every %dm idle\n", idleThresholdMinutes)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 }

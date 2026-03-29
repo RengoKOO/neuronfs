@@ -648,6 +648,7 @@ func actionIcon(actionType string) string {
 	}
 }
 
+// boolStr returns trueVal if cond is true, otherwise falseVal.
 func boolStr(cond bool, trueVal, falseVal string) string {
 	if cond {
 		return trueVal
@@ -655,6 +656,7 @@ func boolStr(cond bool, trueVal, falseVal string) string {
 	return falseVal
 }
 
+// truncate truncates a string to maxLen and appends "..." if it was longer.
 func truncate(s string, maxLen int) string {
 	if len(s) <= maxLen {
 		return s

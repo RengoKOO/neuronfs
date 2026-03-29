@@ -246,5 +246,83 @@ func startDashboard(brainRoot string, port int) {
 		w.Write([]byte(fmt.Sprintf("%d", newCounter)))
 	}))
 
+	// POST /api/fire — fire (increment) a neuron by path
+	mux.HandleFunc("/api/fire", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Path string `json:"path"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "bad json", 400)
+			return
+		}
+		path := strings.ReplaceAll(req.Path, "\\", "/")
+		path = strings.Trim(path, "/")
+		fireNeuron(brainRoot, path)
+		w.Write([]byte("OK — fired: " + path))
+	}))
+
+	// POST /api/dedup — deduplicate similar neurons
+	mux.HandleFunc("/api/dedup", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		deduplicateNeurons(brainRoot)
+		w.Write([]byte("OK — dedup complete"))
+	}))
+
+	// POST /api/signal — add signal (dopamine/bomb/memory) to a neuron
+	mux.HandleFunc("/api/signal", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Path string `json:"path"`
+			Type string `json:"type"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "bad json", 400)
+			return
+		}
+		path := strings.ReplaceAll(req.Path, "\\", "/")
+		path = strings.Trim(path, "/")
+		sigType := req.Type
+		if sigType == "" {
+			sigType = "dopamine"
+		}
+		if err := signalNeuron(brainRoot, path, sigType); err != nil {
+			http.Error(w, err.Error(), 400)
+			return
+		}
+		w.Write([]byte("OK — " + sigType + ": " + path))
+	}))
+
+	// POST /api/rollback — rollback (decrement) a neuron's counter
+	mux.HandleFunc("/api/rollback", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Path string `json:"path"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "bad json", 400)
+			return
+		}
+		path := strings.ReplaceAll(req.Path, "\\", "/")
+		path = strings.Trim(path, "/")
+		if err := rollbackNeuron(brainRoot, path); err != nil {
+			http.Error(w, err.Error(), 400)
+			return
+		}
+		w.Write([]byte("OK — rolled back: " + path))
+	}))
+
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 }

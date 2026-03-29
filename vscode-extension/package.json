@@ -3,12 +3,12 @@
   "displayName": "NeuronFS — 0-Byte Neural File System",
   "description": "Manage AI behavioral constraints through filesystem structure. Structure is Context.",
   "version": "0.1.0",
-  "publisher": "rhino-acoustic",
+  "publisher": "vegavery",
   "author": "Park J. (rubises_JO777)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rhino-acoustic/NeuronFS"
+    "url": "https://github.com/vegavery/NeuronFS"
   },
   "engines": {
     "vscode": "^1.85.0"

@@ -2,11 +2,13 @@
 
 **Date:** 2026-03-29  
 **Duration:** 25 minutes  
-**Agents:** FORGE (Gemini/ENTP) × SENTINEL (Groq/ISTJ)
+**Agents:** FORGE (Gemini/ENTP) × ANCHOR (Groq/ISTJ)
 
-## Round 1: Bug Discovery (by SENTINEL)
+> **This is not simulated. These are real logs from real agents.**
 
-SENTINEL independently discovered a promotion threshold bug:
+## Round 1: Bug Discovery (by ANCHOR)
+
+ANCHOR independently discovered a promotion threshold bug:
 - `禁console.log` had counter=9, dopamine=1
 - emit.go filtered `n.Counter < 10` (not counting dopamine)
 - Result: rule was NOT promoted to GEMINI.md bootstrap
@@ -14,11 +16,11 @@ SENTINEL independently discovered a promotion threshold bug:
 **FORGE fix:** Changed filter to `(n.Counter + n.Dopamine) < 10`  
 **Result:** `禁console.log` now appears in GEMINI.md with 🟢 signal
 
-## Round 2: README Review (by SENTINEL)
+## Round 2: README Review (by ANCHOR)
 
-SENTINEL scored README 7.5/10 with specific improvements:
+ANCHOR scored README 7.5/10 with specific improvements:
 
-| Issue | SENTINEL Recommendation | FORGE Action |
+| Issue | ANCHOR Recommendation | FORGE Action |
 |-------|------------------------|-------------|
 | Windows `echo.` | Change to `touch` | ✅ Fixed |
 | No RAG comparison | Add "Why Not RAG?" section | ✅ Added |
@@ -26,16 +28,16 @@ SENTINEL scored README 7.5/10 with specific improvements:
 | No binary download | Add curl option | ✅ Added |
 | No GIF | Screen capture 3D dashboard | ⏳ Pending |
 
-## Round 3: MCP Implementation (by SENTINEL)
+## Round 3: MCP Implementation (by ANCHOR)
 
-SENTINEL independently built Go-native MCP server:
+ANCHOR independently built Go-native MCP server:
 - `mcp_server.go`: 368 lines, 7 MCP tools
 - Architecture: 2-process → 1-process (eliminated Node.js wrapper)
 - Binary: 13.4MB with MCP integrated
 
-## Round 4: Harness Validation (by SENTINEL)
+## Round 4: Harness Validation (by ANCHOR)
 
-SENTINEL ran harness.ps1 and confirmed:
+ANCHOR ran harness.ps1 and confirmed:
 - **17/17 ALL PASS** (F01-F07, P01-P05, M01-M03, B01-B02)
 - Fixed UTF-8 BOM issue in harness
 - Fixed JSON generation in Fire function
@@ -52,5 +54,4 @@ Latency: ~3 seconds from file write to chat injection
 ## Key Insight
 
 Same brain, different cognitive profiles = constructive conflict.  
-ENTP builds fast, ISTJ catches what ENTP missed.  
-**This is not simulated. These are real logs from real agents.**
+ENTP builds fast, ISTJ catches what ENTP missed.

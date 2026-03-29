@@ -14,6 +14,7 @@ type brainInit struct {
 	root string
 }
 
+// neuron simplifies creating a Neuron struct for default system initialization.
 func (b *brainInit) neuron(path string, counter int, signals ...string) {
 	dir := filepath.Join(b.root, path)
 	os.MkdirAll(dir, 0755)
@@ -23,11 +24,13 @@ func (b *brainInit) neuron(path string, counter int, signals ...string) {
 	}
 }
 
+// axon converts a source/target rule into an Axon struct for cross-references.
 func (b *brainInit) axon(path, target string) {
 	full := filepath.Join(b.root, path)
 	os.WriteFile(full, []byte("TARGET: "+target), 0644)
 }
 
+// initBrain initializes the brain directory structure and injects default rules if missing.
 func initBrain(root string) {
 	if _, err := os.Stat(root); err == nil {
 		fmt.Printf("[CLEAN] Removing %s\n", root)
@@ -169,14 +172,20 @@ func initBrain(root string) {
 	b.neuron("cortex/neuronfs/defense/bomb_circuit_breaker_auto", 30)
 
 	// ━━━ CORTEX/SKILLS — External skill references ━━━
+	home := os.Getenv("USERPROFILE")
+	if home == "" {
+		home = os.Getenv("HOME") // fallback for non-Windows
+	}
+	skillBase := filepath.Join(home, ".agents", "skills")
+
 	b.neuron("cortex/skills/supanova/taste_skill", 20)
-	b.axon("cortex/skills/supanova/taste_skill/ref.axon", "SKILL:C:\\Users\\BASEMENT_ADMIN\\.agents\\skills\\taste-skill\\SKILL.md")
+	b.axon("cortex/skills/supanova/taste_skill/ref.axon", "SKILL:"+filepath.Join(skillBase, "taste-skill", "SKILL.md"))
 	b.neuron("cortex/skills/supanova/redesign_skill", 15)
-	b.axon("cortex/skills/supanova/redesign_skill/ref.axon", "SKILL:C:\\Users\\BASEMENT_ADMIN\\.agents\\skills\\redesign-skill\\SKILL.md")
+	b.axon("cortex/skills/supanova/redesign_skill/ref.axon", "SKILL:"+filepath.Join(skillBase, "redesign-skill", "SKILL.md"))
 	b.neuron("cortex/skills/supanova/soft_skill", 15)
-	b.axon("cortex/skills/supanova/soft_skill/ref.axon", "SKILL:C:\\Users\\BASEMENT_ADMIN\\.agents\\skills\\soft-skill\\SKILL.md")
+	b.axon("cortex/skills/supanova/soft_skill/ref.axon", "SKILL:"+filepath.Join(skillBase, "soft-skill", "SKILL.md"))
 	b.neuron("cortex/skills/supanova/output_skill", 15)
-	b.axon("cortex/skills/supanova/output_skill/ref.axon", "SKILL:C:\\Users\\BASEMENT_ADMIN\\.agents\\skills\\output-skill\\SKILL.md")
+	b.axon("cortex/skills/supanova/output_skill/ref.axon", "SKILL:"+filepath.Join(skillBase, "output-skill", "SKILL.md"))
 
 	// ━━━ EGO ━━━
 	fmt.Println("[6/7] ego")

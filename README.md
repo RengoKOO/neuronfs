@@ -61,6 +61,8 @@ Net Weight = Counter(+) - Contra(-) + Dopamine(+)
 Polarity   = (Counter + Dopamine - Contra) / Total    # -1.0 to +1.0
 ```
 
+**Polarity = direction. Intensity = magnitude.** A neuron with Counter=1000 and Polarity=+0.8 is far stronger than Counter=2 with Polarity=+1.0.
+
 | Polarity | Meaning | Effect |
 |----------|---------|--------|
 | +0.7 ~ +1.0 | Strong excitatory | Rule is firm, high confidence |

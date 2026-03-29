@@ -127,6 +127,44 @@ watchdog 30초 루프:
 > `/api/state`는 `--watch` 모드가 갱신하는 brain_state.json을 그대로 반환.  
 > 새 빌드 후 watch 프로세스도 재시작해야 API 값이 갱신됨.
 
+### MCP 서버 (세션 중 실시간 뇌 접근)
+
+**GEMINI.md는 세션 시작 시 1회 로드 (정적). MCP가 세션 중 실시간 접근을 해결한다.**
+
+```
+GEMINI.md (Tier 1) → 세션 시작 시 자동 로드
+MCP read_region    → 호출할 때마다 파일시스템 실시간 읽기
+MCP correct        → corrections.jsonl 안 거치고 즉시 뉴런 생성
+```
+
+실행: `neuronfs brain_v4 --mcp` (stdio JSON-RPC 2.0)
+
+설정: `~/.gemini/settings.json`
+
+```json
+{
+  "mcpServers": {
+    "neuronfs": {
+      "command": "c:\\Users\\BASEMENT_ADMIN\\NeuronFS\\neuronfs.exe",
+      "args": ["c:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4", "--mcp"]
+    }
+  }
+}
+```
+
+| 도구 | 기능 |
+|------|------|
+| `read_region` | 영역 _rules.md 실시간 생성 + 반환. **읽기 = 발화** (상위 3 자동 활성) |
+| `read_brain` | 전체 뇌 상태 JSON |
+| `grow` | 뉴런 생성 (60% 유사도 → 기존 발화) |
+| `fire` | 카운터 +1 |
+| `signal` | dopamine / bomb / memory |
+| `correct` | PD 교정 즉시 반영 (corrections.jsonl 안 거침) |
+| `evolve` | Groq 기반 자율 진화 (dry_run 지원) |
+
+> **⚠️ 롤백 주의**: `settings.json`이 `"mcpServers": {}`으로 초기화되면 MCP가 비활성화됨.  
+> 감사 시 반드시 `settings.json`에 neuronfs 등록 확인.
+
 ### ⚠️ start_brain.bat 주의
 
 **빌드 후 반드시 runtime/neuronfs.exe에도 복사해야 함.**
@@ -207,7 +245,8 @@ $path = "Z:\VOL1\VGVR\BRAIN\...\corrections.jsonl"  # 이러면 안 됨
 - [ ] neuronfs --watch alive
 - [ ] agent-bridge alive
 - [ ] auto-accept alive
-- [ ] watchdog alive (선택)
+- [ ] watchdog alive
+- [ ] `~/.gemini/settings.json`에 neuronfs MCP 등록 확인
 
 ### D. 기능
 
@@ -259,7 +298,15 @@ $path = "Z:\VOL1\VGVR\BRAIN\...\corrections.jsonl"  # 이러면 안 됨
 
 **증상:** NAS 존재 시 `--watch`가 NAS 경로로 실행됨  
 **영향:** AI가 로컬에 쓴 corrections.jsonl이 즉시 처리되지 않음 (5초 robocopy 지연)  
-**수정 필요:** L106을 항상 로컬 brain_v4 경로로 변경
+**수정 완료:** L106을 항상 로컬 brain_v4 경로로 변경
+
+### 2026-03-29: MCP settings.json 롤백
+
+**증상:** `~/.gemini/settings.json`의 `mcpServers`가 `{}`로 초기화됨  
+**영향:** MCP 도구(read_region/correct/fire) 세션 중 사용 불가  
+**원인:** Antigravity 업데이트 또는 설정 초기화로 추정  
+**해결:** settings.json에 neuronfs MCP 서버 재등록  
+**교훈:** 감사 시 반드시 settings.json 확인
 
 ---
 

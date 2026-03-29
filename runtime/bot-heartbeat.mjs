@@ -18,12 +18,16 @@ const IDLE_THRESHOLD_MS = 45000;
 const BRAIN = 'C:\\Users\\BASEMENT_ADMIN\\NeuronFS\\brain_v4';
 const AGENTS_DIR = join(BRAIN, '_agents');
 
+// PM은 heartbeat의 도구 사용자. PM 킥 = 에이전트 산출물 브리핑 (backlog 아님)
 const botState = {
-    pm:   { lastActive: Date.now(), kickCount: 0, lastIdx: -1 },
+    pm:   { lastActive: Date.now(), kickCount: 0, lastIdx: -1, isBriefing: true },
     bot1: { lastActive: Date.now(), kickCount: 0, lastIdx: -1 },
     entp: { lastActive: Date.now(), kickCount: 0, lastIdx: -1 },
     enfp: { lastActive: Date.now(), kickCount: 0, lastIdx: -1 }
 };
+
+// PM 통제: heartbeat.lock 존재 시 전체 킥 비활성화
+const HEARTBEAT_LOCK = join(AGENTS_DIR, 'pm', 'heartbeat.lock');
 
 // PM 창 title 매칭 — BASEMENT_ADMIN 워크스페이스
 const TITLE_MAP = {
@@ -67,6 +71,27 @@ function getNextBacklogItem(agentId) {
         }
     }
     return null;
+}
+
+function getAgentBriefing() {
+    const agents = ['bot1', 'entp', 'enfp'];
+    const lines = [];
+    for (const ag of agents) {
+        const outbox = join(AGENTS_DIR, ag, 'outbox');
+        if (!existsSync(outbox)) { lines.push(`${ag}: 산출물 없음`); continue; }
+        const files = readdirSync(outbox)
+            .filter(f => f.endsWith('.md') || f.endsWith('.js'))
+            .map(f => ({ name: f, mtime: statSync(join(outbox, f)).mtimeMs }))
+            .sort((a, b) => b.mtime - a.mtime);
+        const recent = files.slice(0, 3).map(f => f.name.replace(/^\d{8}_/, '').replace(/\.(md|js)$/, ''));
+        const total = files.length;
+        if (recent.length > 0) {
+            lines.push(`${ag}(${total}건): ${recent.join(', ')}`);
+        } else {
+            lines.push(`${ag}: 산출물 없음`);
+        }
+    }
+    return lines.join(' | ');
 }
 
 function getRecentOutbox(agentId) {
@@ -216,6 +241,9 @@ async function kickBot(botName, task) {
 }
 
 async function heartbeatLoop() {
+    // [PM 통제] heartbeat.lock 존재 → 전체 킥 비활성화
+    if (existsSync(HEARTBEAT_LOCK)) return;
+
     for (const botName of Object.keys(botState)) {
         try {
             // [QUARANTINE PROTOCOL] 폭탄 맞은 에이전트는 Heartbeat 차단 및 PM 호출
@@ -266,6 +294,16 @@ async function heartbeatLoop() {
                     let kickMsg;
                     const now = Date.now();
                     const titleKey = TITLE_MAP[botName];
+
+                    // PM 브리핑 킥: backlog가 아닌 에이전트 산출물 종합
+                    if (botState[botName]?.isBriefing) {
+                        const briefing = getAgentBriefing();
+                        kickMsg = `[HEARTBEAT BRIEFING] 에이전트 산출물 현황: ${briefing}. 검토하고 필요하면 지시하라.`;
+                        log(`📋 PM 브리핑 킥: ${briefing.slice(0, 100)}`);
+                        const ok = await kickBot(botName, kickMsg);
+                        if (ok) { state.lastActive = Date.now(); state.kickCount++; }
+                        continue;
+                    }
                     if (!nextTask) {
                         // [PM 다이렉트 패치: 쳇바퀴 유휴 알람 영구 MUTE]
                         // 런타임 스레드들이 자율 생존하므로 PM에게 억지 핑(Wake up)을 쏘는 로직을 완전히 파기/제거합니다.

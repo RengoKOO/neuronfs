@@ -350,14 +350,15 @@ func emitIndex(brain Brain, result SubsumptionResult) string {
 		}
 	}
 	if len(spotlight) > 0 {
-		sb.WriteString("## 🆕 신규 (probation)\n")
+		sb.WriteString("<details>\n")
+		sb.WriteString(fmt.Sprintf("<summary>🆕 신규 (probation) — %d neurons (%dd window)</summary>\n\n", len(spotlight), spotlightDays))
 		for _, rn := range spotlight {
 			icon := regionIcons[rn.region]
 			ageDays := int(now.Sub(rn.neuron.ModTime).Hours() / 24)
 			sb.WriteString(fmt.Sprintf("- %s **%s** (%d) — %dd남음\n",
 				icon, pathToSentence(rn.neuron.Path), rn.neuron.Counter, spotlightDays-ageDays))
 		}
-		sb.WriteString("\n")
+		sb.WriteString("\n</details>\n\n")
 	}
 
 	// Per-region summary table

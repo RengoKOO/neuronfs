@@ -99,6 +99,9 @@ func runEvolve(brainRoot string, dryRun bool) {
 	}
 	fmt.Println()
 
+	// Process corrections.jsonl (Layer 2 backup — uses existing processInbox from main.go)
+	processInbox(brainRoot)
+
 	// 1. Collect episode logs
 	episodes := collectEpisodes(brainRoot)
 	fmt.Printf("  📝 Episodes collected: %d\n", len(episodes))

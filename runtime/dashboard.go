@@ -5,9 +5,28 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
+
+// ─── Health check models ───
+
+type ProcessHealth struct {
+	Name    string `json:"name"`
+	Role    string `json:"role"`
+	Running bool   `json:"running"`
+	PID     string `json:"pid,omitempty"`
+}
+
+type HealthJSON struct {
+	API        bool            `json:"api"`
+	Processes  []ProcessHealth `json:"processes"`
+	OS         string          `json:"os"`
+	BrainRoot  string          `json:"brainRoot"`
+	NeuronFile int             `json:"neuronFiles"`
+}
 
 // ─── JSON models for API ───
 
@@ -15,6 +34,7 @@ type NeuronJSON struct {
 	Name      string `json:"name"`
 	Path      string `json:"path"`
 	Counter   int    `json:"counter"`
+	Contra    int    `json:"contra"`
 	Dopamine  int    `json:"dopamine"`
 	HasBomb   bool   `json:"hasBomb"`
 	HasMemory bool   `json:"hasMemory"`
@@ -65,6 +85,67 @@ func withCORSDashboard(h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// ─── Check if a process with given image name is running ───
+func isProcessRunning(imageName string) bool {
+	if runtime.GOOS != "windows" {
+		out, err := exec.Command("pgrep", "-f", imageName).Output()
+		return err == nil && len(out) > 0
+	}
+	out, err := exec.Command("tasklist", "/FI", "IMAGENAME eq "+imageName, "/NH", "/FO", "CSV").Output()
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(out), imageName)
+}
+
+// ─── Check if a node.js script is running ───
+func isNodeScriptRunning(scriptName string) bool {
+	if runtime.GOOS != "windows" {
+		out, err := exec.Command("pgrep", "-f", scriptName).Output()
+		return err == nil && len(out) > 0
+	}
+	out, err := exec.Command("wmic", "process", "where", "name='node.exe'", "get", "commandline", "/format:list").Output()
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(out), scriptName)
+}
+
+// ─── Count neuron files ───
+func countNeuronFiles(brainRoot string) int {
+	count := 0
+	filepath.Walk(brainRoot, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".neuron") {
+			count++
+		}
+		return nil
+	})
+	return count
+}
+
+// ─── Build health JSON ───
+func buildHealthJSON(brainRoot string) HealthJSON {
+	processes := []ProcessHealth{
+		// 인프라 데몬
+		{Name: "neuronfs", Role: "인지 엔진 (API 서버 + 대시보드)", Running: isProcessRunning("neuronfs.exe")},
+		{Name: "agent-bridge", Role: "CDP 에이전트 통신 브릿지", Running: isNodeScriptRunning("agent-bridge")},
+		{Name: "bot-heartbeat", Role: "유휴 감지 + Groq 진화 + 백로그 관리 + 인젝션", Running: isNodeScriptRunning("bot-heartbeat")},
+		{Name: "auto-accept", Role: "CDP 자동 수락 + 교정 감지", Running: isNodeScriptRunning("auto-accept")},
+		{Name: "watchdog", Role: "전체 프로세스 생존 감시 + harness 주기 실행", Running: isNodeScriptRunning("watchdog") || isProcessRunning("powershell.exe")},
+	}
+
+	return HealthJSON{
+		API:        true, // 이 응답이 올 시점에 API는 살아있음
+		Processes:  processes,
+		OS:         runtime.GOOS,
+		BrainRoot:  brainRoot,
+		NeuronFile: countNeuronFiles(brainRoot),
+	}
+}
+
 // ─── Build brain JSON from scan ───
 func buildBrainJSONResponse(brainRoot string) BrainJSON {
 	brain := scanBrain(brainRoot)
@@ -92,6 +173,7 @@ func buildBrainJSONResponse(brainRoot string) BrainJSON {
 				Name:      n.Name,
 				Path:      strings.ReplaceAll(n.Path, string(filepath.Separator), "/"),
 				Counter:   n.Counter,
+				Contra:    n.Contra,
 				Dopamine:  n.Dopamine,
 				HasBomb:   n.HasBomb,
 				HasMemory: n.HasMemory,
@@ -127,6 +209,13 @@ func startDashboard(brainRoot string, port int) {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		fmt.Fprint(w, dashboardHTML)
+	}))
+
+	// GET /api/health — system process health check
+	mux.HandleFunc("/api/health", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		health := buildHealthJSON(brainRoot)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(health)
 	}))
 
 	// GET /api/brain — scan and return full state
@@ -322,6 +411,50 @@ func startDashboard(brainRoot string, port int) {
 			return
 		}
 		w.Write([]byte("OK — rolled back: " + path))
+	}))
+
+	// POST /api/contra — add inhibitory signal to a neuron
+	mux.HandleFunc("/api/contra", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Path string `json:"path"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "bad json", 400)
+			return
+		}
+		path := strings.ReplaceAll(req.Path, "\\", "/")
+		path = strings.Trim(path, "/")
+		// Find current contra and increment
+		neuronDir := filepath.Join(brainRoot, strings.ReplaceAll(path, "/", string(filepath.Separator)))
+		if _, err := os.Stat(neuronDir); os.IsNotExist(err) {
+			http.Error(w, "neuron not found", 404)
+			return
+		}
+		contraFiles, _ := filepath.Glob(filepath.Join(neuronDir, "*.contra"))
+		currentContra := 0
+		var oldFile string
+		for _, f := range contraFiles {
+			base := strings.TrimSuffix(filepath.Base(f), ".contra")
+			if n, err := fmt.Sscanf(base, "%d", new(int)); err == nil && n > 0 {
+				var v int
+				fmt.Sscanf(base, "%d", &v)
+				if v > currentContra {
+					currentContra = v
+					oldFile = f
+				}
+			}
+		}
+		if oldFile != "" {
+			os.Remove(oldFile)
+		}
+		newContra := currentContra + 1
+		os.WriteFile(filepath.Join(neuronDir, fmt.Sprintf("%d.contra", newContra)), []byte("."), 0644)
+		fmt.Printf("[CONTRA] 🔴 %s: %d → %d\n", path, currentContra, newContra)
+		w.Write([]byte(fmt.Sprintf("OK — contra %d: %s", newContra, path)))
 	}))
 
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)

@@ -76,9 +76,10 @@ type Neuron struct {
 	Path      string    // relative path from region root (e.g. "frontend/css/glass_blur20")
 	FullPath  string    // absolute path
 	Counter   int       // from N.neuron filename (correction count)
+	Contra    int       // from N.contra filename (inhibition count)
 	Dopamine  int       // from dopamineN.neuron filename (reward count)
-	Intensity int       // Counter + Dopamine (total activation)
-	Polarity  float64   // Dopamine / Intensity (0.0=pure correction, 1.0=pure reward)
+	Intensity int       // Counter - Contra + Dopamine (net activation)
+	Polarity  float64   // net / total (-1.0=pure inhibition, +1.0=pure excitation)
 	HasBomb   bool      // bomb.neuron exists
 	HasMemory bool      // memoryN.neuron exists
 	HasGoal   bool      // .goal file exists (todo/objective)
@@ -187,6 +188,8 @@ func main() {
 			if i+1 < len(os.Args) && !strings.HasPrefix(os.Args[i+1], "--") {
 				_ = os.Args[i+1] // webhookUrl = os.Args[i+1]
 			}
+		case "--supervisor":
+			mode = "supervisor"
 		case "--dry-run":
 			dryRun = true
 		}
@@ -314,6 +317,8 @@ func main() {
 		go runInjectionLoop(brainRoot)
 		go runIdleLoop(brainRoot)
 		startMCPServerWithStdout(brainRoot, realStdout) // blocking: stdio loop
+	case "supervisor":
+		runSupervisor(brainRoot)
 	}
 }
 
@@ -389,18 +394,88 @@ func scanBrain(root string) Brain {
 			region.Axons = append(region.Axons, target)
 		}
 
-		// Walk for neuron folders (any folder containing .neuron files)
+		// Scan flat neurons at region root (e.g., brainstem: 禁fallback.1.neuron)
+		// Pattern: NeuronName.Counter.neuron or NeuronName.neuron
+		flatNeuronRegex := regexp.MustCompile(`^(.+)\.(\d+)\.neuron$`)
+		flatNeuronSimple := regexp.MustCompile(`^(.+)\.neuron$`)
+		rootNeuronFiles, _ := filepath.Glob(filepath.Join(regionPath, "*.neuron"))
+		seen := make(map[string]*Neuron) // group by neuron name
+		for _, nf := range rootNeuronFiles {
+			fname := filepath.Base(nf)
+			var neuronName string
+			var counter int
+
+			if m := flatNeuronRegex.FindStringSubmatch(fname); m != nil {
+				neuronName = m[1]
+				counter, _ = strconv.Atoi(m[2])
+			} else if m := flatNeuronSimple.FindStringSubmatch(fname); m != nil {
+				neuronName = m[1]
+				// Check for special files
+				if neuronName == "bomb" || strings.HasPrefix(neuronName, "dopamine") || strings.HasPrefix(neuronName, "memory") {
+					continue // these are signals, not neuron names
+				}
+			} else {
+				continue
+			}
+
+			if existing, ok := seen[neuronName]; ok {
+				if counter > existing.Counter {
+					existing.Counter = counter
+				}
+			} else {
+				n := &Neuron{
+					Name:     neuronName,
+					Path:     neuronName,
+					FullPath: filepath.Join(regionPath, neuronName),
+					Depth:    0,
+					Counter:  counter,
+					ModTime:  time.Now(),
+				}
+				// Bomb check
+				if fname == "bomb.neuron" {
+					n.HasBomb = true
+					region.HasBomb = true
+				}
+				if strings.HasPrefix(fname, "bomb_") {
+					n.HasBomb = true
+				}
+				// Compute intensity
+				n.Intensity = n.Counter + n.Dopamine
+				if n.Intensity > 0 {
+					n.Polarity = float64(n.Dopamine) / float64(n.Intensity)
+				} else {
+					n.Polarity = 0.5
+				}
+				seen[neuronName] = n
+				region.Neurons = append(region.Neurons, *n)
+			}
+		}
+
+		// Walk for neuron folders — Axiom: Folder=Neuron, File=Trace
+		// Every non-system folder IS a neuron. .neuron files are weight traces, not requirements.
 		filepath.Walk(regionPath, func(path string, info os.FileInfo, err error) error {
 			if err != nil || !info.IsDir() || path == regionPath {
 				return nil
 			}
 
-			// Check if this folder has any .neuron or .goal files (= it's a neuron)
-			neuronFiles, _ := filepath.Glob(filepath.Join(path, "*.neuron"))
-			goalFiles, _ := filepath.Glob(filepath.Join(path, "*.goal"))
-			if len(neuronFiles) == 0 && len(goalFiles) == 0 {
-				return nil // structural folder, not a neuron
+			// Skip system/hidden folders (except _sandbox children for dashboard sandbox feature)
+			baseName := filepath.Base(path)
+			if strings.HasPrefix(baseName, "_") || strings.HasPrefix(baseName, ".") {
+				// Allow walking INTO _sandbox but don't count _sandbox itself as a neuron
+				if baseName == "_sandbox" {
+					return nil
+				}
+				return filepath.SkipDir
 			}
+
+			// _sandbox container is not a neuron — its children are
+			// (handled by return nil above, children will reach here as normal folders)
+
+			// Every non-system folder is a neuron — parse .neuron files as weight traces
+			neuronFiles, _ := filepath.Glob(filepath.Join(path, "*.neuron"))
+			contraFiles, _ := filepath.Glob(filepath.Join(path, "*.contra"))
+			neuronFiles = append(neuronFiles, contraFiles...)
+			goalFiles, _ := filepath.Glob(filepath.Join(path, "*.goal"))
 
 			relPath, _ := filepath.Rel(regionPath, path)
 			depth := strings.Count(relPath, string(filepath.Separator))
@@ -429,6 +504,14 @@ func scanBrain(root string) Brain {
 				if m := dopamineRegex.FindStringSubmatch(fname); m != nil {
 					n, _ := strconv.Atoi(m[1])
 					neuron.Dopamine += n
+				}
+
+				// Contra: N.contra (inhibitory signal)
+				if strings.HasSuffix(fname, ".contra") {
+					base := strings.TrimSuffix(fname, ".contra")
+					if n, err := strconv.Atoi(base); err == nil && n > neuron.Contra {
+						neuron.Contra = n
+					}
 				}
 
 				// Bomb
@@ -469,9 +552,12 @@ func scanBrain(root string) Brain {
 			}
 
 				// Compute derived fields
-			neuron.Intensity = neuron.Counter + neuron.Dopamine
-			if neuron.Intensity > 0 {
-				neuron.Polarity = float64(neuron.Dopamine) / float64(neuron.Intensity)
+			// Net weight: excitation - inhibition + reward
+			neuron.Intensity = neuron.Counter - neuron.Contra + neuron.Dopamine
+			totalSignals := neuron.Counter + neuron.Contra + neuron.Dopamine
+			if totalSignals > 0 {
+				// Polarity: -1.0 (pure inhibition) to +1.0 (pure excitation)
+				neuron.Polarity = float64(neuron.Counter+neuron.Dopamine-neuron.Contra) / float64(totalSignals)
 			} else {
 				neuron.Polarity = 0.5 // neutral
 			}
@@ -712,6 +798,7 @@ func generateBrainJSON(brainRoot string, _ Brain, result SubsumptionResult) {
 	type JsNeuron struct {
 		Path      string  `json:"path"`
 		Counter   int     `json:"counter"`
+		Contra    int     `json:"contra,omitempty"`
 		Depth     int     `json:"depth"`
 		Dopamine  int     `json:"dopamine"`
 		Intensity int     `json:"intensity"`
@@ -762,7 +849,7 @@ func generateBrainJSON(brainRoot string, _ Brain, result SubsumptionResult) {
 		}
 		for _, n := range r.Neurons {
 			jr.Neurons = append(jr.Neurons, JsNeuron{
-				Path: n.Path, Counter: n.Counter, Depth: n.Depth,
+				Path: n.Path, Counter: n.Counter, Contra: n.Contra, Depth: n.Depth,
 				Dopamine: n.Dopamine, Intensity: n.Intensity, Polarity: n.Polarity,
 				HasBomb: n.HasBomb, Memory: n.HasMemory, Dormant: n.IsDormant,
 			})
@@ -2281,6 +2368,13 @@ func startAPI(brainRoot string, port int) {
 			"path":   fmt.Sprintf("cortex/community/%s/%s", req.Source, safeTopic),
 			"counter": counter,
 		})
+	}))
+
+	// GET /api/health — system process health check
+	mux.HandleFunc("/api/health", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		health := buildHealthJSON(brainRoot)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(health)
 	}))
 
 	// GET /api/brain — full brain state for dashboard (compatible with dashboard.go format)

@@ -1,0 +1,37 @@
+# NeuronFS — Windows CRLF 강제
+# cmd.exe는 LF를 인식하지 못함 → .bat, .cmd, .ps1은 반드시 CRLF
+
+# 전역 기본값: auto (Git이 checkout 시 OS에 맞게 변환)
+* text=auto eol=crlf
+
+# Windows 스크립트: 반드시 CRLF (치명적)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# JavaScript/Node: CRLF (Windows 환경 통일)
+*.js text eol=crlf
+*.mjs text eol=crlf
+*.cjs text eol=crlf
+*.json text eol=crlf
+
+# Go 소스
+*.go text eol=crlf
+
+# 문서
+*.md text eol=crlf
+*.txt text eol=crlf
+*.yaml text eol=crlf
+*.yml text eol=crlf
+*.toml text eol=crlf
+
+# 바이너리 (변환 금지)
+*.exe binary
+*.dll binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

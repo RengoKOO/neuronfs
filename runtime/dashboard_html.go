@@ -193,6 +193,24 @@ const dashboardHTML = `<!DOCTYPE html>
   }
   .toast.show { opacity: 1; }
 
+  /* ── System Health Panel ── */
+  .system-health {
+    padding: 12px 24px; border-bottom: 1px solid #1a1a2e;
+  }
+  .health-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 11px; border-bottom: 1px solid #111;
+  }
+  .health-row:last-child { border: none; }
+  .health-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .health-dot.on { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+  .health-dot.off { background: #ef4444; box-shadow: 0 0 6px #ef4444; animation: pulse-red 1.5s infinite; }
+  @keyframes pulse-red { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .health-name { color: #e0e0e0; font-weight: 600; width: 100px; }
+  .health-role { color: #666; font-size: 10px; flex: 1; }
+
   /* ── 3D overlay info ── */
   .hover-tooltip {
     position: absolute; pointer-events: none;
@@ -259,6 +277,15 @@ const dashboardHTML = `<!DOCTYPE html>
         <button class="btn btn-ghost" onclick="clearSandbox()" style="font-size:10px">🗑 초기화</button>
       </div>
       <div class="sandbox-paths" id="sandboxPaths"></div>
+    </div>
+
+    <div class="system-health" id="healthPanel">
+      <div class="add-label" style="margin-bottom:8px;display:flex;align-items:center;gap:6px">
+        ⚙️ SYSTEM STATUS
+        <span id="health-badge" style="font-size:9px;padding:2px 8px;border-radius:10px;background:#064e3b;color:#34d399;font-weight:700">ALL OK</span>
+      </div>
+      <div id="healthList"></div>
+      <div style="margin-top:8px;font-size:9px;color:#444" id="healthMeta"></div>
     </div>
 
     <div class="controls">
@@ -866,9 +893,47 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2000);
 }
 
+// ── Health monitoring ──
+async function loadHealth() {
+  try {
+    const res = await fetch('/api/health');
+    const data = await res.json();
+    const list = document.getElementById('healthList');
+    const badge = document.getElementById('health-badge');
+    const meta = document.getElementById('healthMeta');
+    if (!list) return;
+
+    let html = '';
+    let allOk = true;
+    (data.processes || []).forEach(p => {
+      if (!p.running) allOk = false;
+      html += '<div class="health-row">' +
+        '<div class="health-dot ' + (p.running ? 'on' : 'off') + '"></div>' +
+        '<span class="health-name">' + p.name + '</span>' +
+        '<span class="health-role">' + p.role + '</span>' +
+        '</div>';
+    });
+    list.innerHTML = html;
+
+    if (allOk) {
+      badge.textContent = 'ALL OK';
+      badge.style.background = '#064e3b';
+      badge.style.color = '#34d399';
+    } else {
+      badge.textContent = 'DEGRADED';
+      badge.style.background = '#7f1d1d';
+      badge.style.color = '#fca5a5';
+    }
+
+    meta.textContent = 'OS: ' + data.os + ' | .neuron files: ' + data.neuronFiles;
+  } catch(e) { /* silent */ }
+}
+
 // ── Init ──
 loadBrain();
+loadHealth();
 setInterval(loadBrain, 10000);
+setInterval(loadHealth, 15000);
 
 // ── Keyboard shortcuts ──
 document.addEventListener('keydown', (e) => {

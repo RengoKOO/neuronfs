@@ -120,8 +120,8 @@ func TestLimbicBomb_BrainstemSurvives(t *testing.T) {
 	if len(result.BlockedRegions) != 6 {
 		t.Fatalf("expected 6 blocked regions, got %d", len(result.BlockedRegions))
 	}
-	if result.FiredNeurons != 3 {
-		t.Fatalf("expected 3 brainstem neurons fired, got %d", result.FiredNeurons)
+	if result.FiredNeurons != 5 {
+		t.Fatalf("expected 5 brainstem neurons fired, got %d", result.FiredNeurons)
 	}
 
 	t.Logf("OK: brainstem alive (%d neurons), limbic~prefrontal blocked (%d regions)",
@@ -166,7 +166,9 @@ func TestDeleteNeuron_CountDecreases(t *testing.T) {
 	result1 := runSubsumption(brain1)
 	before := result1.TotalNeurons
 
-	os.Remove(filepath.Join(dir, "cortex", "left", "frontend", "hooks_pattern", "40.neuron"))
+	// Remove the entire hooks_pattern folder to actually delete the neuron
+	// (Axiom: Folder=Neuron, removing just the trace file doesn't destroy the neuron)
+	os.RemoveAll(filepath.Join(dir, "cortex", "left", "frontend", "hooks_pattern"))
 
 	brain2 := scanBrain(dir)
 	result2 := runSubsumption(brain2)

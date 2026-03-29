@@ -1,4 +1,4 @@
-﻿# NeuronFS 뉴런 폴더 마이그레이션: 영어 → 한글/한자
+# NeuronFS 뉴런 폴더 마이그레이션: 영어 → 한글/한자
 # 카운터(.neuron), dopamine, bomb, goal, memory 파일 모두 보존
 # 규칙: 금지류=禁, 권장류=推, 나머지=한글
 

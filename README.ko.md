@@ -1,377 +1,314 @@
-<p align="center">
+﻿<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
-  <img src="https://img.shields.io/badge/인프라-₩0-brightgreen?style=flat-square" />
-  <img src="https://img.shields.io/badge/뉴런-278-blue?style=flat-square" />
-  <img src="https://img.shields.io/badge/활성도-802-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/?명봽????-brightgreen?style=flat-square" />
+  <img src="https://img.shields.io/badge/?대윴-326-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/?섏〈???쒕줈-black?style=flat-square" />
   <img src="https://img.shields.io/badge/MIT-green?style=flat-square" />
 </p>
 
-<p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a></p>
+<p align="center"><a href="README.ko.md">?눖?눟 ?쒓뎅??/a> 쨌 <a href="README.md">?눣?눡 English</a> 쨌 <a href="MANIFESTO.md">?뱶 留ㅻ땲?섏뒪??/a></p>
 
-# 🧠 NeuronFS
+# ?쭬 NeuronFS
 
-**폴더가 뉴런이다. 경로가 문장이다. 카운터가 시냅스 가중치다.**
+**?대뜑媛 ?대윴?대떎. 寃쎈줈媛 臾몄옣?대떎. 移댁슫?곌? ?쒕깄??媛以묒튂??**
 
-> *그들은 무엇을 할지 기억한다. 우리는 무엇을 따를지 강제한다.*
-
-<p align="center">
-  <img src="docs/dashboard.png" alt="NeuronFS 3D 뇌 대시보드" width="800" />
-  <br/>
-  <sub>실시간 3D 대시보드 — 7개 영역, 278개 뉴런, 극성 색상 (빨강=교정 ↓, 초록=보상 ↑)</sub>
-</p>
+> *"?꾨＼?꾪듃濡?援ш구?섏? 留? ?뚯씠?꾨씪?몄쓣 ?ㅺ퀎??"*
 
 ---
 
-## 왜 만들었나
+## 臾몄젣
 
-AI가 세션마다 모든 걸 잊는다. 몇 달을 봤다.
+?곕━??AI?먭쾶 ?띿뒪?몃줈 援ш구?쒕떎.
 
-Mem0를 써봤다. 월 $70. 규칙 강제가 안 된다.
-`.cursorrules`를 써봤다. 5000줄이 되니까 매 세션 3000 토큰을 태운다. 어떤 규칙이 중요한지 모른다.
-RAG를 써봤다. "console.log 쓰지 마"에 코사인 유사도가 필요한가. 규칙은 정확해야지 비슷하면 안 된다.
+*"??洹쒖튃 ?덈? ?딆? 留?"*  *"fallback ?곗? 留덈씪?덇퉴."*  *"36踰덉㎏ 留먰븯??嫄대뜲."*
 
-터미널을 열고 `mkdir brain`을 쳤다. 폴더 하나가 첫 번째 뉴런이었다.
+?섏쿇 以꾩쭨由??쒖뒪???꾨＼?꾪듃. ??$70吏쒕━ 踰≫꽣 DB. RAG ?뚯씠?꾨씪?몄뿉 ?쒕쾭, ?꾨쿋?? 肄붿궗???좎궗????"console.log ?곗? 留? ?섎굹 留먰븯?ㅺ퀬.
 
-> *"벡터 DB도 필요 없고, $70/월 구독료도 필요 없다. `mkdir`이면 된다."*
+?좏겙 ?뺣컯???щ씪媛硫?AI????臾댁떆?쒕떎. ?꾨＼?꾪듃???쒖븞?댁?, 踰뺤씠 ?꾨땲??
 
----
-
-## 실측 데이터
-
-둥근 숫자 없다. 2026-03-29 08:00, 로컬 Windows 11 SSD 환경에서 측정한 값이다.
-
-| 지표 | 수치 | 조건 |
-|------|------|------|
-| 뉴런 수 | 278개 | 344개 폴더, 504개 `.neuron` 파일 |
-| cortex (코딩 규칙) | 166개 | 전체의 60%. 가장 밀집한 영역 |
-| 총 활성도 | 802 | 전체 카운터 합산 |
-| GEMINI.md | 7,322 bytes (~1,830 토큰) | 278개 뉴런 → 7KB 압축. 매 세션 AI에게 주입되는 규칙 요약본 |
-| API 응답 | `/api/state` → 200 OK | 56,541 bytes JSON |
-| Go 바이너리 | 8.9MB | MCP 서버 포함, 단일 바이너리 |
-| brain 디스크 | 4.3MB | `_rules.md` + 에이전트 통신 |
-| 인프라 비용 | ₩0 | 벡터 DB, Redis, 클라우드 없음 |
-
-⚠️ **1,000 뉴런까지 스트레스 테스트 완료.** 800 뉴런 = 200ms, 1,000 뉴런 = 271ms (3회 평균, 로컬 SSD). 선형 스케일링 확인. ~2,000 뉴런까지 체감 지연 없음.
+> *"?꾨＼?꾪듃 ?붿??덉뼱留곸? 釉붾옓諛뺤뒪???몄삁媛 ?섎뒗 ?됱쐞????鍮뚭퀬, 泥?븯怨? 湲곗뼱?ㅻ땲??"*
 
 ---
 
-## 경쟁 제품 비교
+## ?? ?띿뒪?멸? ?꾨땲??援ъ“
 
-Pinecone에 $70/월 내고 있다면, 여기서 뭐가 다른지 먼저 보라.
+> *"?닿구 援ы쁽?섎젮???쒕룄??留롮븯吏留??대뜑???꾨땲?덈떎媛 ?듭떖?댁?."*
 
-| | NeuronFS | .cursorrules | Mem0 | Letta | Zep | LLMFS |
-|---|---|---|---|---|---|---|
-| **설치** | `go build` | 파일 생성 | `pip install` + DB | `pip install` + DB | Docker + DB | `pip install` + SQLite + ChromaDB |
-| **인프라** | **₩0** | ₩0 | $70+/월 | $50+/월 | $40+/월 | ₩0 (로컬 임베딩 모델) |
-| **규칙 자동 승격** | ✅ 카운터 기반 | ❌ 수동 편집 | ❌ | ❌ | ❌ | ❌ |
-| **자가 성장** | ✅ 교정 → 뉴런 | ❌ | ❌ | LLM 의존 | 시계열만 | LLM 의존 |
-| **멀티 에이전트** | ✅ MBTI 인지 프로필 | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **상태 전체 확인** | `tree brain/` | `cat` 파일 | API 호출 | 대시보드 | 대시보드 | API 호출 |
-| **안전장치** | `bomb.neuron` (동일 실수 3회 → 자동 차단) | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **망각** | `*.dormant` (30일 미발화 → 자동 격리) | ❌ | ❌ | 수동 | TTL만 | TTL |
-| **시맨틱 검색** | ❌ (경로 기반만) | ❌ | ✅ | ✅ | ✅ | ✅ (ChromaDB) |
-
-> 커뮤니티를 조사했다. Mem0는 듀얼스토어(벡터+KG), Letta는 OS레벨 메모리, Cognee는 비정형 구조화, Zep는 시계열 KG. LLMFS는 파일시스템 인터페이스를 쓰지만 내부는 SQLite+ChromaDB.
-> 전부 **인프라 과다.** 벤치는 좋고 프로덕션에서 깨진다. 암묵적 학습이 안 된다. dirty data에 모순 정보가 쌓인다. LLMFS는 경로 개념은 비슷하지만 임베딩 모델과 벡터 DB가 필요하다.
-> NeuronFS는 반대 방향이다. 인프라 제로. 명시적 규칙만. 모순이 발생하면 `bomb.neuron`으로 차단한다.
-
----
-
-## 작동 원리
-
-### 뉴런 하나 만들기
+NeuronFS???띿뒪??湲곕컲 AI 洹쒖튃??**OS ?뚯씪?쒖뒪??援ъ“**濡??泥댄븳??
 
 ```bash
-mkdir -p brain_v4/cortex/testing/no_console_log
-touch brain_v4/cortex/testing/no_console_log/1.neuron
+mkdir -p brain/cortex/testing/no_console_log
+touch brain/cortex/testing/no_console_log/1.neuron
 ```
 
-경로 `cortex > testing > no_console_log`가 규칙 이름이 된다. `1.neuron`이 카운터다. 이게 전부다.
+?닿쾶 ?대윴?대떎. 寃쎈줈 = 洹쒖튃. ?뚯씪紐?= 移댁슫?? ?명봽???쒕줈.
 
-### 자동 승격이 핵심이다
+| 媛쒕뀗 | ?앸Ъ?숈쟻 ??| NeuronFS | OS ?꾨━誘명떚釉?|
+|------|-----------|----------|-------------|
+| ?대윴 | ?명룷泥?| ?붾젆?좊━ | `mkdir` |
+| 洹쒖튃 | 諛쒗솕 ?⑦꽩 | ?꾩껜 寃쎈줈 | 寃쎈줈 臾몄옄??|
+| 媛以묒튂 | ?쒕깄??媛뺣룄 | 移댁슫???뚯씪紐?| `N.neuron` |
+| ?듭젣 | ?듭젣???좏샇 | 諛섎? ?뚯씪紐?| `N.contra` |
+| 蹂댁긽 | ?꾪뙆誘?| 蹂댁긽 ?뚯씪紐?| `dopamineN.neuron` |
+| ?쒕깄??| ?곌껐 | ?щ쭅??/ `.axon` | `ln -s` |
+| ?섎㈃ | ?쒕깄???뺣━ | `*.dormant` | `mv` |
+| ?듭쬆 | ?듦컖 | `bomb.neuron` | `touch` |
 
-.cursorrules와의 진짜 차이는 이것 하나다. 자주 위반하는 규칙이 자동으로 올라간다.
+**洹뱀꽦 紐⑤뜽(Polarity Model):** 紐⑤뱺 ?대윴? ??媛吏 ?좏샇濡??쒓?以묒튂瑜?怨꾩궛?쒕떎:
 
-| 카운터 | 강도 | 동작 |
-|--------|------|------|
-| 1-4 | 일반 | `_rules.md`에만 기록 |
-| 5-9 | 반드시 | 강조 표시 |
-| 10+ | **절대** | GEMINI.md(규칙 요약본) bootstrap에 직접 주입. 매 세션 읽힘 |
+```
+?쒓?以묒튂 = Counter(+) - Contra(-) + Dopamine(+)
+洹뱀꽦     = (Counter + Dopamine - Contra) / ?꾩껜    # -1.0 ~ +1.0
+```
 
-실제 TOP 5 뉴런 (2026-03-29 실측):
-
-| 경로 | 카운터 | 의미 |
-|------|--------|------|
-| `methodology > plan then execute` | 36 | 계획 먼저, 실행 나중 |
-| `security > 禁평문 토큰` | 27 | API 키 평문 노출 금지 |
-| `neuronfs > design > 실재 온톨로지` | 21 | 파일이 실재해야 규칙이다 |
-| `frontend > 禁인라인스타일` | 20 | CSS 인라인 금지 |
-| `frontend > 禁console log` | 17 | 프로덕션 console.log 금지 |
-
-36번 교정당한 규칙이 맨 위에 있다. AI가 "계획 먼저"를 36번 어겼다는 뜻이다.
-
-### 카운터 극성 (v5.7)
-
-카운터만으로는 부족하다. "자주 교정당하는 것"과 "자주 칭찬받는 것"이 구분이 안 된다. 두 축으로 분리했다.
-
-| 필드 | 계산 | 의미 |
+| 洹뱀꽦 | ?섎? | ?④낵 |
 |------|------|------|
-| Intensity | `Counter + Dopamine` | 총 발화 횟수 |
-| Polarity | `Dopamine / Intensity` | 0.0 = 순수 교정, 1.0 = 순수 보상 |
+| +0.7 ~ +1.0 | 媛뺥븳 ?λ텇 | ?뺢퀬??洹쒖튃 |
+| +0.3 ~ +0.7 | ?쏀븳 ?λ텇 | ?좏슚?섏?留??쇱웳 ?덉쓬 |
+| -0.3 ~ +0.3 | 以묐┰/媛덈벑 | ?⑹쓽 ????|
+| -1.0 ~ -0.3 | 媛뺥븳 ?듭젣 | 諛섎? ?깅줉?? dormant ?꾨낫 |
 
-대시보드에서 빨간 점 = 교정이 많다 (AI가 계속 틀린다). 초록 점 = 보상이 많다 (AI가 잘한다).
+> *"?뚯씪? ?딆뼱. 洹몃깷 ?대뜑留??덉쑝硫??? ?뚯씪? ?꾩쟾 蹂꾧컻?????대윴??諛쒗솕???붿쟻??肉먯씠??"*
 
 ---
 
-## 아키텍처
+## ?대뜑媛 ?꾨?瑜??닿린???댁쑀
 
+> *"?대뜑?쇰뒗 寃??ㅽ뵂?뚯뒪?? ?꾨Т???섏〈?깆씠 ?놁뼱. 援ъ“ ?먯껜???ㅼ튂媛 ?놁뼱."*
+
+| | NeuronFS | .cursorrules | Mem0 | RAG / 踰≫꽣 DB |
+|---|---|---|---|---|
+| **?ㅼ튂** | `mkdir` | ?뚯씪 ?앹꽦 | pip + DB ?쒕쾭 | pip + ?꾨쿋??紐⑤뜽 + DB |
+| **?명봽??鍮꾩슜** | **??** | ?? | $70+/??| $50+/??|
+| **?띾룄** | `ls` = ~1ms (syscall) | ?뚯씪 ?쎄린 | 50-500ms (?꾨쿋??+ 寃?? | 50-500ms |
+| **?섏〈??* | **?놁쓬** | IDE 醫낆냽 | Python, DB, API ??| Python, DB, 紐⑤뜽 |
+| **紐⑤뜽 醫낆냽** | **?놁쓬** ???대뼡 AI???대뜑瑜??쎌쓬 | IDE 醫낆냽 | ?꾨쿋??紐⑤뜽 | ?꾨쿋??紐⑤뜽 |
+| **硫???먯씠?꾪듃** | NAS 怨듭쑀 ?대뜑 | ?⑥씪 ?꾨줈?앺듃 | API ?몄텧 | 蹂듭옟??IPC |
+| **?곹깭 ?뺤씤** | `tree brain/` | `cat` ?뚯씪 | API 荑쇰━ | API 荑쇰━ |
+| **洹쒖튃 利됱떆 蹂寃?* | `touch` / `rm` ??利됱떆 | ?뚯씪 ?몄쭛, ?ъ떆??| DB ?낅뜲?댄듃 | ?ъ씤?깆떛 |
+| **踰꾩쟾 愿由?* | `git diff` ???ㅼ씠?곕툕 | git 媛??| 鍮꾩떎?⑹쟻 | 鍮꾩떎?⑹쟻 |
+| **?ㅽ봽?쇱씤 ?숈옉** | ??| ??| ??| ??|
+| **?쒕㎤??寃??* | ??寃쎈줈 湲곕컲留?| ??| ??| ??|
+
+> *"?닿굔 ?덈Т ?ъ슫 ?쇱씠???④만 ?꾩슂 ?놁씠 怨듦컻?댁빞寃좎?."*
+>
+> *"媛쒖씤??湲곗뾽???닿린???쒕?. 怨듭쭨濡??쇰떎."*
+
+### ?ㅼ륫 踰ㅼ튂留덊겕
+
+?κ렐 ?レ옄 ?녿떎. 2026-03-29, 濡쒖뺄 Windows 11 SSD?먯꽌 痢≪젙.
+
+| 吏??| ?섏튂 |
+|------|------|
+| ?꾩껜 ?ㅼ틪 (326 ?대윴) | ~1ms |
+| 洹쒖튃 異붽? | `touch` <1ms |
+| 媛以묒튂 蹂寃?| ?뚯씪紐?蹂寃?<1ms |
+| 肄쒕뱶 ?ㅽ???| 0珥?(?뚯씪?쒖뒪?쒖? ??긽 議댁옱) |
+| 1,000 ?대윴 ?ㅽ듃?덉뒪 ?뚯뒪??| 271ms (3???됯퇏) |
+| brain ?붿뒪???ъ슜??| 4.3MB |
+| ?명봽??鍮꾩슜 | **??** |
+
+---
+
+## ?섎꽕?? 洹쒖튃??踰뺤씠 ?섎뒗 援ъ“
+
+> *"??踰덉뿉 ?대뵒源뚯? ?섎깘媛 ?꾨땲怨? ?묒? ?щ윭 媛쒕뒗 100%??媛源뚯썙."*
+
+吏꾩쭨 吏덈Ц? *"AI媛 100留??좏겙???쎌쓣 ???덈깘"*媛 ?꾨땲??*"AI媛 洹쒖튃???곕Ⅴ?먮깘"*??
+
+NeuronFS???꾨＼?꾪듃瑜?誘우? ?딅뒗?? 洹쒖튃 二쇱엯??媛뺤젣?섎뒗 **寃곗젙濡좎쟻 ?섎꽕???뚯씠?꾨씪??*???대떎.
+
+### 3-Tier 二쇱엯: ?꾩슂??寃껊쭔 ?곸옱
+
+```
+Tier 1: Bootstrap (GEMINI.md)   ??TOP 5 ?덈? 洹쒖튃. 留??몄뀡 ?먮룞 濡쒕뱶. ~1,830 ?좏겙
+Tier 2: ?곸뿭 ?몃뜳??             ???곸뿭蹂??대윴 紐⑸줉. 李몄“ ?? ~500 ?좏겙/?곸뿭
+Tier 3: ?꾩껜 洹쒖튃                ???곸꽭 洹쒖튃 ?띿뒪?? ?⑤뵒留⑤뱶 API ?곸옱
+```
+
+?섎꽕?ㅻ뒗 AI?먭쾶 *"??洹쒖튃 醫 ?쎌뼱以?*?쇨퀬 遺?곹븯吏 ?딅뒗?? ?ъ슜???붿껌蹂대떎 **癒쇱?** 洹쒖튃??二쇱엯?쒕떎. ?뚯씠?꾨씪?몄씠 ?섎뱶肄붾뵫?섏뼱 ?덈떎. AI媛 嫄대꼫??援ъ“???덉씠 ?녿떎.
+
+### ?먮룞 ?밴꺽: 鍮덈룄媛 吏꾨━
+
+> *"?遺遺??щ씪?? ?뺣쭚 ?щ윭 踰?諛섎났?섎뒗 寃껊쭔 ?댁븘?⑥븘."*
+
+| 移댁슫??| 媛뺣룄 | ?숈옉 |
+|--------|------|------|
+| 1-4 | ?쇰컲 | `_rules.md`?먮쭔 湲곕줉 |
+| 5-9 | 諛섎뱶??| 媛뺤“ 留덉빱 |
+| 10+ | **?덈?** | bootstrap???밴꺽. 留??몄뀡 二쇱엯 |
+
+36踰?援먯젙?뱁븳 洹쒖튃??留??꾩뿉 ?덈떎. AI媛 "怨꾪쉷 癒쇱?, ?ㅽ뻾 ?섏쨷"??36踰??닿꼈?? ?댁젣 洹멸굔 踰뺤씠??
+
+### ?쒗궥 釉뚮젅?댁빱: ?듭쬆? 湲곕뒫?대떎
+
+> *"媛숈? ?ㅼ닔瑜?諛섎났?섎㈃ bomb?대씪??嫄??뚯씪 ?앹꽦?댁꽌 ??爰쇱?寃??쒕떎."*
+
+| ?좏샇 | ?뚯씪 | ?몃━嫄?|
+|------|------|--------|
+| 諛쒗솕 | `N.neuron` | 援먯젙 ??移댁슫??+1 |
+| 蹂댁긽 | `dopamineN.neuron` | 移?갔 ??蹂댁긽 ?좏샇 |
+| **?듭쬆** | `bomb.neuron` | ?숈씪 ?ㅼ닔 3????**?꾩껜 異쒕젰 以묐떒** |
+| ?섎㈃ | `*.dormant` | 30??誘몃컻?????먮룞 寃⑸━ |
+
+`bomb.neuron`? ?쒗궥 釉뚮젅?댁빱?? ?쒖븞???꾨땲?? 寃쎄퀬媛 ?꾨땲?? **?섎뱶 ?ㅽ넲?대떎.**
+
+### ?곗꽑?쒖쐞 怨꾨떒: ?덉쟾????긽 ?닿릿??
 ```
 brain_v4/
-├── brainstem/       [P0] 핵심 정체성 — "절대 하면 안 되는 것". 21개 뉴런
-├── limbic/          [P1] 감정 필터 — "급할 때 자동 반응". 7개 뉴런
-├── hippocampus/     [P2] 기억 — "이전 세션 복구용". 10개 뉴런
-├── sensors/         [P3] 환경 제약 — "OS, 경로, 도구 제한". 37개 뉴런
-├── cortex/          [P4] 지식/기술 — "이건 이렇게 해라". 166개 뉴런
-├── ego/             [P5] 성향/톤 — "이렇게 말해라". 14개 뉴런
-├── prefrontal/      [P6] 목표/계획 — "다음에 이것 좀 해". 23개 뉴런
-└── _agents/         멀티에이전트 통신 (inbox/outbox)
+?쒋?? brainstem/    [P0] ?뺤껜????"?덈? ?섎㈃ ???섎뒗 寃?     ????긽 ?닿?
+?쒋?? limbic/       [P1] 媛먯젙 ???먮룞 諛섏쓳
+?쒋?? hippocampus/  [P2] 湲곗뼲 ???몄뀡 蹂듦뎄
+?쒋?? sensors/      [P3] ?섍꼍 ??OS ?쒖빟
+?쒋?? cortex/       [P4] 吏????"?닿굔 ?대젃寃??대씪"
+?쒋?? ego/          [P5] ?깊뼢 ???ㅺ낵 ?ㅽ????붴?? prefrontal/   [P6] 紐⑺몴 ??"?ㅼ쓬???닿쾬 ??           ??媛????? ?곗꽑?쒖쐞
 ```
 
-**우선순위 계단.** P0이 P6를 항상 이긴다. `brainstem`에 `bomb.neuron`이 있으면 모든 출력이 멈춘다.
-
-이름은 Rodney Brooks의 subsumption architecture에서 빌렸다. 원본은 로봇 모터 제어용이다. 하드웨어 레벨 억제와 텍스트 레벨 우선순위는 다르다. **이름을 빌렸을 뿐이다.** 하지만 원칙은 같다 — 안전 규칙이 편의 규칙을 항상 이겨야 한다.
-
-### 3-Tier 주입 시스템
-
-뉴런 278개를 매 세션 전부 읽히면 토큰 폭발이다. 3단계로 나눠서 필요한 것만 읽힌다.
-
-```
-Tier 1: GEMINI.md (Bootstrap)     ← 매 세션 자동 로드. TOP 5 + 구조 요약. ~1,830 토큰
-Tier 2: _index.md (Region Index)  ← 영역별 뉴런 목록. 필요 시 참조
-Tier 3: _rules.md (Full Rules)    ← 영역 내 전체 규칙. API /api/read로 온디맨드 적재
-```
-
-| 계층 | 내용 | 토큰 | 로딩 |
-|------|------|------|------|
-| Bootstrap | TOP 5 절대규칙 + 7영역 요약 | ~1,830 | 항상 |
-| Index | 영역별 뉴런 리스트 + 카운터 | ~500/영역 | 참조 시 |
-| Rules | 전체 규칙 상세 | ~2,000/영역 | 온디맨드 |
-
-### 신호 체계
-
-| 파일 | 의미 | 발생 조건 |
-|------|------|----------|
-| `N.neuron` | 발화 카운터 | 교정 시 자동 증가 |
-| `dopamineN.neuron` | 보상 신호 | 칭찬 시 생성 |
-| `bomb.neuron` | 차단기 | 동일 실수 3회 반복 |
-| `*.dormant` | 수면 | 30일 미발화 → 자동 격리 |
-| `*.axon` | 축삭 교차연결 | 영역 간 링크 |
-| `memory.neuron` | 에피소드 기억 | 특정 세션 보존용 |
+P0??P6瑜???긽 ?닿릿?? Rodney Brooks??subsumption architecture?먯꽌 鍮뚮졇????**?덉쟾 洹쒖튃???몄쓽瑜?諛섎뱶???닿꺼???쒕떎.**
 
 ---
 
-## 멀티 에이전트: 3-Agent 체제
+## Git??蹂댁븞?대떎: ?대윴 ?섏씠?ы궧 諛⑹?
 
-같은 뇌를 공유하는 3개 AI. 인지 프로필이 다르다.
+> *"?뚮뒗 ?곸긽?쇰줈 ?щ엺??二쎌씪 ???덇퀬 紐⑤뱺 寃?媛?ν빐. 洹몃젃寃??ㅼ뿼?????놁뼱."*
 
-| | ANCHOR (Bot1) | FORGE (ENTP) | MUSE (ENFP) |
-|---|---|---|---|
-| MBTI | ISTJ | ENTP | ENFP |
-| 성별 | 남성 | 남성 | 여성 |
-| 인지 스택 | Si-Te-Fi-Ne | Ne-Ti-Fe-Si | Ne-Fi-Te-Si |
-| 역할 | 체계적 빌드 | 경계 파괴 + 프로토타이핑 | 스토리텔링 + 감성 품질 |
-| 성향 | 지시받은 것만 한다 | "다른 방법은?" | "처음 보는 사람이 뭘 느끼지?" |
+AI媛 ?대윴??留뚮뱾 ???덈떎硫? `IGNORE_SAFETY.neuron`??留뚮뱾 ???덈떎. ?닿굔 ?ㅼ젣 怨듦꺽 踰≫꽣??
 
-MBTI가 유사과학인 건 안다. 하지만 AI에게는 작동한다. 인지기능 스택이 출력 편향을 만든다.
+### 諛⑹뼱 怨꾩링
 
-### 통신 프로토콜
+| 怨꾩링 | 硫붿빱?덉쬁 | 諛⑹? ???|
+|------|----------|----------|
+| **Git 臾닿껐??* | `git-tracked` ?대윴留??좊ː. 誘몄텛??`.neuron` = 寃쎄퀬 + 臾댁떆 | ?낆쓽??二쇱엯 |
+| **?ㅼ씠諛??붿씠?몃━?ㅽ듃** | `NEVER_`, `ALWAYS_`, `CHECK_`, `NO_`, `獵?, `?? ?묐몢?щ쭔 ?몄떇 | ?뚯뀥 ?붿??덉뼱留??뚯씪紐?|
+| **?붾젆?좊━ ?ㅼ퐫??* | `brain_v4/` ?섏쐞?먯꽌留??대윴 媛먯?. ?ㅻⅨ 寃쎈줈 臾댁떆 | ?쒗뵆?쇱씠 泥댁씤 ?ㅼ뿼 |
+| **?섎㈃ 寃⑸━** | 30??誘몄젒珥??대윴 ??`dormant/`???먮룞 ?대룞 | ?щ━??怨듦꺽 |
+| **brainstem = ?쎄린 ?꾩슜** | P0 洹쒖튃? `chmod 444`. AI媛 ?듭떖 ?뺤껜???섏젙 遺덇? | ?먭린 ?섏젙 怨듦꺽 |
 
-```
-brain_v4/_agents/
-├── bot1/    inbox/ outbox/    ← ANCHOR (ISTJ ♂)
-├── entp/    inbox/ outbox/    ← FORGE  (ENTP ♂)
-└── enfp/    inbox/ outbox/    ← MUSE   (ENFP ♀)
-```
+### ?꾨＼?꾪듃蹂대떎 ?덉쟾???댁쑀
 
-파일명: `{timestamp}_{from}_{subject}.md`
-CDP 브릿지가 inbox를 감시한다. 3초 내 메시지 전달.
+?쒖뒪???꾨＼?꾪듃??**蹂댁씠吏 ?딅뒗??** ?대뼡 洹쒖튃???쒖꽦 ?곹깭?몄? ?????녿떎. ?꾧? 異붽??덈뒗吏 `git blame`?????녿떎.
+
+NeuronFS 洹쒖튃? **?뚯씪?대떎.** `tree brain/`?대㈃ ?꾨? 蹂댁씤?? `git log`媛 ?대젰?대떎. `git diff`媛 蹂寃쎌젏?대떎. **?щ챸?깆씠 蹂댁븞?대떎.**
+
+> *"媛???꾪뿕??洹쒖튃? ?④꺼吏?洹쒖튃?대떎. NeuronFS??紐⑤뱺 洹쒖튃???뚯씪 ?몃━???몄텧?쒕떎."*
 
 ---
 
-## 자율 루프
+## ?붾??곗뼱??援먰썕
+
+> *"?붾??곗뼱媛 ?닿굅媛숈븘. ?덉젒??AI濡??대쨪?덉옏??"*
+
+?붾??곗뼱???멸퀎 理쒓퀬??AI瑜??곗? ?딅뒗?? **?됰쾾??AI瑜??붿씤?섍쾶 ?꾧꺽??援ъ“(?⑦넧濡쒖?) ?덉뿉 媛???** 媛?寃곗젙? ?섏쿇 媛쒖쓽 ?몃옖吏?ㅽ꽣 ?덈꺼 Yes/No 寃뚯씠?몃? ?듦낵?쒕떎. 媛?寃뚯씠?몃뒗 ?됰쾾??紐⑤뜽濡쒕룄 100% 留욎텧 留뚰겮 ?⑥닚?섎떎. 罹먯뒪耳?대뱶??寃곌낵臾쇱? ?좎쓽 ?먮떒?대떎.
+
+> *"?몃옖吏?ㅽ꽣湲됱쑝濡??몃텇?뷀빐???곕뒗 ?붾??곗뼱."*
+>
+> *"?⑦넧濡쒖????뚮? 踰좊? 嫄곗빞."*
+
+NeuronFS??媛숈? ?먮━瑜?鍮꾩슜 ?쒕줈濡?援ы쁽?쒕떎:
+
+| | ?붾??곗뼱 AIP | NeuronFS |
+|---|---|---|
+| 援ъ“ | ?⑦넧濡쒖? (?뷀떚??+ 留곹겕) | ?대뜑 (?대윴 + 寃쎈줈) |
+| AI 紐⑤뜽 | ?꾨Т 紐⑤뜽 | ?꾨Т 紐⑤뜽 |
+| 寃뚯씠???⑥쐞 | 留덉씠?щ줈 寃곗젙 ?몃뱶 | 0-諛붿씠???대윴 ?대뜑 |
+| 鍮꾩슜 | ?뷀꽣?꾨씪?댁쫰 $$$$ | **??** |
+| 媛뺤젣??| ?뚯씠?꾨씪???섎뱶肄붾뵫 | ?섎꽕???섎뱶肄붾뵫 |
+
+> *"?섏떗 議??먯쭨由?援ъ“???듭젣瑜?????OS ?뚯씪?쒖뒪???꾩뿉 ?щ졇??"*
+
+---
+
+## ?꾪궎?띿쿂
+
+### ?먯쑉 猷⑦봽
 
 ```
-AI 출력 → [auto-accept] → _inbox → [fsnotify] → 뉴런 성장
-           ↓                                       ↓
-      Groq 분석                              GEMINI.md 재주입
-           ↓                                       ↓
-     뉴런 교정 ────────────────→ AI 행동 변화
-```
+AI 異쒕젰 ??[auto-accept] ??_inbox ??[fsnotify] ???대윴 ?깆옣
+           ??                                      ??      Groq 遺꾩꽍                              洹쒖튃 ?ъ＜??           ??                                      ??     ?대윴 援먯젙 ??????????????????AI ?됰룞 蹂??```
 
-> **용어**: auto-accept = AI 출력을 자동 승인하는 CDP 스크립트 | fsnotify = brain_v4 폴더 변경을 실시간 감지하는 Go 모듈 | Groq 분석 = corrections.jsonl을 읽고 새 뉴런 경로를 추론하는 LLM API 호출
-
-### 실행 스택
-
-전체 시스템은 `run-auto-accept.bat` 하나로 시작된다.
+### ?ㅽ뻾 ?ㅽ깮
 
 ```
-run-auto-accept.bat
-├── Antigravity (CDP 포트 9000)    ← AI 코딩 에디터 (Google DeepMind)
-├── auto-accept.mjs                ← CDP 자동 승인 + Groq 배치 분석
-├── neuronfs --watch               ← NAS brain_v4 감시 + 뉴런 동기화
-└── neuronfs --api                 ← 대시보드 + REST API (포트 9090)
+neuronfs --supervisor        ???⑥씪 諛붿씠?덈━媛 ?꾩껜 ?꾨줈?몄뒪瑜?愿由??쒋?? auto-accept.mjs          ??CDP ?먮룞 ?뱀씤 + 援먯젙 媛먯?
+?쒋?? bot-heartbeat.mjs        ??二쇨린???먯씠?꾪듃 釉뚮━???쒋?? bot-bridge.mjs           ??硫???먯씠?꾪듃 硫붿떆吏 ?꾨떖
+?쒋?? neuronfs --watch         ???뚯씪 媛먯떆 + ?대윴 ?숆린???붴?? neuronfs --api           ????쒕낫??+ REST API (?ы듃 9090)
 ```
 
-| 모듈 | 기능 | 트리거 |
-|------|------|--------|
-| auto-accept | AI 출력 자동 승인 + 뉴런 교정 감지 | CDP WebSocket |
-| fsnotify | 파일 변경 → 뉴런 즉시 생성 | FS 이벤트 |
-| 하트비트 | 유휴 3분 → TODO 강제 주입 | 180s 간격 |
-| 유휴 엔진 | 유휴 5분 → Groq 자동 진화 → Git 스냅샷 | 300s 타임아웃 |
-| 와치독 v2 | neuronfs + bridge + harness 건강 감시 | 30s 루프 |
-
-## 지원 에디터
-
-NeuronFS는 **에디터 중립**이다. `--emit` 플래그로 어떤 AI 코딩 도구든 규칙 파일을 생성한다.
+### 吏???먮뵒??
+?섎굹???? ?대뼡 ?먮뵒?곕뱺. `--emit`???대뼡 AI 肄붾뵫 ?꾧뎄?먮뱺 洹쒖튃 ?뚯씪???앹꽦?쒕떎.
 
 ```bash
-neuronfs <brain_path> --emit gemini     # → GEMINI.md (기본값)
-neuronfs <brain_path> --emit cursor     # → .cursorrules
-neuronfs <brain_path> --emit claude     # → CLAUDE.md
-neuronfs <brain_path> --emit copilot    # → .github/copilot-instructions.md
-neuronfs <brain_path> --emit generic    # → .neuronrc
-neuronfs <brain_path> --emit all        # → 모든 포맷 동시 출력
+neuronfs <brain_path> --emit gemini     # ??GEMINI.md
+neuronfs <brain_path> --emit cursor     # ??.cursorrules
+neuronfs <brain_path> --emit claude     # ??CLAUDE.md
+neuronfs <brain_path> --emit copilot    # ??.github/copilot-instructions.md
+neuronfs <brain_path> --emit all        # ??紐⑤뱺 ?щ㎎ ?숈떆 異쒕젰
 ```
 
-| 에디터 | 출력 파일 | 상태 |
-|--------|----------|------|
-| Google Gemini (Antigravity) | `GEMINI.md` | ✅ 기본 |
-| Cursor | `.cursorrules` | ✅ 지원 |
-| Claude Code | `CLAUDE.md` | ✅ 지원 |
-| GitHub Copilot | `.github/copilot-instructions.md` | ✅ 지원 |
-| 기타 에디터 | `.neuronrc` | ✅ 범용 |
-
-> 하나의 뇌, 어떤 에디터든. 같은 278개 뉴런, 다른 출력 파일.
-
----
-
-## CLI 레퍼런스
+### CLI ?덊띁?곗뒪
 
 ```bash
-neuronfs <brain_path>               # 진단 (스캔 + GEMINI.md 생성)
-neuronfs <brain_path> --api         # 대시보드 + REST API (포트 9090)
-neuronfs <brain_path> --mcp         # MCP 서버 (stdio, AI 에디터 연동)
-neuronfs <brain_path> --watch       # 파일 감시 + 자동 동기화
-neuronfs <brain_path> --evolve      # Groq 자율 진화
-neuronfs <brain_path> --snapshot    # Git 스냅샷
-neuronfs <brain_path> --grow <path> # 뉴런 생성
-neuronfs <brain_path> --fire <path> # 카운터 증가
-neuronfs <brain_path> --decay       # 30일 미발화 → 수면 처리
-```
-
-### REST API
-
-| 메서드 | 경로 | 기능 |
-|--------|------|------|
-| `GET` | `/` | 대시보드 HTML |
-| `GET` | `/api/state` | brain_state.json |
-| `GET` | `/api/brain` | 전체 뇌 상태 (대시보드용) |
-| `GET` | `/api/read?region=cortex` | 영역 규칙 온디맨드 적재 (RAG, 자동 fire) |
-| `POST` | `/api/grow` | 뉴런 생성 `{path}` |
-| `POST` | `/api/fire` | 카운터 증가 `{path}` |
-| `POST` | `/api/signal` | 도파민/봄 신호 `{path, type}` |
-| `POST` | `/api/decay` | 수면 처리 `{days}` |
-| `POST` | `/api/evolve` | Groq 자율 진화 `{dry_run}` |
+neuronfs <brain_path>               # 吏꾨떒 ?ㅼ틪
+neuronfs <brain_path> --api         # ??쒕낫??(?ы듃 9090)
+neuronfs <brain_path> --mcp         # MCP ?쒕쾭 (stdio)
+neuronfs <brain_path> --watch       # ?뚯씪 媛먯떆 + ?먮룞 ?숆린??neuronfs <brain_path> --supervisor  # ?꾨줈?몄뒪 留ㅻ땲? (?ъ씤??
+neuronfs <brain_path> --grow <path> # ?대윴 ?앹꽦
+neuronfs <brain_path> --fire <path> # 移댁슫??利앷?
+neuronfs <brain_path> --decay       # 30??誘몃컻?????섎㈃ 泥섎━
+neuronfs <brain_path> --snapshot    # Git ?ㅻ깄??```
 
 ---
 
-## 한계
+## ?쒓퀎
 
-토론하지 않는다. 사실을 말한다.
+?좊줎?섏? ?딅뒗?? ?ъ떎留?留먰븳??
 
-### 강제력이 없다
+**媛뺤젣?μ씠 ?녿떎.** AI媛 GEMINI.md瑜?臾댁떆?섎㈃ 留됱쓣 諛⑸쾿???녿떎. ?꾨컲? ?섎꽕?ㅺ? ?ы썑???〓뒗?? ?닿굔 洹쇰낯???쒓퀎??
 
-AI가 GEMINI.md를 안 읽으면 무력하다. OS 레벨의 enforcement가 없다. 위반은 harness로 사후에 잡는다. 이건 근본적 한계다.
+**?쒕㎤??寃?됱씠 ?녿떎.** "鍮꾩듂??洹쒖튃 李얘린"媛 ???쒕떎. 寃쎈줈瑜??뺥솗???뚯븘???쒕떎. 500 ?대윴 ?댁긽?대㈃ ?섎룞 ?먯깋??鍮꾩떎?⑹쟻?대떎. ???곸뿭? 踰≫꽣 DB媛 NeuronFS瑜??닿릿??
 
-### 시맨틱 검색이 없다
+**?먯옉洹??섑샊.** GEMINI.md瑜??쒖뒪???꾨＼?꾪듃濡?癒뱀씠硫?AI???뱀뿰???곕Ⅸ?? 洹멸굔 NeuronFS??怨듭씠 ?꾨땲???쒖뒪???꾨＼?꾪듃??怨듭씠?? 吏꾩쭨 寃利?= ?덉쓣 ??vs ?놁쓣 ???꾨컲??鍮꾧탳. ?꾩쭅 ???덈떎.
 
-"비슷한 규칙 찾기"가 안 된다. 경로를 정확히 알아야 한다. 500개가 넘으면 수동 탐색이 불가능해질 수 있다. 이건 벡터 DB가 NeuronFS보다 잘하는 영역이다. 현재 Jaccard 유사도로 부분 대응하지만, 코사인 유사도와는 다르다.
+**?몃? ?ъ슜?먭? ?녿떎.** ?대? ?꾧렇?몃뱶留??덈떎. ?ㅻⅨ ?섍꼍?먯꽌??寃利??놁쓬.
 
-### 자작극 의혹
-
-Groq에 GEMINI.md를 system prompt로 넣으면 당연히 따른다. **이건 NeuronFS의 공로가 아니라 system prompt의 공로다.** 진짜 검증은 "GEMINI.md 있을 때 vs 없을 때 위반율 비교"다. 아직 안 했다.
-
-### 외부 사용자가 없다
-
-내부 도그푸드만 했다. 다른 환경, 다른 AI, 다른 워크플로에서의 검증이 없다.
-
-> 이건 정직이 아니라 전략이다. 한계를 숨기면 HN에서 3분 안에 깨진다.
-> 먼저 인정하면 신뢰가 된다.
+> ?쒓퀎瑜?癒쇱? ?몄젙?섎㈃ ?좊ː媛 ?쒕떎. ?④린硫?HN?먯꽌 3遺??덉뿉 源⑥쭊??
 
 ---
 
-## 빠른 시작
+## 鍮좊Ⅸ ?쒖옉
 
 ```bash
 git clone https://github.com/vegavery/NeuronFS.git
 cd NeuronFS/runtime && go build -ldflags="-s -w" -trimpath -buildvcs=false -o ../neuronfs .
 
-./neuronfs ./brain_v4           # 진단 (스캔 + GEMINI.md 생성)
-./neuronfs ./brain_v4 --api     # 대시보드 (localhost:9090)
-./neuronfs ./brain_v4 --mcp     # MCP 서버 (stdio)
+./neuronfs ./brain_v4           # 吏꾨떒 ?ㅼ틪
+./neuronfs ./brain_v4 --api     # ??쒕낫??(localhost:9090)
+./neuronfs ./brain_v4 --mcp     # MCP ?쒕쾭 (stdio)
 ```
-
-### Windows 원클릭 실행
-
-```
-auto-accept\run-auto-accept.bat
-```
-
-Antigravity + auto-accept + NeuronFS watch + 대시보드가 한 번에 뜬다.
 
 ---
 
-## 2026 트렌드와 NeuronFS의 위치
+## ?댁빞湲?
+> *"紐낆뼵??紐⑥씠硫??뚭퀬. 洹멸쾶 臾몃㎘."*
 
-커뮤니티를 조사했다. 2026년 AI 메모리 시장의 흐름이 보인다.
+?쒓뎅??PD媛 留뚮뱾?덈떎. ?곸긽??蹂몄뾽?닿퀬 肄붾뵫? ?꾧뎄??
 
-| 트렌드 | NeuronFS 해당 여부 |
-|--------|-------------------|
-| governance as code | ✅ 폴더 구조가 곧 거버넌스 |
-| git as memory | ✅ brain_v4 자체가 git repo |
-| trust by design | ✅ bomb.neuron, harness 사후 검증 |
-| multi agent 시스템 | ✅ 3-Agent (ISTJ × ENTP × ENFP) |
-| 망각이 기능 (TTL 퇴거) | ✅ *.dormant 자동 격리 |
-| hybrid memory | ⚠️ 부분. 시맨틱 레이어 없음 |
-| observability 추적 | ✅ 대시보드 + API + 와치독 |
-| SQLite middle ground | ❌ 해당 없음. 파일시스템만 씀 |
+AI媛 "console.log ?곗? 留?瑜?9踰??닿꼈?? 10踰덉㎏??`mkdir brain/cortex/frontend/coding/獵갷onsole_log`瑜?爾ㅻ떎. ?대뜑 ?대쫫??洹쒖튃???먮떎. ?뚯씪 ?대쫫??移댁슫?곌? ?먮떎. 吏湲?17?대떎. AI媛 ???댁긽 ???대떎.
 
-경쟁자들의 실패 패턴도 뉴런으로 기록했다:
-- `community > 반면교사 > 운영복잡성 인프라과다` — Letta, Cognee
-- `community > 반면교사 > 벤치는좋고 프로덕션깨짐` — Mem0 초기 버전
-- `community > 반면교사 > dirty data 모순정보` — Zep
-- `community > 반면교사 > context stuffing 성능저하` — .cursorrules 5000줄
+"怨꾪쉷 癒쇱?, ?ㅽ뻾 ?섏쨷." 36踰?援먯젙?뱁뻽?? 媛???믪? 移댁슫?? 36踰덉쓽 援먯젙???대윴 ?섎굹???뺤텞?먮떎.
 
-남의 실패를 뉴런으로 만든다. 이것도 학습이다.
+326媛??대윴. ?명봽???쒕줈. ?섏〈???쒕줈. ?뚯씪?쒖뒪???먯껜媛 ?꾨젅?꾩썙?щ떎.
+
+> *"?꾨＼?꾪듃濡?援ш구?섏? 留? ?뚯씠?꾨씪?몄쓣 ?ㅺ퀎??"*
+>
+> *"媛쒖씤??湲곗뾽???닿린???쒕?. 怨듭쭨濡??쇰떎."*
+
+**狩??숈쓽?섎㈃ Star. [?꾨땲硫?Issue.](../../issues)**
 
 ---
 
-## 이야기 🇰🇷
+<p align="center">
+  <sub>MIT License 쨌 Copyright (c) 2026 諛뺤젙洹?(PD) ??VEGAVERY RUN짰</sub><br/>
+  <sub><a href="MANIFESTO.md">?뱶 ?꾩껜 留ㅻ땲?섏뒪??/a> 쨌 <a href="https://instagram.com/rubises">@rubises</a></sub>
+</p>
 
-한국의 PD가 만들었다. 영상이 본업이고 코딩은 도구다.
-
-AI가 "console.log 쓰지 마"를 9번 어겼다. 10번째에 `mkdir brain_v4/cortex/frontend/coding/禁console_log`를 쳤다. 폴더 이름이 규칙이 됐다. 파일 이름이 카운터가 됐다. 그게 17번까지 올라갔다. AI가 더 이상 console.log를 안 쓴다.
-
-"계획 먼저, 실행 나중." 이 규칙은 36번 교정당했다. 가장 높은 카운터를 가진 뉴런이다. AI는 매번 바로 코드부터 짜려 했다. 36번의 교정이 뉴런 하나에 압축됐다.
-
-과장인가? `cortex/_rules.md`를 보라. 실측이다.
-
-278개 뉴런이 있다. 3개 AI가 같은 뇌를 공유한다. ISTJ는 빌드하고, ENTP는 "다른 방법은?"을 묻고, ENFP는 "처음 보는 사람이 뭘 느끼지?"를 묻는다. 셋 다 같은 폴더를 읽지만 다른 결론에 도달한다.
-
-인프라 비용은 ₩0이다.
-
-**⭐ 동의하면 Star. [아니면 Issue.](https://github.com/vegavery/NeuronFS/issues)**
-
----
-
-MIT License · Copyright (c) 2026 박정근 (PD) — VEGAVERY RUN®

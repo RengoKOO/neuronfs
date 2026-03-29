@@ -314,7 +314,7 @@ AI violated "don't use console.log" nine times. On the tenth: `mkdir brain/corte
 
 "Plan first, execute second." Corrected 36 times. The highest counter. 36 corrections compressed into one neuron.
 
-262 neurons. Zero infrastructure. Zero dependencies. The filesystem itself is the framework.
+326 neurons. Zero infrastructure. Zero dependencies. The filesystem itself is the framework.
 
 > *"Don't beg with prompts. Design the pipeline."*
 >

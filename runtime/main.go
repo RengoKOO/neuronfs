@@ -559,7 +559,7 @@ func scanBrain(root string) Brain {
 				// Polarity: -1.0 (pure inhibition) to +1.0 (pure excitation)
 				neuron.Polarity = float64(neuron.Counter+neuron.Dopamine-neuron.Contra) / float64(totalSignals)
 			} else {
-				neuron.Polarity = 0.5 // neutral
+				neuron.Polarity = 0.0 // neutral — no signals
 			}
 
 			region.Neurons = append(region.Neurons, neuron)

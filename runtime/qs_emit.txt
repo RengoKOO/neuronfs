@@ -1,6 +1,0 @@
-﻿[EMIT] ??Claude ??C:\Users\BASEME~1\AppData\Local\Temp\neuronfs_emit_test\CLAUDE.md
-[EMIT] ??Copilot ??C:\Users\BASEME~1\AppData\Local\Temp\neuronfs_emit_test\.github\copilot-instructions.md
-[EMIT] ??Cursor ??C:\Users\BASEME~1\AppData\Local\Temp\neuronfs_emit_test\.cursorrules
-[EMIT] ??Gemini ??C:\Users\BASEME~1\AppData\Local\Temp\neuronfs_emit_test\.gemini\GEMINI.md
-[EMIT] ??Generic ??C:\Users\BASEME~1\AppData\Local\Temp\neuronfs_emit_test\.neuronrc
-[SYNC] ?삼툘  emit complete: 5 target(s) + _index.md + 7x _rules.md (305 neurons, activation: 474)

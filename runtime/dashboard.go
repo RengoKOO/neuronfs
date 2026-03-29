@@ -282,6 +282,12 @@ func startDashboard(brainRoot string, port int) {
 			return
 		}
 
+		// Brainstem is immutable — no bomb allowed
+		if req.Region == "brainstem" {
+			http.Error(w, "brainstem neurons are immutable — bomb denied", 403)
+			return
+		}
+
 		bombDir := filepath.Join(brainRoot, req.Region, req.Name)
 		os.MkdirAll(bombDir, 0755)
 		bombFile := filepath.Join(bombDir, "bomb.neuron")
@@ -428,6 +434,11 @@ func startDashboard(brainRoot string, port int) {
 		}
 		path := strings.ReplaceAll(req.Path, "\\", "/")
 		path = strings.Trim(path, "/")
+		// Brainstem is immutable — no contra allowed
+		if strings.HasPrefix(path, "brainstem") {
+			http.Error(w, "brainstem neurons are immutable — contra denied", 403)
+			return
+		}
 		// Find current contra and increment
 		neuronDir := filepath.Join(brainRoot, strings.ReplaceAll(path, "/", string(filepath.Separator)))
 		if _, err := os.Stat(neuronDir); os.IsNotExist(err) {
@@ -457,5 +468,5 @@ func startDashboard(brainRoot string, port int) {
 		w.Write([]byte(fmt.Sprintf("OK — contra %d: %s", newContra, path)))
 	}))
 
-	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
+	http.ListenAndServe(fmt.Sprintf("127.0.0.1:%d", port), mux)
 }

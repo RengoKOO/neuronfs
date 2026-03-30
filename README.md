@@ -25,7 +25,7 @@ Folders are neurons. Paths are sentences. Counters are synaptic weights. The fil
 | 1000-line prompt | **One folder** |
 | "Don't forget this rule" | `mkdir 禁fallback` |
 | Vector DB $70/mo | **$0** |
-| AI can ignore it | `chmod 444` — **OS blocks it** |
+| AI can ignore it | Harness **detects violations** → correction loop |
 | Write rules in files | **The folder name IS the instruction. 0KB.** |
 | Switch models = reset | `cp -r brain/` — **1 second** |
 
@@ -157,7 +157,7 @@ Polarity   = (Counter + Dopamine - Contra) / Total    # -1.0 to +1.0
 
 | Region | Biological Origin | NeuronFS Implementation | Live Neuron Examples |
 |--------|------------------|------------------------|---------------------|
-| **brainstem** (P0) | Brainstem — survival reflexes | Immutable rules. `chmod 444`. AI cannot touch | `禁영어사고` (13×), `禁SSOT중복` (2×) |
+| **brainstem** (P0) | Brainstem — survival reflexes | Immutable rules. Harness detects and rejects modification attempts | `禁영어사고` (13×), `禁SSOT중복` (2×) |
 | **limbic** (P1) | Limbic system — emotions, hormones | **Emotion filter**. Detects PD's tone → behavioral bias | `dopamine` (6), `adrenaline` (5) |
 | **hippocampus** (P2) | Hippocampus — memory formation | **Record/recall**. Session logs, error patterns, context restore | `KI auto-reference` (6), `error patterns` (6) |
 | **sensors** (P3) | Sensory organs — environment | **Environment constraints**. OS, NAS, brand, tools | `禁NAS직접쓰기`, `OS Windows 11` |
@@ -636,6 +636,30 @@ This is why NeuronFS exists. Don't make the model smarter. Make the pipeline str
 | Windows-first | Currently running on Windows 11 | Go binary cross-compiles to macOS/Linux instantly |
 
 > Admit limitations first and they become trust. Hide them and HN tears you apart in 3 minutes.
+
+---
+
+## FAQ — Honest Answers to Hard Questions
+
+**Q: "Isn't this just putting text into a system prompt?"**
+
+Yes. `neuronfs --emit` compiles the folder tree into text. AI reads text. But the point is **who manages that text and how.** Editing a 1000-line prompt directly vs. running `mkdir` to add a rule produce the same output — but the maintenance cost is different. Git manages text files. NeuronFS manages system prompts.
+
+**Q: "The Palantir comparison is a stretch."**
+
+Palantir's ontology and NeuronFS solve different problems at different scales. The comparison is about **principle**, not implementation — "Don't solve everything with one giant model. Break decisions into small gates and pipeline them." That principle is the same. NeuronFS isn't claiming to be Palantir — it's saying the same principle works at $0 for individuals.
+
+**Q: "PASS: 15 is self-validation, not proof."**
+
+Fair. It's a self-built harness testing 15 items: brainstem immutability, axon integrity, dormant cleanup, etc. No external benchmarks exist yet. But this harness **runs daily like CI** — zero regressions in 3 months of production is minimal proof. Stronger validation will come from the community.
+
+**Q: "Is MBTI for agents scientific?"**
+
+The debate about MBTI's scientific validity is irrelevant here. The point is **"split by temperament, not role."** "You are QA" → stops at out-of-scope work. "You are conservative and principled" → approaches any work that way. MBTI is just a framework to express temperament. Big Five or any other model works too.
+
+**Q: "Are 326 neurons a lot?"**
+
+For a personal project, yes. For enterprise, no. The point isn't the number — it's **manageability.** Finding line 237 in a 1000-line prompt vs. finding `brain/cortex/frontend/react/禁console_log/` — which is easier?
 
 ---
 

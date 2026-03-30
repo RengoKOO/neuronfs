@@ -598,6 +598,32 @@ neuronfs <brain_path> --snapshot    # Git snapshot
 
 ---
 
+## People Ask: "When AI Gets Better, You Can Add More Neurons, Right?"
+
+> **We think in reverse.**
+
+People say: "When 1M-token context comes, we can put a whole book in the system prompt." More rules, longer explanations, bigger brains.
+
+**Is that really the right direction?**
+
+"How much can you fit at once" is the wrong question. Small, certain gates composed into a pipeline approach 100% control.
+
+The person who built NeuronFS can't write code. A 40-year-old Korean man who met the vibe coding era. His philosophy on AI:
+
+| Phase | Purpose | AI Dependency |
+|-------|---------|--------------|
+| **① Architecture** | Use top models to design structure | High (Opus, Gemini) |
+| **② Normalization** | Structure hardens → cheaper models achieve same result | Medium (Groq, LLaMA) |
+| **③ Autonomous** | Structure complete → runs without AI | **Converges to 0** |
+
+> *"High-end models build the structure. In the final chapter, the goal is to normalize away AI entirely — or use it at transistor-level minimum."*
+
+**When someone asks "can you add more?", we ask the reverse: "As architecture matures, can't a weaker AI do the same job?"**
+
+This is why NeuronFS exists. Don't make the model smarter. Make the pipeline stricter. As structure hardens, AI dependency converges to zero.
+
+---
+
 ## Limitations & Honest Status
 
 > **This is not a perfect system. But it works in production every day.**

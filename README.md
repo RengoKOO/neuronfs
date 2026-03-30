@@ -31,6 +31,21 @@ Folders are neurons. Paths are sentences. Counters are synaptic weights. The fil
 
 > *"Don't beg with prompts. Design the pipeline."*
 
+### How This Differs from .cursorrules — Self-Evolution
+
+`.cursorrules` and `CLAUDE.md` are **static files you edit by hand.** NeuronFS is different:
+
+```
+AI makes mistake → correction → corrections.jsonl → mkdir (neuron auto-created)
+AI does well     → praise     → dopamine.neuron (reward signal)
+Same mistake 3×  → bomb.neuron (hard stop on that output)
+30 days unused   → *.dormant (auto-sleep)
+     ↓
+Automatically reflected in next session's system prompt
+```
+
+**This is the feedback loop.** You don't open a file and edit it. The brain grows on its own. Existing tools don't have this. `.cursorrules` is static text. NeuronFS is a **living context management system.**
+
 ### Contents
 
 | | Section | What You'll Learn |

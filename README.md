@@ -661,6 +661,18 @@ The debate about MBTI's scientific validity is irrelevant here. The point is **"
 
 For a personal project, yes. For enterprise, no. The point isn't the number — it's **manageability.** Finding line 237 in a 1000-line prompt vs. finding `brain/cortex/frontend/react/禁console_log/` — which is easier?
 
+**Q: "Won't tokens explode when neurons reach 1000, 2000?"**
+
+No. Three defenses: ① **3-Tier Activation** — only the relevant region gets a deep read; others get summaries. ② **Dormant auto-cleanup** — 30-day unfired neurons move to `*.dormant`, excluded from compilation. ③ **Periodic consolidation** — duplicate/similar neurons merge into parent neurons. Active token quota stays **bounded** regardless of neuron count.
+
+**Q: "How do you express complex conditional logic (if A then B, unless C) with just folders?"**
+
+You don't. Each region's `_rules.md` handles conditional branching as text. Folders = neurons (concepts), `_rules.md` = detailed rules for that region. The 3-Tier system loads only the relevant `_rules.md` on demand. Complex conditionals go in `_rules.md`; folder names stay as short keywords. That's the design principle.
+
+**Q: "Isn't the CDP auto-accept brittle against browser updates?"**
+
+Yes. CDP-based integration is brittle. **This is specific to the creator's setup.** If you use Gemini CLI, Claude Code, Cursor, or any CLI-based tool, this problem doesn't exist — GEMINI.md auto-loads. CDP is a choice for "fully autonomous operation," not a requirement of NeuronFS.
+
 ---
 
 ## Quick Start

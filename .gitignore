@@ -6,8 +6,6 @@
 
 # Node.js
 runtime/node_modules/
-_tmp_aa_v1/
-_tmp_aa_v2/
 
 # Debug/temp files
 runtime/debug_out.txt
@@ -20,6 +18,8 @@ runtime/scrape_bot1.cjs
 runtime/wargame.mjs
 runtime/multi-agent.mjs
 _tmp_scrape.mjs
+_tmp_aa_v1/
+_tmp_aa_v2/
 
 # Logs
 *.log
@@ -32,13 +32,10 @@ bot1_response.txt
 bot1_scrape.json
 bot1_ws.txt
 harness_r*.txt
-watchdog_out.txt
-watchdog_err.txt
 aa_log.txt
 aa_err.txt
 bridge_log.txt
 bridge_err.txt
-wargame_cdp_result.txt
 
 # System
 .DS_Store
@@ -73,43 +70,7 @@ _transcripts/
 runtime/qs_*.txt
 runtime/coverage_*.txt
 test_result.txt
+heartbeat_log.txt
 
-# === Internal operational files ===
-
-# Proposals/evidence
+# Proposals (internal)
 _proposals/
-evidence/
-
-# Legacy scripts
-generate_brain_v2.ps1
-generate_brain_v3.ps1
-generate_brain_v4.ps1
-generate_deep_brain.ps1
-migrate_to_korean.ps1
-harness.ps1
-watchdog.ps1
-merge.ps1
-start_brain.bat
-
-# CDP exploration
-cdp_explore*.mjs
-cdp_pages.json
-cdp_result.json
-
-# Test/temp JSON
-groq_test_result.json
-pd_chain.json
-test_groq_batch.mjs
-
-# Legacy docs (consolidated into README/MANIFESTO)
-COGNITIVE_ARCHITECTURE.md
-OPERATIONS.md
-PD_NARRATIVE.md
-MANIFESTO_EN.md
-COMMIT_MESSAGES_IN_ENGLISH.neuron
-
-# VSCode extension (WIP)
-vscode-extension/
-
-# MCP legacy (migrated to runtime)
-mcp/

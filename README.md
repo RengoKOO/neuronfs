@@ -107,6 +107,17 @@ touch brain/cortex/testing/no_console_log/1.neuron
 
 That's a neuron. Path = rule. Filename = counter. Zero infrastructure.
 
+**Path length limits force granular decomposition:**
+
+OS has path length limits (Windows: 260 chars). As paths deepen like `brain/cortex/frontend/react/hooks/禁console_log/`, names must stay short. This **naturally forces hierarchical decomposition:**
+
+```
+✗ Flat:         brain/cortex/frontend_react_hooks_never_use_console_log_always_check/  (long, meaning blob)
+✓ Hierarchical: brain/cortex/frontend/react/hooks/禁console_log/  (short names, clear meaning)
+```
+
+Longer path → shorter names → deeper hierarchy → **transistor-gate decomposition, enforced by the OS itself.**
+
 <p align="center">
   <img src="docs/neuronfs_tree.png" alt="NeuronFS Folder Tree — Brain Architecture" width="720" />
 </p>
@@ -193,6 +204,30 @@ When the brain has 326 neurons and each name is a folder path, **every saved tok
 | **Brooks Subsumption** | Lower layers suppress higher ones | brainstem (P0) always beats prefrontal (P6). Conscience > Goals |
 | **Hebbian Learning** | "Neurons that fire together wire together" | Frequently corrected neurons gain higher counters, appear earlier in the compiled system prompt |
 | **Apoptosis** | Cell death — remove what's not needed | `bomb.neuron` = kill problematic neurons. `dormant/` = sleep unused ones |
+
+### 3-Tier Brain Activation — Only Wake What You Need
+
+> **Key: Don't read 328 neurons every time. Detect the task, deeply activate only the relevant brain region.**
+
+| Tier | What's Read | When | Tokens |
+|------|------------|------|--------|
+| **Tier 1: Always on** | brainstem + limbic | Every conversation start | ~200 |
+| **Tier 2: Summary** | All regions compressed (GEMINI.md) | Injected into system prompt | ~800 |
+| **Tier 3: Deep activation** | Specific region's full `_rules.md` | Task detected | ~2000 |
+
+```
+User: "Fix the CSS"
+  → Task detected: Design/UI
+  → Tier 3: read cortex/_rules.md (212 neurons)
+  → Other regions: Tier 2 summary only
+
+User: "Copy to NAS"
+  → Task detected: NAS/files
+  → Tier 3: read sensors/_rules.md (31 neurons — 禁NAS직접쓰기 etc.)
+  → Other regions: Tier 2 summary only
+```
+
+**Biological parallel:** When you solve a math problem, your prefrontal cortex activates strongly while visual cortex runs at minimum. A brain at 100% everywhere = wasted energy. For AI, tokens are energy.
 
 ### Axons — Cross-Region Wiring
 

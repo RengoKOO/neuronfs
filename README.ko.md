@@ -103,6 +103,17 @@ touch brain/cortex/testing/no_console_log/1.neuron
 
 이게 뉴런이다. 경로 = 규칙. 파일명 = 카운터. 인프라 제로.
 
+**경로 길이 제한이 세분화를 강제한다:**
+
+OS에는 경로 길이 제한이 있다 (Windows: 260자). `brain/cortex/frontend/react/hooks/禁console_log/`처럼 깊어지면 이름이 길어질 수 없다. 이 제한이 **자연스럽게 계층적 세분화를 강제한다:**
+
+```
+✗ 한 줄에 다 넣기:    brain/cortex/frontend_react_hooks_never_use_console_log_always_check/  (길다, 의미 뭉침)
+✓ 계층으로 분해하기:  brain/cortex/frontend/react/hooks/禁console_log/  (짧다, 의미 명확)
+```
+
+경로가 길어지면 → 이름을 짧게 → 대신 깊이를 늘린다 → **트랜지스터 게이트처럼 단계별로 세분화**된다. OS의 제약이 아키텍처의 강점이 된다.
+
 <p align="center">
   <img src="docs/neuronfs_tree.png" alt="NeuronFS 폴더 트리 — 뇌 아키텍처" width="720" />
 </p>
@@ -194,6 +205,30 @@ brainstem(P0) ←→ limbic(P1) ←→ hippocampus(P2) ←→ sensors(P3) ←→
 | **Brooks Subsumption** | 하위 계층이 상위를 억제 | brainstem(P0)이 prefrontal(P6)을 항상 이긴다. 양심 > 목표 |
 | **Hebbian Learning** | "함께 발화하는 뉴런은 함께 연결된다" | 자주 교정되는 뉴런은 카운터가 올라가고, 시스템 프롬프트에서 더 앞에 배치된다 |
 | **Apoptosis** | 세포 사멸 — 필요 없는 세포를 죽여서 건강 유지 | `bomb.neuron` = 문제 있는 뉴런 제거. dormant = 안 쓰는 뉴런 수면 |
+
+### 3-Tier 뇌 활성화 — 작업에 맞는 뇌만 깨운다
+
+> **핵심: 328개 뉴런을 매번 전부 읽지 않는다. 작업이 감지되면 해당 영역만 깊게 활성화한다.**
+
+| Tier | 뭘 읽나 | 언제 | 토큰 |
+|------|---------|------|------|
+| **Tier 1: 항상 활성** | brainstem + limbic | 매 대화 시작 | ~200 |
+| **Tier 2: 요약** | 전체 영역 압축 (GEMINI.md) | 시스템 프롬프트에 주입 | ~800 |
+| **Tier 3: 깊은 활성화** | 특정 영역의 `_rules.md` 전체 | 작업 감지 시 | ~2000 |
+
+```
+PD: "CSS 고쳐줘"
+  → 작업 감지: 디자인/UI
+  → Tier 3 활성화: cortex/_rules.md 전체 읽기 (212개 뉴런)
+  → 나머지 영역: Tier 2 요약만
+
+PD: "NAS에 복사해"
+  → 작업 감지: NAS/파일
+  → Tier 3 활성화: sensors/_rules.md (31개 뉴런 — 禁NAS직접쓰기 등)
+  → 나머지 영역: Tier 2 요약만
+```
+
+**생물학적 대응:** 사람이 수학 문제를 풀 때 전두엽이 강하게 활성화되고 시각 영역은 최소로 돌아가는 것과 같다. 전체 뇌가 항상 100%로 작동하면 에너지 낭비 — AI도 토큰이 에너지다.
 
 ### 축삭(Axon) — 영역 간 배선
 

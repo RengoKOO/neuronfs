@@ -1,4 +1,4 @@
-`하<p align="center">
+﻿`하<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -210,12 +210,12 @@ brainstem(P0) ←→ limbic(P1) ←→ hippocampus(P2) ←→ sensors(P3) ←→
 | `禁fallback` | ~3 | `NEVER_USE_FALLBACK_SOLUTIONS` | ~6 |
 | `禁SSOT중복` | ~4 | `NEVER_DUPLICATE_SINGLE_SOURCE_OF_TRUTH` | ~9 |
 | `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
-| `반드시_KI자동참조` | ~5 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
+| `必KI자동참조` | ~3 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
 
 **한자 접두사 (1글자 = 1규칙 타입):**
 - **禁** = 금지 — 절대 하지 마
 - **推** = 추천 — 가능하면 이렇게
-- **반드시** = 필수 — 무조건
+- **必** = 필수 — 무조건
 
 326개 뉴런이 시스템 프롬프트로 컴파일될 때, **절약되는 모든 토큰이 중요하다.** 한자는 미학이 아니라 압축이다. 같은 뇌를 영어로 쓰면 토큰이 2~3배 늘어난다.
 
@@ -489,7 +489,7 @@ Active: 24 | Dormant: 0 | Activation: 138
 - **토론말고 실행** [2회 교정]
 
 ## 🧠 cortex (P4 — 지식/기술)
-- agent ops: 반드시 **no pm solo work** [6회]
+- agent ops: 必 **no pm solo work** [6회]
 - backend/supabase: **RLS 항상켜기** [1회]
 ...
 (326 뉴런 → ~8KB 시스템 프롬프트)

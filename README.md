@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -209,12 +209,12 @@ Lower P **always** suppresses higher P. If brainstem has a bomb → limbic throu
 | `禁fallback` | ~3 | `NEVER_USE_FALLBACK_SOLUTIONS` | ~6 |
 | `禁SSOT중복` | ~4 | `NEVER_DUPLICATE_SINGLE_SOURCE_OF_TRUTH` | ~9 |
 | `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
-| `반드시_KI자동참조` | ~5 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
+| `必KI자동참조` | ~3 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
 
 **Hanja prefixes (1 character = 1 rule type):**
 - **禁** = Forbidden (금지) — hard ban
 - **推** = Recommended (추천) — soft preference  
-- **반드시** = Mandatory — absolute requirement
+- **必** = Mandatory — absolute requirement
 
 When the brain has 326 neurons and each name is a folder path, **every saved token matters.** Hanja isn't aesthetic — it's compression. The same brain in English would consume 2-3× more tokens in the system prompt.
 
@@ -532,7 +532,7 @@ Active: 24 | Dormant: 0 | Activation: 138
 Active: 212 | Dormant: 0 | Activation: 225
 
 - **agent ops** (0)
-  - 반드시 **no pm solo work** (6)
+  - 必 **no pm solo work** (6)
   - **share source context** (3)
 - **backend** (0)
   - **supabase** → **RLS 항상켜기** (1)
@@ -547,7 +547,7 @@ Active: 212 | Dormant: 0 | Activation: 225
 - **토론말고 실행** [2회 교정]
 
 ## 🧠 cortex (P4 — 지식/기술)
-- agent ops: 반드시 **no pm solo work** [6회]
+- agent ops: 必 **no pm solo work** [6회]
 - backend/supabase: **RLS 항상켜기** [1회]
 ...
 (326 neurons → ~8KB system prompt)

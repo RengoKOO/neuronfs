@@ -18,7 +18,7 @@
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a></p>
 
 # 🧠 NeuronFS
-### *A self-evolving AI brain made of folders. Zero infra. Zero dependencies.*
+### *A filesystem-native hierarchical rule memory and prompt compiler for AI agents.*
 
 ## [TL;DR] The Filesystem IS the Cortex
 
@@ -31,6 +31,57 @@ Switch models? `cp -r brain/`. Share across agents? NAS shared folder. Version c
 
 Not a rule manager. A self-evolving context layer with absolute physical governance that outlives every model it runs on.
 **326 neurons. Daily driver since January 2026. One person, one company, every AI task.**
+
+---
+
+*(Note: Thanks to the Reddit community for the sharp feedback. This is my very first open-source project. I originally framed this as a "Vector DB killer" which was marketing hype — its true, honest identity is a **filesystem-native hierarchical rule compiler**. I've pushed the philosophical architecture down and brought the actual execution up here.)*
+
+## ⚡ Quickstart & Implementation
+
+### 1. Build the Binary
+Zero external dependencies. Just Go.
+```bash
+git clone https://github.com/rhino-acoustic/NeuronFS.git
+cd NeuronFS
+go build -o neuronfs.exe ./runtime
+```
+
+### 2. Grow Neurons via OS Commands
+No databases. No API calls. A folder path is the rule.
+```bash
+# Rule 1: Brainstem (P0 - Absolute Law)
+mkdir -p brain_v4/brainstem/禁never_use_fallback
+
+# Rule 2: Cortex (P4 - Knowledge)
+mkdir -p brain_v4/cortex/frontend/react/hooks/必use_memos
+
+# Add a weight counter (Rule has fired 3 times)
+touch brain_v4/cortex/frontend/react/hooks/必use_memos/3.neuron
+```
+
+### 3. Compile the Brain (Static Mode)
+Compiles your deep folder tree into a priority-ordered system prompt artifact that you can feed into Claude, Gemini, or Cursor.
+```bash
+neuronfs ./brain_v4 --emit cursor  # Output: .cursorrules
+neuronfs ./brain_v4 --emit claude  # Output: CLAUDE.md
+neuronfs ./brain_v4 --emit all     # Generates all formats
+```
+*Your `brainstem` rules will always be placed at the very top, structurally suppressing lower layers.*
+
+### 4. Live MCP Server (Dynamic Mode)
+Connects to Claude Desktop so the AI can dynamically query your OS rules without rewriting the system prompt.
+Add this to your `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "neuronfs": {
+      "command": "/absolute/path/to/neuronfs.exe",
+      "args": ["/absolute/path/to/brain_v4", "--mcp"]
+    }
+  }
+}
+```
+
 ---
 
 **Unix said "Everything is a file." We say: Everything is folders.**

@@ -18,7 +18,7 @@
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 매니페스토</a></p>
 
 # 🧠 NeuronFS
-### *폴더로 만든 자가 진화하는 AI 뇌. 인프라 제로. 종속성 제로.*
+### *파일시스템 네이티브 계층형 규칙 메모리 및 에이전트 프롬프트 컴파일러*
 
 ## [TL;DR] 파일시스템 자체가 대뇌피질이다 (The Filesystem IS the Cortex)
 
@@ -31,6 +31,56 @@ NeuronFS는 다릅니다: **OS 파일시스템 자체가 뇌의 물리적 구조
 
 단순한 룰 매니저가 아닙니다. 어떤 AI가 접근하든 그 위에서 조직을 물리적으로 통제하는 자가 진화형 거버넌스 레이어입니다.
 **326 뉴런. 2026년 1월부터 매일 구동 중(Daily driver). 1인 기업의 모든 AI 업무를 통제하고 있습니다.**
+
+---
+
+*(알려드립니다: 레딧 유저들의 날카로운 검증 리뷰에 감사드립니다! 이것은 제 인생 첫 오픈소스 스레드입니다. 초기에 적혀있던 'Vector DB 킬러'라는 문구는 주목을 끌기 위한 마케팅 스핀이었음을 찌질하게(?) 인정합니다. 본 프로젝트의 진짜 정체성은 커뮤니티가 결론 내려준 **파일시스템 네이티브 계층형 규칙 메모리 컴파일러**입니다. 여러분의 피드백을 수용하여 철학적인 아키텍처 부분은 밑으로 빼고, 코드와 실행 방법(Quickstart)을 최상단으로 끌어올렸습니다.)*
+
+## ⚡ 빠른 시작 및 구현 방법 (Quickstart)
+
+### 1. 런타임 바로 빌드하기
+무거운 종속성 패키지가 아예 없습니다. Go 명령어 한 줄이면 끝납니다.
+```bash
+git clone https://github.com/rhino-acoustic/NeuronFS.git
+cd NeuronFS
+go build -o neuronfs.exe ./runtime
+```
+
+### 2. OS 경로로 뇌(Neuron) 생성하기
+별도의 DB 연동 없이 탐색기나 터미널에서 폴더를 생성하면 그 자체가 규칙(Rule)이 됩니다.
+```bash
+# P0 뇌간 (절대 불변의 원칙 - 최우선 순위로 가장 상단에 꽂힘)
+mkdir -p brain_v4/brainstem/禁파이썬_사용금지_절대원칙
+
+# P4 대뇌피질 (지식 및 로직)
+mkdir -p brain_v4/cortex/frontend/react/hooks/必항상_메모이제이션사용
+
+# 가중치 카운터 추가 (이 규칙을 3번 썼다는 물리적 증명)
+touch brain_v4/cortex/frontend/react/hooks/必항상_메모이제이션사용/3.neuron
+```
+
+### 3. 컴파일 테스트하기 (정적 모드)
+생성된 거대한 폴더 트리를 읽어드려, 우선순위가 완벽히 계산된 단 한 장의 최적화된 마크다운 프롬프트(System Prompt)로 찍어냅니다.
+```bash
+neuronfs ./brain_v4 --emit cursor  # 출력결과: .cursorrules
+neuronfs ./brain_v4 --emit claude  # 출력결과: CLAUDE.md
+neuronfs ./brain_v4 --emit all     # 모든 AI 포맷 동시 생성
+```
+
+### 4. 라이브 MCP 서버 결합 (동적 모드)
+Claude Desktop용 MCP 서버로 구동하면 컴파일 없이 실시간으로 폴더 구조 변경을 감지하고 AI 뇌를 동기화합니다.
+당신의 `claude_desktop_config.json` 파일에 추가:
+```json
+{
+  "mcpServers": {
+    "neuronfs": {
+      "command": "C:/절대경로/neuronfs.exe",
+      "args": ["C:/절대경로/brain_v4", "--mcp"]
+    }
+  }
+}
+```
+
 ---
 
 **Unix는 "Everything is a file"이라 했다. 우리는 말한다: Everything is folders.**

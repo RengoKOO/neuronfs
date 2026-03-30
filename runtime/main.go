@@ -92,8 +92,8 @@ type Neuron struct {
 
 // Emission thresholds
 const (
-	emitThreshold     = 5   // min counter to appear in region listings
-	spotlightDays     = 7   // days a new neuron gets spotlight regardless of counter
+	emitThreshold = 5 // min counter to appear in region listings
+	spotlightDays = 7 // days a new neuron gets spotlight regardless of counter
 )
 
 // ─── Region ───
@@ -551,7 +551,7 @@ func scanBrain(root string) Brain {
 				neuron.IsDormant = true
 			}
 
-				// Compute derived fields
+			// Compute derived fields
 			// Net weight: excitation - inhibition + reward
 			neuron.Intensity = neuron.Counter - neuron.Contra + neuron.Dopamine
 			totalSignals := neuron.Counter + neuron.Contra + neuron.Dopamine
@@ -603,7 +603,7 @@ func runSubsumption(brain Brain) SubsumptionResult {
 			result.BombSource = region.Name
 			result.BlockedRegions = append(result.BlockedRegions, region.Name+" [BOMB]")
 			blocked = true
-			
+
 			// Physical Hook Trigger (e.g., ring alarm or strict kill process)
 			// Triggered when a bomb is found in the geofenced context.
 			triggerPhysicalHook(region.Name)
@@ -978,6 +978,7 @@ func jaccardSimilarity(a, b []string) float64 {
 	}
 	return float64(intersection) / float64(union)
 }
+
 // growNeuron creates a new neuron folder with 1.neuron
 // If a similar neuron already exists (Jaccard similarity >= 0.6), fire that instead (consolidation)
 // Usage: neuronfs brain_v4 --grow cortex/frontend/coding/no_console_log
@@ -1345,10 +1346,10 @@ func logEpisode(brainRoot string, event string, detail string) {
 // DIRTY FLAG + BATCH INJECTION
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 var (
-	brainDirty   bool
-	brainDirtyMu sync.Mutex
+	brainDirty    bool
+	brainDirtyMu  sync.Mutex
 	lastMountHash string
-	triggerChan  = make(chan struct{}, 1)
+	triggerChan   = make(chan struct{}, 1)
 )
 
 // markBrainDirty signals that the brain state has changed and needs an event broadcast.
@@ -1356,7 +1357,7 @@ func markBrainDirty() {
 	brainDirtyMu.Lock()
 	brainDirty = true
 	brainDirtyMu.Unlock()
-	
+
 	// Non-blocking trigger
 	select {
 	case triggerChan <- struct{}{}:
@@ -1413,10 +1414,10 @@ func autoReinject(brainRoot string) {
 // inboxEntry represents a correction or insight from AI or auto-accept
 type inboxEntry struct {
 	Ts         string `json:"ts"`
-	Type       string `json:"type"`    // "correction" | "insight"
+	Type       string `json:"type"` // "correction" | "insight"
 	Text       string `json:"text"`
-	Source     string `json:"source"`  // "ai" | "auto-accept"
-	Path       string `json:"path"`    // optional: pre-computed neuron path
+	Source     string `json:"source"`      // "ai" | "auto-accept"
+	Path       string `json:"path"`        // optional: pre-computed neuron path
 	CounterAdd int    `json:"counter_add"` // optional: how much to add
 	Author     string `json:"author"`      // optional: explicit author mapping
 }
@@ -1696,10 +1697,10 @@ var (
 	idleEvolveRunning bool
 
 	// Heartbeat control
-	heartbeatEnabled   = true // 기본 ON
-	heartbeatInterval  = 10   // 초 (켜져 있을 때 즉각 반응)
-	heartbeatCooldown  = 3    // 분 (주입 후 쿨다운)
-	heartbeatMu        sync.Mutex
+	heartbeatEnabled  = true // 기본 ON
+	heartbeatInterval = 10   // 초 (켜져 있을 때 즉각 반응)
+	heartbeatCooldown = 3    // 분 (주입 후 쿨다운)
+	heartbeatMu       sync.Mutex
 )
 
 // touchActivity updates the system's last recorded activity timestamp.
@@ -2135,8 +2136,8 @@ func startAPI(brainRoot string, port int) {
 		result := runSubsumption(brain)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"status":  "ok",
-			"neurons": result.TotalNeurons,
+			"status":     "ok",
+			"neurons":    result.TotalNeurons,
 			"activation": result.TotalCounter,
 		})
 	}))
@@ -2351,21 +2352,21 @@ func startAPI(brainRoot string, port int) {
 		safeTopic := strings.ReplaceAll(req.Topic, " ", "_")
 		safeTopic = strings.ReplaceAll(safeTopic, "/", "_")
 		safeTopic = strings.ReplaceAll(safeTopic, "\\", "_")
-		
+
 		neuronPath := filepath.Join(brainRoot, "cortex", "community", req.Source, safeTopic)
 		os.MkdirAll(neuronPath, 0755)
-		
+
 		// 카운터 파일 생성/증가
 		files, _ := filepath.Glob(filepath.Join(neuronPath, "*.neuron"))
 		counter := len(files) + 1
 		counterFile := filepath.Join(neuronPath, fmt.Sprintf("%d.neuron", counter))
 		os.WriteFile(counterFile, []byte(req.Insight), 0644)
-		
+
 		fmt.Printf("[COMMUNITY] 📡 %s/%s → counter %d\n", req.Source, safeTopic, counter)
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"status": "ok",
-			"path":   fmt.Sprintf("cortex/community/%s/%s", req.Source, safeTopic),
+			"status":  "ok",
+			"path":    fmt.Sprintf("cortex/community/%s/%s", req.Source, safeTopic),
 			"counter": counter,
 		})
 	}))
@@ -2455,8 +2456,12 @@ func startAPI(brainRoot string, port int) {
 	fmt.Printf("  GET  /api/brain                   — Full brain state for dashboard\n")
 	fmt.Printf("  GET  /api/heartbeat               — Heartbeat status\n")
 	fmt.Printf("  POST /api/heartbeat {enabled,interval,cooldown} — Toggle heartbeat\n")
-	fmt.Printf("  💓 HEARTBEAT: %s (interval=%ds, cooldown=%dm)\n", func() string { if heartbeatEnabled { return "ON" }; return "OFF" }(), heartbeatInterval, heartbeatCooldown)
+	fmt.Printf("  💓 HEARTBEAT: %s (interval=%ds, cooldown=%dm)\n", func() string {
+		if heartbeatEnabled {
+			return "ON"
+		}
+		return "OFF"
+	}(), heartbeatInterval, heartbeatCooldown)
 	fmt.Printf("  🔄 IDLE ENGINE: auto evolve/snapshot/NAS every %dm idle\n", idleThresholdMinutes)
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 }
-

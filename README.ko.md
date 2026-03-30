@@ -1,4 +1,4 @@
-<p align="center">
+하<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -16,7 +16,9 @@
 
 # 🧠 NeuronFS
 
-**폴더가 뉴런이다. 경로가 문장이다. 카운터가 시냅스 가중치다.**
+**Unix는 "Everything is a file"이라 했다. 우리는 말한다: Everything is folders.**
+
+폴더가 뉴런이다. 경로가 문장이다. 카운터가 시냅스 가중치다. 파일시스템이 뇌다.
 
 > *"프롬프트로 구걸하지 마. 파이프라인을 설계해."*
 
@@ -123,7 +125,66 @@ touch brain/cortex/testing/no_console_log/1.neuron
 | -0.3 ~ +0.3 | 중립/갈등 | 합의 필요 |
 | -1.0 ~ -0.3 | 강한 억제 | 반대 기록됨, dormant 전환 |
 
-> *"파일은 없어. 그 폴더만 있으면 돼. 파일은 완전 변경이 가능해. 뉴런의 발화는 적의 흔적을 쫓이다."*
+> *"파일은 없어. 그 폴더만 있으면 돼."*
+
+### 뇌 구조를 베꼈다 — 은유가 아니라 구현
+
+> **핵심: 7개 뇌 영역은 이름만 빌린 게 아니다. 호르몬, 감정, 기억, 양심 — 생물학적 기능을 폴더로 구현했다.**
+
+| 뇌 영역 | 생물학적 원본 | NeuronFS 구현 | 실제 뉴런 예시 |
+|---------|-------------|--------------|---------------|
+| **brainstem** (P0) | 뇌간 — 생존 반사, 심장 박동 | 절대 불변 규칙. `chmod 444`. AI가 건드릴 수 없다 | `禁영어사고` (13회), `禁SSOT중복` (2회) |
+| **limbic** (P1) | 변연계 — 감정, 호르몬 | **감정 필터**. PD의 톤을 감지하여 행동 편향 | `도파민 보상` (6), `아드레날린 비상` (5) |
+| **hippocampus** (P2) | 해마 — 기억 형성 | **기록/기억**. 세션 로그, 에러 패턴, 이전 컨텍스트 복원 | `KI 자동참조` (6), `에러패턴` (6) |
+| **sensors** (P3) | 감각 기관 — 환경 인식 | **환경 제약**. OS, NAS, 브랜드, 도구 설정 | `禁NAS직접쓰기`, `OS Windows 11` |
+| **cortex** (P4) | 대뇌피질 — 지식, 기술 | **212개 뉴런**. 프론트엔드, 백엔드, 커뮤니티 지식 | `RLS 항상켜기`, `no pm solo work` (6) |
+| **ego** (P5) | 자아 — 성격, 표현 방식 | **톤/성향**. 한국어 사고, 간결 실행, 트랜지스터 분해 | `전문가 간결`, `결과물 먼저` |
+| **prefrontal** (P6) | 전두엽 — 계획, 목표 | **할 일, 프로젝트, 스프린트** | `GitHub 공개 준비`, `영상파이프라인 v17` |
+
+**호르몬 시스템 — 진짜 구현돼 있다:**
+
+- **도파민 (`dopamine.neuron`):** PD가 칭찬하면 생성. 해당 뉴런의 긍정 가중치 상승. 생물학: 보상 회로.
+- **아드레날린 (`adrenaline.neuron`):** PD가 "급해"라고 하면 limbic이 감지. 하위 P가 상위 P를 억제(Subsumption). 생물학: 투쟁-도피 반응.
+- **엔도르핀 (`endorphin.neuron`):** 장기 작업 완료 시 지속적 만족감 트래킹. 생물학: 지구력 보상.
+- **폭탄 (`bomb.neuron`):** 3회 반복 실수 시 생성. 해당 뉴런 하위 전체 비활성. 생물학: 세포 사멸(apoptosis).
+
+**Subsumption Cascade — Brooks의 포섭 아키텍처:**
+
+```
+brainstem(P0) ←→ limbic(P1) ←→ hippocampus(P2) ←→ sensors(P3) ←→ cortex(P4) ←→ ego(P5) ←→ prefrontal(P6)
+```
+
+낮은 P가 높은 P를 **항상** 억제한다. brainstem에 bomb이 있으면? limbic부터 prefrontal까지 전부 무시된다. Brooks의 로봇 포섭 아키텍처를 폴더 계층으로 구현 — 양심(brainstem)이 목표(prefrontal)보다 항상 우선한다.
+
+### 왜 한자와 한국어인가 — 토큰 효율
+
+> **핵심: 禁 (1글자) = "forbidden/never do" (17글자). 한자와 한국어는 폴더 이름에 3~5배 더 많은 의미를 압축한다.**
+
+| 뉴런 이름 | 토큰 (GPT-4) | 영어 동등 표현 | 토큰 |
+|-----------|-------------|---------------|------|
+| `禁fallback` | ~3 | `NEVER_USE_FALLBACK_SOLUTIONS` | ~6 |
+| `禁SSOT중복` | ~4 | `NEVER_DUPLICATE_SINGLE_SOURCE_OF_TRUTH` | ~9 |
+| `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
+| `반드시_KI자동참조` | ~5 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
+
+**한자 접두사 (1글자 = 1규칙 타입):**
+- **禁** = 금지 — 절대 하지 마
+- **推** = 추천 — 가능하면 이렇게
+- **반드시** = 필수 — 무조건
+
+326개 뉴런이 시스템 프롬프트로 컴파일될 때, **절약되는 모든 토큰이 중요하다.** 한자는 미학이 아니라 압축이다. 같은 뇌를 영어로 쓰면 토큰이 2~3배 늘어난다.
+
+### 설계 철학의 뿌리
+
+> **핵심: NeuronFS는 이론에서 나온 게 아니다. 검증된 소프트웨어 공학 원칙을 폴더 구조로 구현한 것이다.**
+
+| 원칙 | 원래 의미 | NeuronFS 적용 |
+|------|----------|--------------|
+| **Strangler Fig** | 레거시를 한 번에 버리지 말고, 점진적으로 감싸서 교체 | 프롬프트를 한 번에 버리지 않는다. 뉴런을 하나씩 만들면서 프롬프트의 역할이 줄어든다. 결국 뉴런이 프롬프트를 완전히 대체 |
+| **SSOT** | 진실의 원천은 하나뿐 | 폴더 트리가 **유일한 원천**. GEMINI.md는 컴파일된 출력일 뿐. 수정은 반드시 폴더에서 |
+| **Brooks Subsumption** | 하위 계층이 상위를 억제 | brainstem(P0)이 prefrontal(P6)을 항상 이긴다. 양심 > 목표 |
+| **Hebbian Learning** | "함께 발화하는 뉴런은 함께 연결된다" | 자주 교정되는 뉴런은 카운터가 올라가고, 시스템 프롬프트에서 더 앞에 배치된다 |
+| **Apoptosis** | 세포 사멸 — 필요 없는 세포를 죽여서 건강 유지 | `bomb.neuron` = 문제 있는 뉴런 제거. dormant = 안 쓰는 뉴런 수면 |
 
 ### 축삭(Axon) — 영역 간 배선
 

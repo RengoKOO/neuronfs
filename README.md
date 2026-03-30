@@ -16,7 +16,9 @@
 
 # 🧠 NeuronFS
 
-**Folders are neurons. Paths are sentences. Counters are synaptic weights.**
+**Unix said "Everything is a file." We say: Everything is folders.**
+
+Folders are neurons. Paths are sentences. Counters are synaptic weights. The filesystem is the brain.
 
 > *"Don't beg with prompts. Design the pipeline."*
 
@@ -127,7 +129,61 @@ Polarity   = (Counter + Dopamine - Contra) / Total    # -1.0 to +1.0
 | -0.3 ~ +0.3 | Neutral / contested | No consensus |
 | -1.0 ~ -0.3 | Strong inhibitory | Opposite registered, dormant candidate |
 
-> *"Forget files. Just folders. The file is completely separate — it's just a trace of the neuron firing."*
+> *"Forget files. Just folders."*
+
+### Mimicking the Biological Brain — Not Metaphor, Implementation
+
+> **Key: The 7 brain regions aren't just names borrowed from neuroscience. Hormones, emotions, memory, conscience — each is implemented as folders.**
+
+| Region | Biological Origin | NeuronFS Implementation | Live Neuron Examples |
+|--------|------------------|------------------------|---------------------|
+| **brainstem** (P0) | Brainstem — survival reflexes | Immutable rules. `chmod 444`. AI cannot touch | `禁영어사고` (13×), `禁SSOT중복` (2×) |
+| **limbic** (P1) | Limbic system — emotions, hormones | **Emotion filter**. Detects PD's tone → behavioral bias | `dopamine` (6), `adrenaline` (5) |
+| **hippocampus** (P2) | Hippocampus — memory formation | **Record/recall**. Session logs, error patterns, context restore | `KI auto-reference` (6), `error patterns` (6) |
+| **sensors** (P3) | Sensory organs — environment | **Environment constraints**. OS, NAS, brand, tools | `禁NAS직접쓰기`, `OS Windows 11` |
+| **cortex** (P4) | Cerebral cortex — knowledge | **212 neurons**. Frontend, backend, community knowledge | `RLS always on`, `no pm solo work` (6) |
+| **ego** (P5) | Self — personality, expression | **Tone/style**. Korean-native thinking, concise execution | `expert concise`, `results first` |
+| **prefrontal** (P6) | Prefrontal cortex — planning | **Goals, projects, sprints** | `GitHub public launch`, `video pipeline v17` |
+
+**Hormone system — actually implemented:**
+
+- **Dopamine (`dopamine.neuron`):** Created when PD praises. Positive weight boost. Biology: reward circuit.
+- **Adrenaline (`adrenaline.neuron`):** PD says "urgent" → limbic detects → lower P suppresses higher P. Biology: fight-or-flight.
+- **Bomb (`bomb.neuron`):** 3 repeated failures → created. Entire subtree deactivated. Biology: apoptosis (cell death).
+
+**Subsumption Cascade (Brooks Architecture):**
+
+Lower P **always** suppresses higher P. If brainstem has a bomb → limbic through prefrontal all ignored. Conscience (P0) always overrides goals (P6).
+
+### Why Hanja and Korean — Token Efficiency
+
+> **Key: 禁 (1 character) = "forbidden/never do" (17 characters). Korean and Hanja compress 3-5× more meaning per token into folder names.**
+
+| Neuron Name | Tokens (GPT-4) | English Equivalent | Tokens |
+|-------------|----------------|-------------------|--------|
+| `禁fallback` | ~3 | `NEVER_USE_FALLBACK_SOLUTIONS` | ~6 |
+| `禁SSOT중복` | ~4 | `NEVER_DUPLICATE_SINGLE_SOURCE_OF_TRUTH` | ~9 |
+| `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
+| `반드시_KI자동참조` | ~5 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
+
+**Hanja prefixes (1 character = 1 rule type):**
+- **禁** = Forbidden (금지) — hard ban
+- **推** = Recommended (추천) — soft preference  
+- **반드시** = Mandatory — absolute requirement
+
+When the brain has 326 neurons and each name is a folder path, **every saved token matters.** Hanja isn't aesthetic — it's compression. The same brain in English would consume 2-3× more tokens in the system prompt.
+
+### Design Philosophy Roots
+
+> **Key: NeuronFS didn't come from theory. It implemented proven software engineering principles as folder structures.**
+
+| Principle | Original Meaning | NeuronFS Application |
+|-----------|-----------------|---------------------|
+| **Strangler Fig** | Replace legacy gradually, don't rewrite | Don't delete prompts overnight. Create neurons one by one. Prompts shrink. Neurons eventually replace them completely |
+| **SSOT** | One source of truth | The folder tree is the **only source**. GEMINI.md is compiled output. Edits happen in folders only |
+| **Brooks Subsumption** | Lower layers suppress higher ones | brainstem (P0) always beats prefrontal (P6). Conscience > Goals |
+| **Hebbian Learning** | "Neurons that fire together wire together" | Frequently corrected neurons gain higher counters, appear earlier in the compiled system prompt |
+| **Apoptosis** | Cell death — remove what's not needed | `bomb.neuron` = kill problematic neurons. `dormant/` = sleep unused ones |
 
 ### Axons — Cross-Region Wiring
 

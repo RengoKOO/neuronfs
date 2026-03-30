@@ -236,6 +236,12 @@ NeuronFS is the same principle at zero cost:
 
 ## Architecture
 
+<p align="center">
+  <img src="docs/dashboard.png" alt="NeuronFS Dashboard — 3D Brain Visualization" width="800" />
+  <br/>
+  <sub>Live dashboard: 329 neurons across 7 regions. Each cluster = brain region. Real-time activation monitoring.</sub>
+</p>
+
 ### Autonomous Loop
 
 ```

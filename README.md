@@ -9,7 +9,7 @@
 <p align="center">
   <img src="docs/dashboard.png" alt="NeuronFS Dashboard — 3D Brain Visualization" width="800" />
   <br/>
-  <sub>Live dashboard: 329 neurons across 7 regions. Real-time activation monitoring.</sub>
+  <sub><strong>[Live Dashboard Metrics]</strong> ① 7-region neuron activation tracking ② Harness system defense logs ③ bomb.neuron threshold alerts ④ Inter-agent sync status</sub>
 </p>
 
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a></p>
@@ -219,6 +219,11 @@ Lower P **always** suppresses higher P. If brainstem has a bomb → limbic throu
 - **答 (Ans)** = Answer — reply in this specific tone/structure
 - **想 (Img)** = Imagine — creative/brainstorming mode
 - **索 (Src)** = Search — force external knowledge lookup
+- **改 (Mod)** = Modify — refactor or optimize existing code/text
+- **略 (Skip)** = Omit — no yapping, output results only
+- **參 (Ref)** = Reference — cross-link to other neurons/docs
+- **結 (End)** = Conclude — stop reasoning, give the final verdict
+- **警 (Alert)** = Alert — high-risk operation (e.g., delete DB)
 
 When the brain has 326 neurons and each name is a folder path, **every saved token matters.** Hanja isn't aesthetic — it's compression. The same brain in English would consume 2-3× more tokens in the system prompt.
 

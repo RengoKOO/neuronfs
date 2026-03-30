@@ -1,4 +1,4 @@
-`하<p align="center">
+<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -9,7 +9,7 @@
 <p align="center">
   <img src="docs/dashboard.png" alt="NeuronFS 대시보드 — 3D 뇌 시각화" width="800" />
   <br/>
-  <sub>라이브 대시보드: 329 뉴런, 7개 영역. 실시간 활성화 모니터링.</sub>
+  <sub><strong>[대시보드 실시간 관측 항목]</strong> ① 7개 뇌 영역별 뉴런 활성도 ② 하네스(Harness) 시스템 방어 내역 ③ bomb.neuron 등 임계치 차단 경고 ④ 에이전트 간 동기화 상태</sub>
 </p>
 
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 매니페스토</a></p>
@@ -220,6 +220,11 @@ brainstem(P0) ←→ limbic(P1) ←→ hippocampus(P2) ←→ sensors(P3) ←→
 - **答 (답)** = 답변 (Answer) — 이런 톤/구조로 대답해
 - **想 (상)** = 상상 (Imagine) — 창의적 접근, 아이디에이션
 - **索 (색)** = 검색 (Search) — 외부 DB/문서 필수 스캔
+- **改 (개)** = 개정 (Modify) — 기존 코드/문서 리팩터링 및 최적화
+- **略 (약)** = 생략 (Omit) — 부연 설명(Yapping) 빼고 결과만 뱉어라
+- **參 (참)** = 참조 (Reference) — 지정된 외부 규칙이나 타 뉴런 연결
+- **結 (결)** = 결론 (Conclude) — 장황한 추론을 끊고 요약 결론만
+- **警 (경)** = 경고 (Alert) — 파괴적 작업(DB/파일 삭제) 경계 태세
 
 326개 뉴런이 시스템 프롬프트로 컴파일될 때, **절약되는 모든 토큰이 중요하다.** 한자는 미학이 아니라 압축이다. 같은 뇌를 영어로 쓰면 토큰이 2~3배 늘어난다.
 

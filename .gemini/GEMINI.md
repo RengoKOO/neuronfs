@@ -1,5 +1,5 @@
 <!-- NEURONFS:START -->
-<!-- Generated: 2026-03-30T11:44:48 -->
+<!-- Generated: 2026-03-30T11:49:06 -->
 <!-- Axiom: Folder=Neuron | File=Trace | Path=Sentence -->
 <!-- Active: 346/346 neurons | Total activation: 563 -->
 

@@ -17,6 +17,34 @@
 # 🧠 NeuronFS
 ### *A self-evolving AI brain made of folders. Zero infra. Zero dependencies.*
 
+## [TL;DR] How to get Palantir-level AI control for $0
+
+> *"Palantir did this. They achieved it with crappy AI."*
+
+Palantir doesn't use the world's smartest AI. They use **average AI locked inside a brutally strict structure (Ontology).** Each decision passes through thousands of transistor-level Yes/No gates. Each gate is simple enough that even a mediocre model gets it right. The cascade produces consistent, reliable results.
+
+**This was proven years ago.** Palantir built a $100B+ company not by waiting for AGI, but by perfecting the *structure around* ordinary AI. NeuronFS applies the same lesson: don't make the model smarter — make the pipeline stricter.
+
+> *"Transistor-level granularity. That's how Palantir uses it."*
+>
+> *"Ontology is just copying the brain."*
+
+NeuronFS is the same principle at zero cost:
+
+| | Palantir AIP | NeuronFS |
+|---|---|---|
+| Structure | Ontology (Entity + Link) | Folders (Neuron + Path) |
+| AI model | Any model | Any model |
+| Gate unit | Micro-decision node | 0-byte neuron folder |
+| Cost | Enterprise $$ | **$0** |
+| Enforcement | Pipeline hardcoded | Harness hardcoded |
+
+> *"We brought enterprise-grade structural control down to $0 using the OS filesystem."*
+
+**Current production environment:** Windows 11, Google Antigravity (DeepMind), 326 neurons, daily operation since 2026-01.
+
+---
+
 **Unix said "Everything is a file." We say: Everything is folders.**
 
 Folders are neurons. Paths are sentences. Counters are synaptic weights. The filesystem is the brain.
@@ -300,7 +328,7 @@ No rounded numbers. Measured 2026-03-29, local Windows 11 SSD.
 
 | Metric | Value |
 |--------|-------|
-| Full scan (326 neurons) | ~1ms |
+| Full scan (326 neurons) | ~1ms (vs. RAG avg 300ms, Mem0 150ms) |
 | Rule add | `touch` <1ms |
 | Weight change | rename file <1ms |
 | Cold start | 0s (filesystem always exists) |
@@ -400,31 +428,6 @@ NeuronFS rules are **files.** `tree brain/` shows everything. `git log` shows hi
 
 ---
 
-## The Palantir Insight
-
-> *"Palantir did this. They achieved it with crappy AI."*
-
-Palantir doesn't use the world's smartest AI. They use **average AI locked inside a brutally strict structure (Ontology).** Each decision passes through thousands of transistor-level Yes/No gates. Each gate is simple enough that even a mediocre model gets it right. The cascade produces consistent, reliable results.
-
-**This was proven years ago.** Palantir built a $100B+ company not by waiting for AGI, but by perfecting the *structure around* ordinary AI. NeuronFS applies the same lesson: don't make the model smarter — make the pipeline stricter.
-
-> *"Transistor-level granularity. That's how Palantir uses it."*
->
-> *"Ontology is just copying the brain."*
-
-NeuronFS is the same principle at zero cost:
-
-| | Palantir AIP | NeuronFS |
-|---|---|---|
-| Structure | Ontology (Entity + Link) | Folders (Neuron + Path) |
-| AI model | Any model | Any model |
-| Gate unit | Micro-decision node | 0-byte neuron folder |
-| Cost | Enterprise $$$$ | **$0** |
-| Enforcement | Pipeline hardcoded | Harness hardcoded |
-
-> *"We brought enterprise-grade structural control down to $0 using the OS filesystem."*
-
-**Current production environment:** Windows 11, Google Antigravity (DeepMind), 326 neurons, daily operation since 2026-01.
 
 ### What Most People Don't Know: AI Doesn't Re-Read Rules
 
@@ -672,7 +675,7 @@ This is why NeuronFS exists. Don't make the model smarter. Make the pipeline str
 
 | Item | Status | Response |
 |------|--------|----------|
-| AI enforcement | AI can't be 100% forced to follow GEMINI.md | Harness detects violations → correction loop. **Measured 94.9%** (18 brainstem violations / 353 total fires) |
+| AI enforcement | AI can't be 100% forced to follow GEMINI.md | Harness detects violations → correction loop. **Measured 94.9%** (18 brainstem violations / 353 total fires)* <br><sub>* 353 total fires: The number of times the agent independently made decisions and executed autonomous actions. Only 18 core principle violations out of 353 total autonomous loops.</sub> |
 | Semantic search | No vector embeddings — **by design** | Folder structure IS the search. Past 500 neurons: `tree` + dashboard |
 | External validation | Currently validated in 1-person production only | Seeking community feedback post-launch |
 | Windows-first | Currently running on Windows 11 | Go binary cross-compiles to macOS/Linux instantly |

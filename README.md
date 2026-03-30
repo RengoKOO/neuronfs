@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -211,10 +211,14 @@ Lower P **always** suppresses higher P. If brainstem has a bomb → limbic throu
 | `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
 | `必KI자동참조` | ~3 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
 
-**Hanja prefixes (1 character = 1 rule type):**
-- **禁** = Forbidden (금지) — hard ban
-- **推** = Recommended (추천) — soft preference  
-- **必** = Mandatory — absolute requirement
+**Hanja Micro-Opcodes (1 character = 1 instruction type):**
+- **禁 (Ban)** = Forbidden — hard stop
+- **必 (Must)** = Mandatory — absolute requirement
+- **推 (Rec)** = Recommended — soft preference
+- **要 (Req)** = Request — demand for specific data/format
+- **答 (Ans)** = Answer — reply in this specific tone/structure
+- **想 (Img)** = Imagine — creative/brainstorming mode
+- **索 (Src)** = Search — force external knowledge lookup
 
 When the brain has 326 neurons and each name is a folder path, **every saved token matters.** Hanja isn't aesthetic — it's compression. The same brain in English would consume 2-3× more tokens in the system prompt.
 

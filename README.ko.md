@@ -1,4 +1,4 @@
-﻿`하<p align="center">
+`하<p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
   <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
@@ -212,10 +212,14 @@ brainstem(P0) ←→ limbic(P1) ←→ hippocampus(P2) ←→ sensors(P3) ←→
 | `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
 | `必KI자동참조` | ~3 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
 
-**한자 접두사 (1글자 = 1규칙 타입):**
-- **禁** = 금지 — 절대 하지 마
-- **推** = 추천 — 가능하면 이렇게
-- **必** = 필수 — 무조건
+**한자 마이크로-옵코드 (1글자 = 1명령어):**
+- **禁 (금)** = 금지 (Never) — 절대 하지 마
+- **必 (필)** = 필수 (Must) — 무조건 지켜
+- **推 (추)** = 추천 (Recommend) — 가능하면 이렇게
+- **要 (요)** = 요청 (Request) — 특정 데이터/포맷 요구 시
+- **答 (답)** = 답변 (Answer) — 이런 톤/구조로 대답해
+- **想 (상)** = 상상 (Imagine) — 창의적 접근, 아이디에이션
+- **索 (색)** = 검색 (Search) — 외부 DB/문서 필수 스캔
 
 326개 뉴런이 시스템 프롬프트로 컴파일될 때, **절약되는 모든 토큰이 중요하다.** 한자는 미학이 아니라 압축이다. 같은 뇌를 영어로 쓰면 토큰이 2~3배 늘어난다.
 

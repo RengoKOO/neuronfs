@@ -35,7 +35,39 @@
 
 ---
 
+## The Core Idea
+
+**Folders compose into priority-ordered command sentences — and they evolve.**
+
+This is not a static config file. This is not a checklist. Look at what `neuronfs --emit` actually produces:
+
+```
+sensors: "반드시 nas: 禁NAS직접쓰기 로컬만, 禁corrections NAS기록, 동기화 로컬에서NAS 단방향..."
+ego: "트랜지스터 게이트분해. 한국어로 사고하고 응답. 전문가 간결."
+brainstem: "절대 禁영어사고 한국어로 생각하고 대답. 禁뉴런구조 임의변경. 토론말고 실행."
+```
+
+Each line is a **sentence**, not a list. Neurons are compressed by activation weight into priority-ordered commands. The AI reads one dense paragraph per brain region — not 326 individual rules.
+
+**And it evolves.** When the PD corrects the AI tomorrow, a new neuron is created. The sentence changes. The weight shifts. The brain rewrites itself.
+
+### Three Phases — Not Just an Idea
+
+This is not a whitepaper. It went through three phases:
+
+| Phase | What Happened | Proof |
+|-------|---------------|-------|
+| **① Imagination** | "What if folders were neurons?" A non-developer's thought experiment, born from frustration with prompts that AI kept ignoring. | [MANIFESTO.md](MANIFESTO.md) — the full philosophical arc |
+| **② Implementation** | Built in Go. Single binary. 328 neurons across 7 brain regions. Axons wiring cross-domain knowledge flow. Running daily since Jan 2026. | [runtime/](runtime/) — 4,000+ lines of Go |
+| **③ Verification** | 15-point automated harness. Scans for violations, proposes fixes, never modifies directly. PD approves every merge. | [scripts/harness.ps1](scripts/harness.ps1) — PASS: 15, FAIL: 0 |
+
+> *Making this public wasn't easy. This idea is personal. But if it helps one person escape prompt hell, it's worth it.*
+
+---
+
 ## The Problem
+
+> **Key: Every text-based command is a "suggestion" to AI, not a law.**
 
 We beg AI with text.
 
@@ -50,6 +82,8 @@ The AI ignores it all when token pressure rises. Prompts are suggestions, not la
 ---
 
 ## The Answer: Structure, Not Text
+
+> **Key: `mkdir` replaces thousand-line prompts. The folder path IS the natural language command.**
 
 > *"It wasn't the concept that was missing. It was using folders. That's the core."*
 
@@ -96,6 +130,8 @@ Polarity   = (Counter + Dopamine - Contra) / Total    # -1.0 to +1.0
 > *"Forget files. Just folders. The file is completely separate — it's just a trace of the neuron firing."*
 
 ### Axons — Cross-Region Wiring
+
+> **Key: At 3,000 neurons across 20 regions, axons become more important than individual neurons. They are the topology of organizational thought.**
 
 Neurons live inside brain regions. **Axons** connect regions to each other — just like biological axons wire brain areas into a layered network.
 
@@ -289,6 +325,8 @@ NeuronFS is designed to work with **Google Antigravity** (DeepMind's agentic AI 
 
 ## Competitors Comparison
 
+> **Key: Other tools let AI decide what to remember. NeuronFS lets the user decide.**
+
 |  | .cursorrules | Mem0 | Letta (MemGPT) | **NeuronFS** |
 |--|-------------|------|----------------|-------------|
 | 1000+ rules | Token overflow ❌ | ✅ (vector DB) | ✅ (tiered memory) | ✅ (folder tree) |
@@ -369,6 +407,8 @@ neuronfs --supervisor        ← Single binary manages all processes
 ```
 
 ### Why Go
+
+> **Key: If the brain is zero-infrastructure, the runtime should be too. One binary. Zero dependencies.**
 
 NeuronFS runtime is a single Go binary. No Python. No Node.js runtime dependency. No Docker.
 

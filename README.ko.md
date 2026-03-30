@@ -452,7 +452,7 @@ NeuronFS는 실제 필요에서 태어났다: **회사의 지식베이스 완성
 
 **회사가 Claude에서 Gemini로 바꾼다.** 아무 것도 안 변한다. 뇌는 폴더다. 어떤 AI든 읽는다. 마이그레이션 비용 제로.
 
-**병원이 의료 AI에 NeuronFS를 배포한다.** `brainstem/NEVER_hallucinate_dosage/` — chmod 444. 아무리 "창의적인" AI라도 이 규칙을 무시 못한다. 가드레일이 시스템 프롬프트의 기도문이 아니라 폴더다.
+**스타트업이 AI 제품을 출시한다.** `brainstem/NEVER_expose_user_PII/` — chmod 444. 인턴이든, 주니어 개발자의 AI든, "창의적인" 프롬프트이든 이 규칙을 우회 못한다. 가드레일이 코드 리뷰의 코멘트가 아니라 폴더다.
 
 **로펌이 여러 사무소 간 뉴런을 공유한다.** NAS 공유 폴더. 도쿄와 서울이 같은 `brain/legal/contracts/` 뉴런을 읽는다. `robocopy`로 1시간마다 동기화. 인프라 비용 제로.
 

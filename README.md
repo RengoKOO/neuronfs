@@ -495,7 +495,7 @@ Same 326 neurons. But a brain filled with aphorisms is **fundamentally different
 
 **Your company switches from Claude to Gemini.** Nothing changes. The brain is folders. Any AI reads it. Zero migration cost.
 
-**A hospital deploys NeuronFS for medical AI.** `brainstem/NEVER_hallucinate_dosage/` — chmod 444. No AI, no matter how "creative," can override the rule. The guardrail is a folder, not a prayer in a system prompt.
+**A startup ships an AI product.** `brainstem/NEVER_expose_user_PII/` — chmod 444. No intern, no junior dev's AI, no "creative" prompt can bypass it. The guardrail is a folder, not a comment in code review.
 
 **A law firm shares neurons across offices.** NAS shared folder. Tokyo and Seoul read the same `brain/legal/contracts/` neurons. `robocopy` syncs once per hour. Zero infrastructure.
 

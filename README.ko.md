@@ -10,6 +10,9 @@
   <img src="docs/dashboard.png" alt="NeuronFS 대시보드 — 3D 뇌 시각화" width="800" />
   <br/>
   <sub><strong>[대시보드 실시간 관측 항목]</strong> ① 7개 뇌 영역별 뉴런 활성도 ② 하네스(Harness) 시스템 방어 내역 ③ bomb.neuron 등 임계치 차단 경고 ④ 에이전트 간 동기화 상태</sub>
+  <br/>
+  <br/>
+  <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 [3D 대시보드 라이브 목업 체험하기 (Vercel)]</strong></a>
 </p>
 
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 매니페스토</a></p>
@@ -17,12 +20,16 @@
 # 🧠 NeuronFS
 ### *폴더로 만든 자가 진화하는 AI 뇌. 인프라 제로. 종속성 제로.*
 
-## [TL;DR] 파일시스템이 곧 뇌다
+## [TL;DR] 파일시스템 자체가 대뇌피질이다 (The Filesystem IS the Cortex)
 
-Mem0, Letta, MemGPT는 모두 별도의 서버가 필요합니다. 특정 모델에 종속되고 누군가 관리해야 합니다.
-NeuronFS는 단순한 OS 파일시스템 위에 삽니다. 모든 규칙은 폴더입니다. 모든 교정은 새로운 뉴런을 자동으로 자라게 만듭니다. 모델을 교체하시겠습니까? `cp -r brain/` 1초면 끝납니다. 에이전트 간 공유는? NAS 공유 폴더. 버전 관리는? `git diff`. 도입 비용? $0.
+Mem0, Letta, Engram, Anamnesis는 모두 데이터베이스나 서버 위에서 뇌를 '가상으로 흉내'냅니다.
+NeuronFS는 다릅니다: **OS 파일시스템 자체가 뇌의 물리적 구조입니다.** 모든 규칙은 폴더이며, 뇌의 성장은 네이티브 디렉토리 생성으로 직결됩니다.
 
-단순한 룰 매니저가 아닙니다. 어떤 AI 모델이 오든 그보다 오래 살아남는 자가 진화형 컨텍스트 레이어입니다.
+이는 **거버넌스의 폭력적인 확실성**을 보장합니다. 디스크의 물리적 경로에 `bomb.neuron`이 꽂히는 순간, 해당 뇌 영역의 회로가 물리적으로 차단(Hard Stop)됩니다. 확률에 의존하는 추상화된 벡터 DB는 결코 따라올 수 없는 완전박멸 수준의 통제력입니다.
+
+모델을 교체하시겠습니까? `cp -r brain/` 1초면 끝납니다. 에이전트 다중 접속? NAS 공유 폴더. 버전 관리? `git diff`. 인프라 비용? $0.
+
+단순한 룰 매니저가 아닙니다. 어떤 AI가 접근하든 그 위에서 조직을 물리적으로 통제하는 자가 진화형 거버넌스 레이어입니다.
 **326 뉴런. 2026년 1월부터 매일 구동 중(Daily driver). 1인 기업의 모든 AI 업무를 통제하고 있습니다.**
 ---
 

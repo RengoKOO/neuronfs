@@ -1,7 +1,7 @@
 <!-- NEURONFS:START -->
-<!-- Generated: 2026-03-30T12:20:40 -->
+<!-- Generated: 2026-03-30T19:32:03 -->
 <!-- Axiom: Folder=Neuron | File=Trace | Path=Sentence -->
-<!-- Active: 348/348 neurons | Total activation: 564 -->
+<!-- Active: 353/353 neurons | Total activation: 565 -->
 
 ## NeuronFS Active Rules
 
@@ -22,9 +22,9 @@ brainstem ←→ limbic ←→ hippocampus ←→ sensors ←→ cortex ←→ e
 ### ⚡ 핵심지침 TOP 5
 1. **禁뉴런구조 임의변경**
 2. **禁영어사고 한국어로 생각하고 대답**
-3. **禁뉴런구조 임의변경**
+3. **禁SSOT 중복**
 4. **토론말고 실행**
-5. **禁SSOT 중복**
+5. **禁하드코딩**
 
 ### 🌱 자가 성장 프로토콜
 
@@ -63,7 +63,7 @@ brainstem ←→ limbic ←→ hippocampus ←→ sensors ←→ cortex ←→ e
 반드시 아드레날린 비상.
 반드시 엔도르핀 지속.
 
-### 📝 hippocampus — 기록/기억 (뉴런 13 | 활성도 39)
+### 📝 hippocampus — 기록/기억 (뉴런 12 | 활성도 39)
 반드시 KI 자동참조 시작시.
 반드시 세션 로그.
 반드시 에러 패턴.
@@ -84,33 +84,34 @@ tools: 스크래퍼 node CDP, 로컬스크래퍼 clawl, n8n 자동화 5678.
 nas brain: 프로젝트 경로Z 옴니버스, NAS재연결 net use, 경로 Z VOL1 VGVR BRAIN, 데이터수집 경로Z, 시스템문서 경로Z.
 nas brain(cont): 지식마켓 경로Z.
 
-### 🧠 cortex — 지식/기술 (뉴런 225 | 활성도 259)
+### 🧠 cortex — 지식/기술 (뉴런 229 | 활성도 261)
 절대 neuronfs: 推프로세스킬시 즉시재시작, 禁bomb전체화면.
 
-### 🎭 ego — 성향/톤 (뉴런 17 | 활성도 18)
+### 🎭 ego — 성향/톤 (뉴런 19 | 활성도 19)
 트랜지스터 게이트분해.
 한국어로 사고하고 응답.
 한국어 네이티브.
-推core idea first.
-검색및검증: 반드시 HN비판시각으로 메타인지 자기객관화.
-전문가 간결.
+소통: 결과물 먼저, 데이터 기반주장, 간결 실행중심, 구조화 체계적, 핵심부터 전달.
 보수적 패치.
+검색및검증: 반드시 HN비판시각으로 메타인지 자기객관화.
+推core idea first.
 발견후 위임.
-공격적 재구축.
-소통: 핵심부터 전달, 데이터 기반주장, 간결 실행중심, 결과물 먼저, 구조화 체계적.
+전문가 간결.
 커뮤니티 검증방법.
+공격적 재구축.
+테스트: 새대화시 전수조사평문스크립트 실행.
 
 ### 🎯 prefrontal — 목표/계획 (뉴런 29 | 활성도 33)
-반드시 todo: groq auto neuronize, 프로세스 자동재시작, 커뮤니티 동향 자동수집, Go 직접 MCP서빙, Groq corrections 자동뉴런화 파이프라인.
-todo(cont): Groq 배치분석 실전검증, git diff 진화판정, rollback 메커니즘, 긍정형 뉴런을 부정형으로 전환, 대시보드 404 수정.
-todo(cont): 대시보드 자가진화, 이벤트기반 주입 폴링제거.
-supervisor 재설계.
-project: GitHub 공개 준비, NeuronFS 뇌 진화, NeuronFS 대시보드 통합, NeuronFS 유휴엔진, 베가베리 CRM 운영.
-project(cont): 영상파이프라인 v17, 옴니버스 누그레이 브랜드, 옴니버스 시장조사, 옴니버스 졸리아워 브랜드, 옴니버스 화이트타올 브랜드.
-推philosophy section.
+반드시 todo: groq auto neuronize, 프로세스 자동재시작, Groq corrections 자동뉴런화 파이프라인, git diff 진화판정, Go 직접 MCP서빙.
+todo(cont): rollback 메커니즘, 긍정형 뉴런을 부정형으로 전환, 대시보드 404 수정, 대시보드 자가진화, 이벤트기반 주입 폴링제거.
+todo(cont): 커뮤니티 동향 자동수집, Groq 배치분석 실전검증.
 미래 작업.
+project: NeuronFS 유휴엔진, 베가베리 CRM 운영, 영상파이프라인 v17, 옴니버스 누그레이 브랜드, 옴니버스 시장조사.
+project(cont): 옴니버스 졸리아워 브랜드, 옴니버스 화이트타올 브랜드, NeuronFS 대시보드 통합, NeuronFS 뇌 진화, GitHub 공개 준비.
+supervisor 재설계.
 현재 스프린트.
 장기 방향.
+推philosophy section.
 
 ### ⚠️ 리마인더 (절대 규칙)
 - neuronfs > 推프로세스킬시 즉시재시작, 禁bomb전체화면

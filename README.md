@@ -10,6 +10,9 @@
   <img src="docs/dashboard.png" alt="NeuronFS Dashboard — 3D Brain Visualization" width="800" />
   <br/>
   <sub><strong>[Live Dashboard Metrics]</strong> ① 7-region neuron activation tracking ② Harness system defense logs ③ bomb.neuron threshold alerts ④ Inter-agent sync status</sub>
+  <br/>
+  <br/>
+  <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 [Experience Live 3D Dashboard Mockup (Vercel)]</strong></a>
 </p>
 
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a></p>
@@ -17,12 +20,16 @@
 # 🧠 NeuronFS
 ### *A self-evolving AI brain made of folders. Zero infra. Zero dependencies.*
 
-## [TL;DR] The Filesystem is the Brain
+## [TL;DR] The Filesystem IS the Cortex
 
-Mem0, Letta, MemGPT all need a server. They're tied to specific models. Someone has to manage them.
-NeuronFS lives on the filesystem. Every rule is a folder. Every correction grows a new neuron automatically. Switch models? `cp -r brain/`. Share across agents? NAS shared folder. Version control? `git diff`. Cost? $0.
+Mem0, Letta, Engram, Anamnesis all need a server or a database. They simulate a brain on top of abstracted layers.
+NeuronFS is different: **The filesystem itself is the physical structure of the brain.** Every rule is a folder. Every correction grows a new neuron natively. 
 
-Not a rule manager. A self-evolving context layer that outlives every model it runs on.
+This enables **violent certainty in governance**: physical Hard Stops (`bomb.neuron`) that guarantee an immediate halt when rules are broken. Abstracted Vector DBs can only weight probabilities; a filesystem can physically disconnect the circuit.
+
+Switch models? `cp -r brain/`. Share across agents? NAS shared folder. Version control? `git diff`. Cost? $0.
+
+Not a rule manager. A self-evolving context layer with absolute physical governance that outlives every model it runs on.
 **326 neurons. Daily driver since January 2026. One person, one company, every AI task.**
 ---
 
@@ -505,19 +512,38 @@ Same brain, same rules, but **personality drives what each agent notices.** Just
 
 ---
 
-## Competitors Comparison
+## The March 2026 Landscape: Why Not X?
 
-> **Key: Other tools let AI decide what to remember. NeuronFS lets the user decide.**
+> **Key: March 2026 saw an explosion of AI memory layers. They solved storage. We solved *governance*.**
 
-|  | .cursorrules | Mem0 | Letta (MemGPT) | **NeuronFS** |
-|--|-------------|------|----------------|-------------|
-| 1000+ rules | Token overflow ❌ | ✅ (vector DB) | ✅ (tiered memory) | ✅ (folder tree) |
-| Infra cost | $0 | Server/API $$$ | Server $$$ | **$0** |
-| Switch AI | Copy file | Migration | Migration | **No change** (it's folders) |
-| User owns rules | ✅ | ❌ (AI extracts) | ❌ (agent manages) | **✅ (mkdir)** |
-| Self-growth | ❌ | ✅ | ✅ | **✅ (correction→neuron)** |
-| Immutable guardrail | ❌ | ❌ | ❌ | **✅ (brainstem + harness detection)** |
-| Auditability | git diff | Query | Logs | **ls -R** |
+File-based memory is no longer a secret. Here is how NeuronFS structurally dominates the newest specialized engines:
+
+**1. Letta MemFS** (Git-backed markdown memory)
+- **Their way:** Agents manage their own files. Needs a Letta runtime server.
+- **Our edge (Governance):** **Zero Infrastructure**. No Letta cloud, no Python. Just your OS.
+
+**2. Engram** (Cognitive ACT-R Memory)
+- **Their way:** Uses Ebbinghaus forgetting curves and PostgreSQL to simulate human memory decay.
+- **Our edge (Constraint):** Vector DBs don't have emergency brakes. NeuronFS is the only system with `bomb.neuron`, a physical circuit breaker that halts output immediately when rules are broken 3 times.
+
+**3. Axe** (12MB Go Unix-Agent)
+- **Their way:** CLI pipe-based agents (`git diff | axe`). Extremely lightweight.
+- **Our edge (Prevention):** Axe executes fast, but will hallucinate if given a bad prompt. Our `brainstem` structurally prevents P6 (front-end agent) rules from bypassing safety.
+
+**4. Anamnesis / Mem0** (Strategic Memory Engines)
+- **Their way:** Weights memory by Authority and Relevance using heavy databases.
+- **Our edge (Extreme Compression):** **The medium is the constraint.** Our hierarchy *is* the weighting score. A single folder (`mkdir 禁fallback`) costs 0KB, $0, and executes in ~1ms via syscalls.
+
+### The "Governance vs. Storage" Matrix
+
+| | Static Prompts (.cursorrules) | Vector Memory (Mem0) | Agent Framework (Letta/Axe) | **NeuronFS** |
+|--|------------------------------|----------------------|---------------------------|-------------|
+| **1000+ Rules** | Token Overflow ❌ | ✅ (DB Search) | ✅ (Tiered Memory) | **✅ (Folder Tree)** |
+| **Infra Cost** | $0 | $50-70+/mo | Server / Subscriptions | **$0 (OS Native)** |
+| **Rule Source** | Dev types manually | AI extracts from chat | Managed by agent | **Human drives (`mkdir`)** |
+| **Self-Growth** | ❌ None | ✅ Yes | ✅ Yes | **✅ Yes (Correction loop)** |
+| **Hard Stop** | ❌ None | ❌ None | ❌ None | **✅ `bomb.neuron` circuit breaker** |
+| **Immutability**| ❌ AI ignores them | ❌ AI alters context | ❌ Prompt drift | **✅ P0 Brainstem read-only** |
 
 ### What the Output Looks Like
 

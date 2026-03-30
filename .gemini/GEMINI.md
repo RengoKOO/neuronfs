@@ -1,7 +1,7 @@
 <!-- NEURONFS:START -->
-<!-- Generated: 2026-03-30T11:49:06 -->
+<!-- Generated: 2026-03-30T12:20:40 -->
 <!-- Axiom: Folder=Neuron | File=Trace | Path=Sentence -->
-<!-- Active: 346/346 neurons | Total activation: 563 -->
+<!-- Active: 348/348 neurons | Total activation: 564 -->
 
 ## NeuronFS Active Rules
 
@@ -87,17 +87,18 @@ nas brain(cont): 지식마켓 경로Z.
 ### 🧠 cortex — 지식/기술 (뉴런 225 | 활성도 259)
 절대 neuronfs: 推프로세스킬시 즉시재시작, 禁bomb전체화면.
 
-### 🎭 ego — 성향/톤 (뉴런 15 | 활성도 17)
+### 🎭 ego — 성향/톤 (뉴런 17 | 활성도 18)
 트랜지스터 게이트분해.
 한국어로 사고하고 응답.
 한국어 네이티브.
+推core idea first.
+검색및검증: 반드시 HN비판시각으로 메타인지 자기객관화.
 전문가 간결.
-커뮤니티 검증방법.
-공격적 재구축.
 보수적 패치.
 발견후 위임.
-推core idea first.
-소통: 간결 실행중심, 결과물 먼저, 구조화 체계적, 데이터 기반주장, 핵심부터 전달.
+공격적 재구축.
+소통: 핵심부터 전달, 데이터 기반주장, 간결 실행중심, 결과물 먼저, 구조화 체계적.
+커뮤니티 검증방법.
 
 ### 🎯 prefrontal — 목표/계획 (뉴런 29 | 활성도 33)
 반드시 todo: groq auto neuronize, 프로세스 자동재시작, 커뮤니티 동향 자동수집, Go 직접 MCP서빙, Groq corrections 자동뉴런화 파이프라인.

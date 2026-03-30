@@ -206,11 +206,18 @@ NeuronFS는 같은 원리를 비용 제로로 구현한다:
 
 ## 아키텍처
 
-<p align="center">
-  <img src="docs/dashboard.png" alt="NeuronFS 대시보드 — 3D 뇌 시각화" width="800" />
-  <br/>
-  <sub>라이브 대시보드: 329 뉴런, 7개 영역. 각 클러스터 = 뇌 영역. 실시간 활성화 모니터링.</sub>
-</p>
+### Antigravity 연동
+
+NeuronFS는 **Google Antigravity** (DeepMind의 에이전트 AI 코딩 어시스턴트)와 Windows에서 함께 쓴다. Chrome DevTools Protocol (CDP)로 연동:
+
+1. **CDP Auto-Accept** — Node.js 스크립트가 `localhost:9000`으로 Antigravity에 연결, AI 생성 액션을 자동 승인
+2. **실시간 대화 전사** — PD/AI 대화를 캐처하여 버퍼링
+3. **유휴 감지 Groq 분석** — 5분 유휴 시 Groq LLaMA가 전사 버퍼를 분석하여 교정/위반/인사이트 추출
+4. **자동 뉴런 성장** — 교정이 `_inbox/corrections.jsonl`에 기록되고, `neuronfs --supervisor`가 `fsnotify`로 감지하여 뉴런으로 변환
+
+> *CDP 자동 승인 연동은 별도 리포지토리로 공개 예정.*
+
+**운영 환경:** Windows 11, Google Antigravity (DeepMind), 326 뉴런, 2026-01부터 실전 운영 중.
 
 ### 자율 루프
 
@@ -298,21 +305,23 @@ cd NeuronFS/runtime && go build -ldflags="-s -w" -trimpath -buildvcs=false -o ..
 
 AI가 "console.log 쓰지 마"를 9번 어겼다. 10번째에 `mkdir brain/cortex/frontend/coding/禁console_log`를 만들었다. 폴더 이름이 규칙이 된다. 파일 이름이 카운터가 된다. 지금 17이다. AI가 더 이상 안 어긴다.
 
-### 왜 단답이 중요한가
+### 왜 만들었나
 
-교정은 항상 **단답**이다. 사용자는 에세이를 쓰지 않는다:
-- *"fallback 쓰지 마"* → `mkdir 禁fallback` → 뉴런 1개
-- *"토론말고 실행"* → `mkdir 推토론말고_실행` → 뉴런 1개
+NeuronFS는 실제 필요에서 태어났다: **회사의 지식베이스 완성.** VEGAVERY RUN®은 CRM, 영상 제작, 브랜드 디자인, 이커머스를 PD 한 명이 AI와 운영한다. 지식은 대화, 문서, 사람의 머릿속에 흩어져 있었다.
 
-**단답 하나 = 뉴런 하나.** 단답들이 쳐이면 폴더 트리가 된다. 폴더 트리가 뇌다.
+목표는 단순했다: 미래에 어떤 AI가 VEGAVERY 작업을 시작하든, 모든 규칙과 선호와 과거 실수를 **즉시** 알아야 한다. 50페이지 온보딩 문서가 아니라, 폴더 구조 자체에서.
 
-**그리고 여기가 핵심이다:** 단답이 단순한 교정이 아니라 **명언**이면? 뇌는 더 똑똑해진다.
+### 상상해보라
 
-- *"console.log 쓰지 마"* → 기술적 교정. 좋다.
-- *"프롬프트로 구걸하지 마. 파이프라인을 설계해."* → 철학. **뇌의 근본 방향이 바뀌다.**
-- *"명언이 모이면 뇌고. 그게 문맥."* → 메타 인식. 뇌가 자기 자신을 이해한다.
+**신입 개발자가 팀에 합류한다.** 200페이지 문서를 읽는 대신 `brain/`을 클론한다 — AI가 이미 "console.log 쓰지 마", "실행 전 계획", "프로덕션 DB 직접 건드리지 마"를 안다. 326개 교정이 1ms에 읽히는 폴더 트리.
 
-같은 326개 뉴런이라도, 명언과 철학이 들어있는 뇌는 **단순 규칙만 들어있는 뇌와 질적으로 다르다.**
+**회사가 Claude에서 Gemini로 바꾼다.** 아무 것도 안 변한다. 뇌는 폴더다. 어떤 AI든 읽는다. 마이그레이션 비용 제로.
+
+**병원이 의료 AI에 NeuronFS를 배포한다.** `brainstem/NEVER_hallucinate_dosage/` — chmod 444. 아무리 "창의적인" AI라도 이 규칙을 무시 못한다. 가드레일이 시스템 프롬프트의 기도문이 아니라 폴더다.
+
+**로펌이 여러 사무소 간 뉴런을 공유한다.** NAS 공유 폴더. 도쿄와 서울이 같은 `brain/legal/contracts/` 뉴런을 읽는다. `robocopy`로 1시간마다 동기화. 인프라 비용 제로.
+
+**10개 AI 에이전트가 공장을 관리한다.** 각 에이전트가 `brain/base/`를 fork하여 전문 뉴런으로 진화. 품질관리 에이전트: 500 뉴런. 물류 에이전트: 300 뉴런. 모두 `brainstem/`은 공유 — 헌법적 규칙.
 
 326개 뉴런. 런타임 제로. 종속성 제로. 파일시스템 자체가 프레임워크다.
 

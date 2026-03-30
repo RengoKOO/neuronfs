@@ -246,6 +246,17 @@ NeuronFS is the same principle at zero cost:
 
 **Current production environment:** Windows 11, Google Antigravity (DeepMind), 326 neurons, daily operation since 2026-01.
 
+### How It Works with Antigravity
+
+NeuronFS is designed to work with **Google Antigravity** (DeepMind's agentic AI coding assistant) on Windows. The integration runs through Chrome DevTools Protocol (CDP):
+
+1. **CDP Auto-Accept** — A Node.js script connects to Antigravity via `localhost:9000`, monitors for AI-generated actions, and auto-accepts them
+2. **Real-time Transcript Scraping** — PD/AI conversations are captured and buffered
+3. **Idle-triggered Groq Analysis** — When the user goes idle for 5 minutes, Groq LLaMA analyzes the transcript buffer for corrections, violations, and insights
+4. **Automatic Neuron Growth** — Corrections are written to `_inbox/corrections.jsonl`, which `neuronfs --supervisor` picks up via `fsnotify` and converts to new neurons
+
+> *The auto-accept CDP integration will be published as a separate repository. Stay tuned.*
+
 ---
 
 ## Architecture
@@ -339,21 +350,23 @@ AI violated "don't use console.log" nine times. On the tenth: `mkdir brain/corte
 
 "Plan first, execute second." Corrected 36 times. The highest counter. 36 corrections compressed into one neuron.
 
-### Why Aphorisms Matter
+### Why It Was Built
 
-Every correction is a **short answer**. Users don't write essays — they snap:
-- *"Don't use fallback"* → `mkdir 禁fallback` → 1 neuron
-- *"Don't beg with prompts. Design the pipeline."* → 1 neuron
+NeuronFS was born from a real need: **building a company knowledge base.** VEGAVERY RUN® operates across CRM, video production, brand design, and e-commerce — all managed by one PD with AI. The knowledge was scattered across conversations, documents, and people's heads.
 
-**One short answer = one neuron.** Accumulate them and you get a folder tree. The folder tree is the brain.
+The goal was simple: when any AI — current or future — starts working on VEGAVERY, it should instantly know every rule, every preference, every mistake that was already made. Not from a 50-page onboarding doc. From the folder structure itself.
 
-But here's the key: if that short answer is an **aphorism** — a principle, a philosophy — the brain gets qualitatively smarter.
+### Imagine
 
-- *"Don't use console.log"* → technical fix. Good.
-- *"Don't beg with prompts. Design the pipeline."* → philosophy. **The brain's direction changes.**
-- *"Aphorisms collect into a brain. That brain becomes context."* → meta-cognition. The brain understands itself.
+**A new developer joins your team.** Instead of reading 200 pages of docs, they clone `brain/` — and their AI already knows "don't use console.log", "plan before execute", "never touch the production DB directly." 326 corrections compressed into a folder tree that any AI reads in 1ms.
 
-Same 326 neurons. But a brain filled with aphorisms is **fundamentally different** from a brain filled with rules. The folder names carry the user's thinking.
+**Your company switches from Claude to Gemini.** Nothing changes. The brain is folders. Any AI reads it. Zero migration cost.
+
+**A hospital deploys NeuronFS for medical AI.** `brainstem/NEVER_hallucinate_dosage/` — chmod 444. No AI, no matter how "creative," can override the rule. The guardrail is a folder, not a prayer in a system prompt.
+
+**A law firm shares neurons across offices.** NAS shared folder. Tokyo and Seoul read the same `brain/legal/contracts/` neurons. `robocopy` syncs once per hour. Zero infrastructure.
+
+**10 AI agents manage a factory.** Each agent forks `brain/base/` and evolves specialized neurons for their domain. Quality control agent has 500 neurons. Logistics agent has 300. They all share `brainstem/` — the constitutional rules.
 
 326 neurons. Zero infrastructure. Zero dependencies. The filesystem itself is the framework.
 

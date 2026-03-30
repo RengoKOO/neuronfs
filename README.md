@@ -535,23 +535,23 @@ File-based memory is no longer a secret. Here is how NeuronFS structurally domin
 
 **1. Letta MemFS** (Git-backed markdown memory)
 - **Their way:** Agents manage their own files. Needs a Letta runtime server.
-- **Our edge (Governance):** **Zero Infrastructure**. No Letta cloud, no Python. Just your OS.
+- **Our edge:** **Zero Infrastructure.** No Letta cloud, no Python. Just your OS.
 
 **2. Engram** (Cognitive ACT-R Memory)
-- **Their way:** Uses Ebbinghaus forgetting curves and PostgreSQL to simulate human memory decay.
-- **Our edge (Constraint):** Vector DBs don't have emergency brakes. NeuronFS is the only system with `bomb.neuron`, a physical circuit breaker that halts output immediately when rules are broken 3 times.
+- **Their way:** Uses Ebbinghaus forgetting curves and PostgreSQL to simulate memory decay.
+- **Our edge:** **"Vector DBs have no emergency brakes."** We have `bomb.neuron`, which physically halts output if a threshold is crossed 3 times.
 
 **3. Axe** (12MB Go Unix-Agent)
 - **Their way:** CLI pipe-based agents (`git diff | axe`). Extremely lightweight.
-- **Our edge (Prevention):** Axe executes fast, but will hallucinate if given a bad prompt. Our `brainstem` structurally prevents P6 (front-end agent) rules from bypassing safety.
+- **Our edge:** **"Axe executes fast, but hallucinations exist if given bad directions."** Our `brainstem (P0)` structurally prevents rule-based hallucinations at the root.
 
 **4. Anamnesis / Mem0** (Strategic Memory Engines)
 - **Their way:** Weights memory by Authority and Relevance using heavy databases.
-- **Our edge (Extreme Compression):** **The medium is the constraint.** Our hierarchy *is* the weighting score. A single folder (`mkdir 禁fallback`) costs 0KB, $0, and executes in ~1ms via syscalls.
+- **Our edge:** **"No need for heavy DBs."** The folder structure itself (`mkdir 禁fallback`) is the most perfect 0KB weight-calculation engine in existence.
 
 ### The "Governance vs. Storage" Matrix
 
-| | Static Prompts (.cursorrules) | Vector Memory (Mem0) | Agent Framework (Letta/Axe) | **NeuronFS** |
+| | Static Prompts (.cursorrules) | Vector Memory (Mem0) | Agent Framework (Letta MemFS) | **NeuronFS** |
 |--|------------------------------|----------------------|---------------------------|-------------|
 | **1000+ Rules** | Token Overflow ❌ | ✅ (DB Search) | ✅ (Tiered Memory) | **✅ (Folder Tree)** |
 | **Infra Cost** | $0 | $50-70+/mo | Server / Subscriptions | **$0 (OS Native)** |

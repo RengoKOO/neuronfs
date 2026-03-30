@@ -22,8 +22,6 @@
 Mem0, Letta, MemGPT all need a server. They're tied to specific models. Someone has to manage them.
 NeuronFS lives on the filesystem. Every rule is a folder. Every correction grows a new neuron automatically. Switch models? `cp -r brain/`. Share across agents? NAS shared folder. Version control? `git diff`. Cost? $0.
 
-Palantir's bet wasn't a smarter AI — it was a stricter pipeline. This is the same bet, on a filesystem, for anyone.
-
 Not a rule manager. A self-evolving context layer that outlives every model it runs on.
 **326 neurons. Daily driver since January 2026. One person, one company, every AI task.**
 ---

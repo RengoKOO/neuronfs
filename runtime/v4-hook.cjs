@@ -184,18 +184,40 @@ https.request = function(...args) {
         if (chunk) chunks.push(Buffer.from(chunk));
 
         let finalBody;
+        let rawStr = '';
         try {
-            const raw = Buffer.concat(chunks).toString('utf-8');
-            const injected = inject(raw);
+            rawStr = Buffer.concat(chunks).toString('utf-8');
+            const injected = inject(rawStr);
             finalBody = injected ? Buffer.from(injected, 'utf-8') : Buffer.concat(chunks);
         } catch {
             finalBody = Buffer.concat(chunks);
         }
 
+        // ─── Transcript dump: save conversation turns for MEMORY_OBSERVER ───
+        try {
+            const j = JSON.parse(rawStr);
+            // Gemini: contents[] array has the actual conversation
+            const contents = j.contents || j.messages;
+            if (Array.isArray(contents) && contents.length > 0) {
+                const last = contents[contents.length - 1];
+                const text = last?.parts?.[0]?.text || last?.content || '';
+                if (text && text.length > 20 && !text.includes('[NeuronFS')) {
+                    const entry = JSON.stringify({
+                        ts: new Date().toISOString(),
+                        role: last.role || 'user',
+                        text: text.substring(0, 2000)
+                    }) + '\n';
+                    const transcriptPath = path.join(BRAIN_PATH, '_agents', 'global_inbox', 'transcript_latest.jsonl');
+                    fs.appendFileSync(transcriptPath, entry);
+                }
+            }
+        } catch {}
+
         try { req.setHeader('content-length', finalBody.length); } catch {}
         _write(finalBody);
         _end();
     };
+
 
     // Log tool-call responses (optional, for headless execution pipeline)
     req.on('response', (res) => {

@@ -2458,5 +2458,59 @@ func startAPI(brainRoot string, port int) {
 		return "OFF"
 	}(), heartbeatInterval, heartbeatCooldown)
 	fmt.Printf("  🔄 IDLE ENGINE: auto evolve/snapshot/NAS every %dm idle\n", idleThresholdMinutes)
+	// POST /api/report — stackable report queue
+	mux.HandleFunc("/api/report", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		var req struct {
+			Message  string `json:"message"`
+			Priority string `json:"priority"`
+		}
+		json.NewDecoder(r.Body).Decode(&req)
+		if req.Message == "" {
+			http.Error(w, "message required", 400)
+			return
+		}
+		if req.Priority == "" {
+			req.Priority = "normal"
+		}
+		reportsDir := filepath.Join(brainRoot, "_inbox", "reports")
+		os.MkdirAll(reportsDir, 0755)
+		ts := fmt.Sprintf("%d", time.Now().UnixMilli())
+		filename := fmt.Sprintf("%s_%s.report", ts, req.Priority)
+		content := fmt.Sprintf("priority: %s\ntimestamp: %s\n\n%s\n", req.Priority, time.Now().Format("2006-01-02 15:04:05"), req.Message)
+		os.WriteFile(filepath.Join(reportsDir, filename), []byte(content), 0644)
+
+		entries, _ := os.ReadDir(reportsDir)
+		pending := 0
+		for _, e := range entries {
+			if strings.HasSuffix(e.Name(), ".report") {
+				pending++
+			}
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"status": "confirmed", "pending": pending, "priority": req.Priority,
+			"ack": "새로운 보고가 확인되었습니다. 사용자의 요청 처리 후 팔로업합니다.",
+		})
+	}))
+
+	// GET /api/reports — list pending
+	mux.HandleFunc("/api/reports", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		reportsDir := filepath.Join(brainRoot, "_inbox", "reports")
+		entries, _ := os.ReadDir(reportsDir)
+		var reports []map[string]string
+		for _, e := range entries {
+			if strings.HasSuffix(e.Name(), ".report") {
+				data, _ := os.ReadFile(filepath.Join(reportsDir, e.Name()))
+				reports = append(reports, map[string]string{"name": e.Name(), "content": string(data)})
+			}
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{"pending": len(reports), "reports": reports})
+	}))
+
+	fmt.Printf("  POST /api/report  {message,priority} — Stackable report queue\n")
+	fmt.Printf("  GET  /api/reports                — List pending reports\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 }

@@ -22,6 +22,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -357,6 +358,143 @@ func registerMCPTools(server *mcp.Server, brainRoot string) {
 				Content: []mcp.Content{&mcp.TextContent{
 					Text: fmt.Sprintf("🧬 Evolve (%s) completed", mode),
 				}},
+			}, nil
+		},
+	)
+
+	// ─── Tool 8: report ───
+	server.AddTool(
+		&mcp.Tool{
+			Name:        "report",
+			Description: "적층형 보고 큐. 사용자 보고/요청을 큐에 쌓는다. 현재 작업 완료 후 heartbeat가 자동 팔로업. priority: urgent(즉시)/normal(적층)/low(유휴시)",
+			InputSchema: json.RawMessage(`{
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string",
+						"description": "보고 내용"
+					},
+					"priority": {
+						"type": "string",
+						"enum": ["urgent", "normal", "low"],
+						"default": "normal",
+						"description": "urgent=즉시처리, normal=현재작업후, low=유휴시"
+					}
+				},
+				"required": ["message"]
+			}`),
+		},
+		func(_ context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			var args struct {
+				Message  string `json:"message"`
+				Priority string `json:"priority"`
+			}
+			if err := json.Unmarshal(req.Params.Arguments, &args); err != nil {
+				return mcpError("invalid arguments"), nil
+			}
+			if args.Message == "" {
+				return mcpError("message required"), nil
+			}
+			if args.Priority == "" {
+				args.Priority = "normal"
+			}
+
+			// Write to _inbox/reports/ as timestamped file
+			reportsDir := filepath.Join(brainRoot, "_inbox", "reports")
+			os.MkdirAll(reportsDir, 0755)
+
+			ts := fmt.Sprintf("%d", time.Now().UnixMilli())
+			filename := fmt.Sprintf("%s_%s.report", ts, args.Priority)
+			reportPath := filepath.Join(reportsDir, filename)
+
+			content := fmt.Sprintf("priority: %s\ntimestamp: %s\n\n%s\n",
+				args.Priority,
+				time.Now().Format("2006-01-02 15:04:05"),
+				args.Message)
+			os.WriteFile(reportPath, []byte(content), 0644)
+
+			// Count pending reports
+			entries, _ := os.ReadDir(reportsDir)
+			pending := 0
+			for _, e := range entries {
+				if !e.IsDir() && strings.HasSuffix(e.Name(), ".report") {
+					pending++
+				}
+			}
+
+			priorityIcons := map[string]string{"urgent": "🔴", "normal": "🟡", "low": "🔵"}
+			icon := priorityIcons[args.Priority]
+			if icon == "" {
+				icon = "🟡"
+			}
+
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{&mcp.TextContent{
+					Text: fmt.Sprintf("%s 새로운 보고가 확인되었습니다.\n\n요약: %s\n우선순위: %s\n대기열: %d건\n\n사용자의 요청 처리 후 팔로업합니다.", icon, args.Message, args.Priority, pending),
+				}},
+			}, nil
+		},
+	)
+
+	// ─── Tool 9: pending_reports ───
+	server.AddTool(
+		&mcp.Tool{
+			Name:        "pending_reports",
+			Description: "대기 중인 보고 목록을 반환. done=true로 호출하면 가장 오래된 보고를 처리 완료 표시.",
+			InputSchema: json.RawMessage(`{
+				"type": "object",
+				"properties": {
+					"done": {
+						"type": "boolean",
+						"default": false,
+						"description": "true면 가장 오래된 보고를 처리 완료로 표시"
+					}
+				}
+			}`),
+		},
+		func(_ context.Context, req *mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			var args struct {
+				Done *bool `json:"done"`
+			}
+			json.Unmarshal(req.Params.Arguments, &args)
+
+			reportsDir := filepath.Join(brainRoot, "_inbox", "reports")
+			doneDir := filepath.Join(brainRoot, "_inbox", "reports_done")
+
+			entries, _ := os.ReadDir(reportsDir)
+
+			// If done=true, move oldest report to done
+			if args.Done != nil && *args.Done && len(entries) > 0 {
+				os.MkdirAll(doneDir, 0755)
+				for _, e := range entries {
+					if strings.HasSuffix(e.Name(), ".report") {
+						src := filepath.Join(reportsDir, e.Name())
+						dst := filepath.Join(doneDir, e.Name())
+						os.Rename(src, dst)
+						break // move only oldest
+					}
+				}
+				entries, _ = os.ReadDir(reportsDir) // refresh
+			}
+
+			if len(entries) == 0 {
+				return &mcp.CallToolResult{
+					Content: []mcp.Content{&mcp.TextContent{Text: "✅ 대기 중인 보고 없음"}},
+				}, nil
+			}
+
+			var sb strings.Builder
+			sb.WriteString(fmt.Sprintf("📋 대기 중인 보고: %d건\n\n", len(entries)))
+			for i, e := range entries {
+				if !strings.HasSuffix(e.Name(), ".report") {
+					continue
+				}
+				data, _ := os.ReadFile(filepath.Join(reportsDir, e.Name()))
+				sb.WriteString(fmt.Sprintf("─── [%d] %s ───\n%s\n", i+1, e.Name(), string(data)))
+			}
+
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{&mcp.TextContent{Text: sb.String()}},
 			}, nil
 		},
 	)

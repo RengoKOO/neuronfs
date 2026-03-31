@@ -253,6 +253,13 @@ const dashboardHTML = `<!DOCTYPE html>
       <input type="text" id="searchInput" placeholder="뉴런 검색 (Ctrl+K)" oninput="filterNeurons()">
     </div>
 
+    <div class="recent-neurons-section" id="recentSection" style="padding: 16px 24px; border-bottom: 1px solid #1a1a2e;">
+      <div class="add-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span>🌱 최근 자라난 뉴런 (Live)</span>
+      </div>
+      <div id="recentGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;"></div>
+    </div>
+
     <div class="detail-panel" id="detail">
       <h2>
         <span id="detail-icon"></span>
@@ -703,6 +710,33 @@ function updateUI(data) {
       '<span class="chip-count">' + nc + '</span></span>';
   });
   document.getElementById('regionChips').innerHTML = chipsHtml;
+
+  // Render Recent Neurons
+  let allNeurons = [];
+  (data.regions || []).forEach(r => {
+    (r.neurons || []).forEach(n => {
+      if (n.modTime) allNeurons.push({ ...n, region: r.name });
+    });
+  });
+  
+  allNeurons.sort((a,b) => b.modTime - a.modTime);
+  let recentHtml = '';
+  allNeurons.slice(0, 4).forEach(n => {
+    let d = new Date(n.modTime);
+    let timeStr = d.getMonth() + 1 + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    let visualPath = n.path.replace(/\\/g, '/');
+    let pathParts = visualPath.split('/');
+    let shortPath = pathParts.length > 1 ? pathParts[pathParts.length-1] : visualPath;
+    
+    recentHtml += '<div style="background:#111; border:1px solid #222; border-radius:8px; padding:10px; cursor:pointer; transition:all 0.15s;" onclick="selectRegion(\'' + n.region + '\')" onmouseover="this.style.borderColor=\'#3b82f6\';this.style.background=\'#1a1a2e\'" onmouseout="this.style.borderColor=\'#222\';this.style.background=\'#111\'">' +
+      '<div style="font-size:9px; color:#888; font-family:monospace; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">' + 
+      '<span style="background:#222; padding:2px 4px; border-radius:4px;">' + (regionEmoji[n.region]||'') + ' ' + n.region.toUpperCase() + '</span>' +
+      '<span>' + timeStr + '</span></div>' +
+      '<div style="color:#b6cfdd; font-size:11px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="' + n.path + '">' + shortPath + '</div>' +
+      '</div>';
+  });
+  document.getElementById('recentGrid').innerHTML = recentHtml || '<div style="color:#666; font-size:9px; grid-column:span 2; text-align:center;">생장 중인 뉴런 기록 없음</div>';
+
   updateBombDropdown();
 }
 

@@ -325,38 +325,14 @@ func buildEvolvePrompt(episodes []string, brainSummary string, _ SubsumptionResu
 	sb.WriteString("## Brain Regions (7, prioritized — Subsumption Architecture)\n")
 	sb.WriteString("P0:brainstem (conscience/survival) > P1:limbic (emotion) > P2:hippocampus (memory) > P3:sensors (environment) > P4:cortex (knowledge) > P5:ego (tone/style) > P6:prefrontal (goals)\n\n")
 
-	// ── MINI BRAIN: PD's inviolable context ──
-	sb.WriteString("## 🧠 MINI BRAIN — PD's Inviolable Context (READ ONLY)\n")
-	sb.WriteString("This is the owner's core identity and direction. You MUST understand this context but NEVER modify these areas.\n\n")
-
-	sb.WriteString("### Identity\n")
-	sb.WriteString("- Owner: 박정근 (PD), Korean developer/brand builder\n")
-	sb.WriteString("- AI Partner: Technical partner for Vegavery RUN® operations + development + design\n")
-	sb.WriteString("- Language: Korean-native. Technical terms kept in original.\n\n")
-
-	sb.WriteString("### Brand (sensors/brand — DO NOT MODIFY)\n")
-	sb.WriteString("- Vegavery RUN® = Premium wellness brand\n")
-	sb.WriteString("- Slogan: 'for your wellness'\n")
-	sb.WriteString("- Target: 30-50 health-conscious runners\n")
-	sb.WriteString("- Tone: Premium, natural, luxury\n")
-	sb.WriteString("- Design references: Oura, Aesop, Apple\n\n")
-
-	sb.WriteString("### Active Projects (prefrontal/project — RESPECT DIRECTION)\n")
-	sb.WriteString("- NeuronFS brain evolution & dashboard\n")
-	sb.WriteString("- Smart Video Pipeline v17\n")
-	sb.WriteString("- Vegavery CRM operations\n")
-	sb.WriteString("- Omnibus brands: NuGray, Jolly Hour, White Towel\n\n")
+	// ── IDENTITY: loaded dynamically from ego + sensors regions ──
+	sb.WriteString("## 🧠 Owner Context (from brain state — DO NOT MODIFY)\n")
+	sb.WriteString("The owner's identity, brand, and projects are encoded as neurons in ego/sensors/prefrontal regions.\n")
+	sb.WriteString("Read the Brain State below to understand the owner's context.\n")
+	sb.WriteString("NEVER modify brainstem, limbic, or sensors/brand neurons.\n\n")
 
 	sb.WriteString("### Brainstem Rules (P0 — ABSOLUTE, NEVER TOUCH)\n")
-	sb.WriteString("- 禁SSOT duplication\n")
-	sb.WriteString("- 禁fallback\n")
-	sb.WriteString("- 禁repeated same mistake\n")
-	sb.WriteString("- 禁process bypass\n")
-	sb.WriteString("- 禁hardcoding\n")
-	sb.WriteString("- 禁approval gates (just execute)\n")
-	sb.WriteString("- Quality first, speed second\n")
-	sb.WriteString("- Self-debug with visual verification\n")
-	sb.WriteString("- Verify before delivery\n\n")
+	sb.WriteString("These are read from the brainstem region neurons above. They are inviolable.\n\n")
 
 	sb.WriteString("## Valid Regions for grow paths\n")
 	sb.WriteString("brainstem, limbic, hippocampus, sensors, cortex, ego, prefrontal\n\n")
@@ -395,7 +371,7 @@ func buildEvolvePrompt(episodes []string, brainSummary string, _ SubsumptionResu
 	sb.WriteString("2. Prefer 'fire' (reinforce existing) over 'grow' (create new) — consolidation over expansion\n")
 	sb.WriteString("3. NEVER touch brainstem neurons (P0 is read-only conscience) — not grow, not prune, not signal\n")
 	sb.WriteString("4. NEVER touch limbic neurons (P1 emotion system is automatic)\n")
-	sb.WriteString("5. NEVER touch sensors/brand/* (PD's brand identity is sacred)\n")
+	sb.WriteString("5. NEVER touch sensors/brand/* (owner's brand identity is sacred)\n")
 	sb.WriteString("6. NEVER create duplicate neurons — check existing paths first\n")
 	sb.WriteString("7. NEVER delete — prune means mark dormant (isolation), NOT deletion\n")
 	sb.WriteString("8. 'prune' ONLY neurons with counter=1 AND no dopamine AND overlap with higher-counter neurons\n")
@@ -520,7 +496,7 @@ func callGroq(apiKey string, prompt string) (*evoResult, error) {
 
 		// Block sensors/brand modifications (PD's sacred identity)
 		if region == "sensors" && strings.HasPrefix(parts[1], "brand") {
-			fmt.Printf("  🛡️  Blocked: cannot %s sensors/brand (PD's brand identity)\n", a.Type)
+			fmt.Printf("  🛡️  Blocked: cannot %s sensors/brand (owner's brand identity)\n", a.Type)
 			continue
 		}
 

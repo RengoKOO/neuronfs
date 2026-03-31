@@ -40,6 +40,7 @@ type NeuronJSON struct {
 	HasMemory bool   `json:"hasMemory"`
 	IsDormant bool   `json:"isDormant"`
 	Depth     int    `json:"depth"`
+	ModTime   int64  `json:"modTime"`
 }
 
 type RegionJSON struct {
@@ -179,6 +180,7 @@ func buildBrainJSONResponse(brainRoot string) BrainJSON {
 				HasMemory: n.HasMemory,
 				IsDormant: n.IsDormant,
 				Depth:     n.Depth,
+				ModTime:   n.ModTime.UnixMilli(),
 			})
 		}
 		data.Regions = append(data.Regions, rj)

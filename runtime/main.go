@@ -428,7 +428,11 @@ func scanBrain(root string) Brain {
 					FullPath: filepath.Join(regionPath, neuronName),
 					Depth:    0,
 					Counter:  counter,
-					ModTime:  time.Now(),
+				}
+				if fileInfo, err := os.Stat(nf); err == nil {
+					n.ModTime = fileInfo.ModTime()
+				} else {
+					n.ModTime = time.Now()
 				}
 				if fname == "bomb.neuron" {
 					n.HasBomb = true
@@ -482,6 +486,11 @@ func scanBrain(root string) Brain {
 
 			for _, nf := range neuronFiles {
 				fname := filepath.Base(nf)
+				if nfInfo, err := os.Stat(nf); err == nil {
+					if nfInfo.ModTime().After(n.ModTime) {
+						n.ModTime = nfInfo.ModTime()
+					}
+				}
 
 				if m := counterRegex.FindStringSubmatch(fname); m != nil {
 					cnt, _ := strconv.Atoi(m[1])

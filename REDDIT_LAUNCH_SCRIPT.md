@@ -1,3 +1,14 @@
+### 🚀 TARGET SUBREDDITS (DO NOT POST AS STANDALONE IN r/golang)
+1. **r/LocalLLaMA** (Primary Target - They will love the 'No Vector DB' hook)
+2. **r/SelfHosted** (Secondary Target - Focus on '0KB Infrastructure')
+3. **r/SideProject** (Tertiary Target)
+
+### 📌 r/golang Pinned Thread Version (Short Snippet)
+**[NeuronFS: A Go-based Autonomous Agent Memory Engine](https://github.com/rhino-acoustic/NeuronFS)**
+I built a lightweight 0KB cognitive architecture for AI agents in Go. It maps a local filesystem directly to an agent's brain structure (brainstem, limbic, prefrontal) so that OS folders act as immutable safety rules (`mkdir cortex/never_do_this`). The Go runtime parses 343+ file-neurons in ~1ms with zero external server dependencies, providing physical circuit breakers instead of standard vector DB distance checks.
+
+---
+
 Title: I got tired of Vector DBs for agent memory, so I built a 0KB governance engine using my local filesystem (NeuronFS)
 
 **TL;DR:** I built an open-source tool ([NeuronFS](https://github.com/rhino-acoustic/NeuronFS)) that lets you control your AI agent's memory and rules purely through OS folders. No Vector DB, no Letta runtime server. A folder (`mkdir cortex/never_do_this`) becomes an immutable rule. It even has a physical circuit breaker (`bomb.neuron`) that halts the AI if it breaks safety thresholds 3 times. 

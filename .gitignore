@@ -49,12 +49,27 @@ brain_dashboard.html
 brain_mesh.obj
 brain.obj
 
-# Environment
-.env
+# Brain user data (personal — use `--init` to create example brain)
+brain_v4/
+.gemini/
+.neuronrc
 
 # Brain agent communication (transient)
-brain_v4/_agents/*/inbox/*.md
-brain_v4/_agents/*/outbox/*.md
+# brain_v4/_agents/*/inbox/*.md
+# brain_v4/_agents/*/outbox/*.md
+
+# Personal orchestration scripts (contain hardcoded local paths)
+runtime/bot-heartbeat.mjs
+runtime/agent-bridge.mjs
+runtime/kickstart.mjs
+runtime/force_kick*.mjs
+runtime/pulse.mjs
+runtime/wargame.mjs
+runtime/multi-agent.mjs
+runtime/community_crawler.mjs
+runtime/probe.mjs
+runtime/pm-force*.mjs
+runtime/scrape_bot1.cjs
 
 # Internal backups
 _backup_*/
@@ -74,3 +89,10 @@ heartbeat_log.txt
 
 # Proposals (internal)
 _proposals/
+
+# Environment
+.env
+
+# Temp directories
+tmp_*/
+force_kick.mjs

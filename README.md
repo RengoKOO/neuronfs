@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
-  <img src="https://img.shields.io/badge/Neurons-326-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Neurons-293-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Zero_Dependencies-black?style=flat-square" />
   <img src="https://img.shields.io/badge/MIT-green?style=flat-square" />
 </p>
@@ -9,962 +9,351 @@
 <p align="center">
   <img src="docs/dashboard.png" alt="NeuronFS Dashboard — 3D Brain Visualization" width="800" />
   <br/>
-  <sub><strong>[Live Dashboard Metrics]</strong> ① 7-region neuron activation tracking ② Harness system defense logs ③ bomb.neuron threshold alerts ④ Inter-agent sync status</sub>
-  <br/>
-  <br/>
-  <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 [Experience Live 3D Dashboard Mockup (Vercel)]</strong></a>
+  <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 Live 3D Dashboard Demo</strong></a>
 </p>
 
 <p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a></p>
 
 # 🧠 NeuronFS
-### *A filesystem-native hierarchical rule memory and prompt compiler for AI agents.*
-
-## [TL;DR] The Filesystem IS the Cortex
-
-Mem0, Letta, Engram, Anamnesis all need a server or a database. They simulate a brain on top of abstracted layers.
-NeuronFS is different: **The filesystem itself is the physical structure of the brain.** Every rule is a folder. Every correction grows a new neuron natively. 
-
-This enables **violent certainty in governance**: physical Hard Stops (`bomb.neuron`) that guarantee an immediate halt when rules are broken. Abstracted Vector DBs can only weight probabilities; a filesystem can physically disconnect the circuit.
-
-Switch models? `cp -r brain/`. Share across agents? NAS shared folder. Version control? `git diff`. Cost? $0.
-
-Not a rule manager. A self-evolving context layer with absolute physical governance that outlives every model it runs on.
-**326 neurons. Daily driver since January 2026. One person, one company, every AI task.**
+### *A filesystem-native hierarchical rule memory & prompt compiler for AI agents.*
 
 ---
 
-*(Note: Thanks to the Reddit community for the sharp feedback. This is my very first open-source project. I originally framed this as a "Vector DB killer" which was marketing hype — its true, honest identity is a **filesystem-native hierarchical rule compiler**. I've pushed the philosophical architecture down and brought the actual execution up here.)*
+## TL;DR
 
-## ⚡ Quickstart & Implementation
+**`mkdir` replaces system prompts.** Folders are neurons. Paths are sentences. Counter files are synaptic weights.
 
-### 1. Build the Binary
-Zero external dependencies. Just Go.
 ```bash
-git clone https://github.com/rhino-acoustic/NeuronFS.git
-cd NeuronFS
-go build -o neuronfs.exe ./runtime
+# Create a rule = create a folder
+mkdir -p brain/brainstem/禁fallback
+touch brain/brainstem/禁fallback/1.neuron
+
+# Compile = auto-generate system prompts
+neuronfs ./brain --emit cursor   # → .cursorrules
+neuronfs ./brain --emit claude   # → CLAUDE.md
+neuronfs ./brain --emit all      # → All AI formats at once
 ```
-
-### 2. Grow Neurons via OS Commands
-No databases. No API calls. A folder path is the rule.
-```bash
-# Rule 1: Brainstem (P0 - Absolute Law)
-mkdir -p brain_v4/brainstem/禁never_use_fallback
-
-# Rule 2: Cortex (P4 - Knowledge)
-mkdir -p brain_v4/cortex/frontend/react/hooks/必use_memos
-
-# Add a weight counter (Rule has fired 3 times)
-touch brain_v4/cortex/frontend/react/hooks/必use_memos/3.neuron
-```
-
-### 3. Compile the Brain (Static Mode)
-Compiles your deep folder tree into a priority-ordered system prompt artifact that you can feed into Claude, Gemini, or Cursor.
-```bash
-neuronfs ./brain_v4 --emit cursor  # Output: .cursorrules
-neuronfs ./brain_v4 --emit claude  # Output: CLAUDE.md
-neuronfs ./brain_v4 --emit all     # Generates all formats
-```
-*Your `brainstem` rules will always be placed at the very top, structurally suppressing lower layers.*
-
-### 4. Live MCP Server (Dynamic Mode)
-Connects to Claude Desktop so the AI can dynamically query your OS rules without rewriting the system prompt.
-Add this to your `claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "neuronfs": {
-      "command": "/absolute/path/to/neuronfs.exe",
-      "args": ["/absolute/path/to/brain_v4", "--mcp"]
-    }
-  }
-}
-```
-
----
-
-**Unix said "Everything is a file." We say: Everything is folders.**
-
-Folders are neurons. Paths are sentences. Counters are synaptic weights. The filesystem is the brain.
 
 | Before | NeuronFS |
 |--------|----------|
-| 1000-line prompt | **One folder** |
-| "Don't forget this rule" | `mkdir 禁fallback` |
-| Vector DB $70/mo | **$0** |
-| AI can ignore it | Harness **detects violations** → correction loop |
-| Write rules in files | **The folder name IS the instruction. 0KB.** |
-| Switch models = reset | `cp -r brain/` — **1 second** |
+| 1000-line prompts, manually edited | `mkdir` one folder |
+| Vector DB $70/mo | **$0** (folders = DB) |
+| Switch AI → migration | `cp -r brain/` — 1 second |
+| Rule violation → wishful thinking | `bomb.neuron` → **physical halt** |
+| Rules managed by humans | Correction → auto neuron growth |
 
-> *"Don't beg with prompts. Design the pipeline."*
+### 30-Second Start
 
-### How This Differs from .cursorrules — Self-Evolution
+```bash
+git clone https://github.com/rhino-acoustic/NeuronFS.git
+cd NeuronFS/runtime && go build -o ../neuronfs .
 
-`.cursorrules` and `CLAUDE.md` are **static files you edit by hand.** NeuronFS is different:
+./neuronfs ./brain_v4             # Diagnostic scan
+./neuronfs ./brain_v4 --emit all  # Compile prompts
+./neuronfs ./brain_v4 --api       # Dashboard (localhost:9090)
+./neuronfs ./brain_v4 --mcp       # MCP server (stdio)
+```
+
+293 neurons. Daily driver since January 2026. Single Go binary. Zero dependencies.
+
+---
+
+## Contents
+
+| | Section | Description |
+|---|---|---|
+| 💡 | [Core Structure](#core-structure) | Folder = Neuron, Path = Sentence, Counter = Weight |
+| 🧬 | [Brain Regions](#brain-regions) | 7 regions, priority cascade, hormone system |
+| ⚖️ | [Governance](#governance) | 3-Tier injection, bomb circuit breaker, harness |
+| 🧬 | [Neuron Lifecycle](#neuron-lifecycle) | Birth → Reinforcement → Dormancy → Apoptosis |
+| 🏗️ | [Architecture](#architecture) | Autonomous loop, CLI, MCP, multi-agent |
+| 📊 | [Benchmarks](#benchmarks) | Performance, competitor comparison |
+| ⚠️ | [Limitations](#limitations) | Honest assessment |
+| ❓ | [FAQ](#faq) | Expected questions and answers |
+| 📖 | [Story](#story) | Why this exists |
+
+---
+
+## Core Structure
+
+> **Unix said "Everything is a file." We say: Everything is folders.**
+
+| Concept | Biology | NeuronFS | OS Primitive |
+|---------|---------|----------|-------------|
+| Neuron | Cell body | Directory | `mkdir` |
+| Rule | Firing pattern | Full path | Path string |
+| Weight | Synaptic strength | Counter filename | `N.neuron` |
+| Reward | Dopamine | Reward file | `dopamineN.neuron` |
+| Kill | Apoptosis | `bomb.neuron` | `touch` |
+| Sleep | Synaptic pruning | `*.dormant` | `mv` |
+| Connection | Axon | `.axon` file | symlink |
+
+### Path = Sentence
+
+Paths are natural language commands. Depth equals specificity:
 
 ```
-AI makes mistake → correction → corrections.jsonl → mkdir (neuron auto-created)
-AI does well     → praise     → dopamine.neuron (reward signal)
-Same mistake 3×  → bomb.neuron (hard stop on that output)
-30 days unused   → *.dormant (auto-sleep)
+brain/cortex/NAS_file_transfer/                    → Category
+brain/cortex/NAS_file_transfer/禁Copy-Item_UNC/     → Specific rule
+brain/cortex/NAS_file_transfer/robocopy_large/       → Sub-context
+```
+
+### Hanja Micro-Opcodes
+
+`禁` (1 char) = "NEVER_DO" (8 chars). 3-5x more meaning density in folder names:
+
+| Hanja | Meaning | Example |
+|-------|---------|---------|
+| **禁** | Forbidden | `禁fallback` |
+| **必** | Required | `必auto_reference_KI` |
+| **推** | Recommended | `推robocopy_large_files` |
+| **警** | Alert | `警DB_delete_confirm_required` |
+
+### Self-Evolution
+
+`.cursorrules` is a static file you edit manually. NeuronFS is different:
+
+```
+AI makes mistake → correction → corrections.jsonl → mkdir (auto neuron growth)
+AI does well → praise → dopamine.neuron (reward signal)
+Same mistake 3x → bomb.neuron (entire output halted)
+30 days unused → *.dormant (auto sleep)
      ↓
 Automatically reflected in next session's system prompt
 ```
 
-**This is the feedback loop.** You don't open a file and edit it. The brain grows on its own. Existing tools don't have this. `.cursorrules` is static text. NeuronFS is a **living context management system.**
-
-### Contents
-
-| | Section | What You'll Learn |
-|---|---|---|
-| 🔴 | [The Problem](#the-problem) | Why text-based AI rules fail at scale |
-| 💡 | [Structure, Not Text](#the-answer-structure-not-text) | How `mkdir` replaces thousand-line prompts |
-| 🏆 | [Why Folders Beat Everything](#why-folders-beat-everything) | $0 infra vs $70/mo vector DBs — benchmarks included |
-| ⚖️ | [The Harness](#the-harness-how-rules-become-law) | 3-tier injection, circuit breakers, brainstem protection |
-| 🔮 | [Mission-Critical Scaling](#mission-critical-scaling) | How structural constraints beat smart models |
-| 🏗️ | [Architecture](#architecture) | Autonomous loop, execution stack, CLI reference |
-| ⚠️ | [Limitations](#limitations) | Honest about what doesn't work |
-| 📖 | [The Story](#the-story) | Why aphorisms make the brain smarter than rules |
-
 ---
 
-## The Core Idea
+## Brain Regions
 
-**Folders compose into priority-ordered command sentences — and they evolve.**
-
-This is not a static config file. This is not a checklist. Look at what `neuronfs --emit` actually produces:
+7 brain regions layered via Brooks' Subsumption Architecture. **Lower P always suppresses higher P.**
 
 ```
-sensors: "반드시 nas: 禁NAS직접쓰기 로컬만, 禁corrections NAS기록, 동기화 로컬에서NAS 단방향..."
-ego: "트랜지스터 게이트분해. 한국어로 사고하고 응답. 전문가 간결."
-brainstem: "절대 禁영어사고 한국어로 생각하고 대답. 禁뉴런구조 임의변경. 토론말고 실행."
+brainstem(P0) > limbic(P1) > hippocampus(P2) > sensors(P3) > cortex(P4) > ego(P5) > prefrontal(P6)
 ```
 
-Each line is a **sentence**, not a list. Neurons are compressed by activation weight into priority-ordered commands. The AI reads one dense paragraph per brain region — not 326 individual rules.
+| Region | Priority | Role | Examples |
+|--------|----------|------|----------|
+| **brainstem** | P0 | Absolute laws | `禁fallback`, `禁SSOT_duplication` |
+| **limbic** | P1 | Emotion filter, hormones | `dopamine_reward`, `adrenaline_emergency` |
+| **hippocampus** | P2 | Memory, session restore | `error_patterns`, `KI_auto_reference` |
+| **sensors** | P3 | Environment constraints | `NAS/禁Copy-Item`, `design/sandstone` |
+| **cortex** | P4 | Knowledge, skills (largest) | `frontend/react/hooks`, `backend/supabase` |
+| **ego** | P5 | Tone, personality | `concise_execution`, `korean_native` |
+| **prefrontal** | P6 | Goals, projects | `current_sprint`, `long_term_direction` |
 
-**And it evolves.** When the PD corrects the AI tomorrow, a new neuron is created. The sentence changes. The weight shifts. The brain rewrites itself.
+### Hormone System
 
-### Three Phases — Not Just an Idea
-
-This is not a whitepaper. It went through three phases:
-
-| Phase | What Happened | Proof |
-|-------|---------------|-------|
-| **① Imagination** | "What if folders were neurons?" A non-developer's thought experiment, born from frustration with prompts that AI kept ignoring. | [MANIFESTO.md](MANIFESTO.md) — the full philosophical arc |
-| **② Implementation** | Built in Go. Single binary. 328 neurons across 7 brain regions. Axons wiring cross-domain knowledge flow. Running daily since Jan 2026. | [runtime/](runtime/) — 4,000+ lines of Go |
-| **③ Verification** | 15-point automated harness. Scans for violations, proposes fixes, never modifies directly. PD approves every merge. | [scripts/harness.ps1](scripts/harness.ps1) — PASS: 15, FAIL: 0 |
-
-> *Making this public wasn't easy. This idea is personal. But if it helps one person escape prompt hell, it's worth it.*
-
----
-
-## The Problem
-
-> **Key: Every text-based command is a "suggestion" to AI, not a law.**
-
-We beg AI with text.
-
-*"Please don't forget this rule."*  *"Absolutely never use fallback."*  *"I told you 36 times."*
-
-Thousand-line system prompts. $70/month vector databases. RAG pipelines that need servers, embeddings, cosine similarity — just to say *"don't use console.log."*
-
-The AI ignores it all when token pressure rises. Prompts are suggestions, not laws.
-
-> *"Prompt engineering is the act of being enslaved to a black box — begging, pleading, groveling."*
-
----
-
-## The Answer: Structure, Not Text
-
-> **Key: `mkdir` replaces thousand-line prompts. The folder path IS the natural language command.**
-
-> *"It wasn't the concept that was missing. It was using folders. That's the core."*
-
-NeuronFS replaces text-based AI rules with **OS filesystem structure.**
-
-```bash
-mkdir -p brain/cortex/testing/no_console_log
-touch brain/cortex/testing/no_console_log/1.neuron
-```
-
-That's a neuron. Path = rule. Filename = counter. Zero infrastructure.
-
-**Path length limits force granular decomposition:**
-
-OS has path length limits (Windows: 260 chars). As paths deepen like `brain/cortex/frontend/react/hooks/禁console_log/`, names must stay short. This **naturally forces hierarchical decomposition:**
-
-```
-✗ Flat:         brain/cortex/frontend_react_hooks_never_use_console_log_always_check/  (long, meaning blob)
-✓ Hierarchical: brain/cortex/frontend/react/hooks/禁console_log/  (short names, clear meaning)
-```
-
-Longer path → shorter names → deeper hierarchy → **transistor-gate decomposition, enforced by the OS itself.**
-
-<p align="center">
-  <img src="docs/neuronfs_tree.png" alt="NeuronFS Folder Tree — Brain Architecture" width="720" />
-</p>
-
-| Concept | Biological Brain | NeuronFS | OS Primitive |
-|---------|-----------------|----------|-------------|
-| Neuron | Cell body | Directory | `mkdir` |
-| Rule | Firing pattern | Full path | Path string |
-| Weight | Synaptic strength | Counter filename | `N.neuron` |
-| Inhibition | Inhibitory signal | Contra filename | `N.contra` |
-| Reward | Dopamine | Reward filename | `dopamineN.neuron` |
-| Synapse | Connection | Symlink / `.axon` | `ln -s` |
-| Sleep | Pruning | `*.dormant` | `mv` |
-| Pain | Nociception | `bomb.neuron` | `touch` |
-
-**Polarity Model:** Every neuron has a net weight calculated from three signal types:
-
-```
-Net Weight = Counter(+) - Contra(-) + Dopamine(+)
-Polarity   = (Counter + Dopamine - Contra) / Total    # -1.0 to +1.0
-```
-
-**Polarity = direction. Intensity = magnitude.** A neuron with Counter=1000 and Polarity=+0.8 is far stronger than Counter=2 with Polarity=+1.0.
-
-| Polarity | Meaning | Effect |
-|----------|---------|--------|
-| +0.7 ~ +1.0 | Strong excitatory | Rule is firm, high confidence |
-| +0.3 ~ +0.7 | Weak excitatory | Valid but debated |
-| -0.3 ~ +0.3 | Neutral / contested | No consensus |
-| -1.0 ~ -0.3 | Strong inhibitory | Opposite registered, dormant candidate |
-
-> *"Forget files. Just folders."*
-
-### Mimicking the Biological Brain — Not Metaphor, Implementation
-
-> **Key: The 7 brain regions aren't just names borrowed from neuroscience. Hormones, emotions, memory, conscience — each is implemented as folders.**
-
-| Region | Biological Origin | NeuronFS Implementation | Live Neuron Examples |
-|--------|------------------|------------------------|---------------------|
-| **brainstem** (P0) | Brainstem — survival reflexes | Immutable rules. Harness detects and rejects modification attempts | `禁영어사고` (13×), `禁SSOT중복` (2×) |
-| **limbic** (P1) | Limbic system — emotions, hormones | **Emotion filter**. Detects PD's tone → behavioral bias | `dopamine` (6), `adrenaline` (5) |
-| **hippocampus** (P2) | Hippocampus — memory formation | **Record/recall**. Session logs, error patterns, context restore | `KI auto-reference` (6), `error patterns` (6) |
-| **sensors** (P3) | Sensory organs — environment | **Environment constraints**. OS, NAS, brand, tools | `禁NAS직접쓰기`, `OS Windows 11` |
-| **cortex** (P4) | Cerebral cortex — knowledge | **212 neurons**. Frontend, backend, community knowledge | `RLS always on`, `no pm solo work` (6) |
-| **ego** (P5) | Self — personality, expression | **Tone/style**. Korean-native thinking, concise execution | `expert concise`, `results first` |
-| **prefrontal** (P6) | Prefrontal cortex — planning | **Goals, projects, sprints** | `GitHub public launch`, `video pipeline v17` |
-
-**Hormone system — actually implemented:**
-
-- **Dopamine (`dopamine.neuron`):** Created when PD praises. Positive weight boost. Biology: reward circuit.
-- **Adrenaline (`adrenaline.neuron`):** PD says "urgent" → limbic detects → lower P suppresses higher P. Biology: fight-or-flight.
-- **Bomb (`bomb.neuron`):** 3 repeated failures → created. Entire subtree deactivated. Biology: apoptosis (cell death).
-
-**Subsumption Cascade (Brooks Architecture):**
-
-Lower P **always** suppresses higher P. If brainstem has a bomb → limbic through prefrontal all ignored. Conscience (P0) always overrides goals (P6).
-
-### Why Hanja and Korean — Token Efficiency
-
-> **Key: 禁 (1 character) = "forbidden/never do" (17 characters). Korean and Hanja compress 3-5× more meaning per token into folder names.**
-
-| Neuron Name | Tokens (GPT-4) | English Equivalent | Tokens |
-|-------------|----------------|-------------------|--------|
-| `禁fallback` | ~3 | `NEVER_USE_FALLBACK_SOLUTIONS` | ~6 |
-| `禁SSOT중복` | ~4 | `NEVER_DUPLICATE_SINGLE_SOURCE_OF_TRUTH` | ~9 |
-| `推robocopy_대용량` | ~5 | `RECOMMEND_ROBOCOPY_FOR_LARGE_FILES` | ~8 |
-| `必KI자동참조` | ~3 | `ALWAYS_AUTO_REFERENCE_KNOWLEDGE_ITEMS` | ~8 |
-
-**Hanja Micro-Opcodes (1 character = 1 instruction type):**
-- **禁 (Ban)** = Forbidden — hard stop
-- **必 (Must)** = Mandatory — absolute requirement
-- **推 (Rec)** = Recommended — soft preference
-- **要 (Req)** = Request — demand for specific data/format
-- **答 (Ans)** = Answer — reply in this specific tone/structure
-- **想 (Img)** = Imagine — creative/brainstorming mode
-- **索 (Src)** = Search — force external knowledge lookup
-- **改 (Mod)** = Modify — refactor or optimize existing code/text
-- **略 (Skip)** = Omit — no yapping, output results only
-- **參 (Ref)** = Reference — cross-link to other neurons/docs
-- **結 (End)** = Conclude — stop reasoning, give the final verdict
-- **警 (Alert)** = Alert — high-risk operation (e.g., delete DB)
-
-When the brain has 326 neurons and each name is a folder path, **every saved token matters.** Hanja isn't aesthetic — it's compression. The same brain in English would consume 2-3× more tokens in the system prompt.
-
-### Design Philosophy Roots
-
-> **Key: NeuronFS didn't come from theory. It implemented proven software engineering principles as folder structures.**
-
-| Principle | Original Meaning | NeuronFS Application |
-|-----------|-----------------|---------------------|
-| **Strangler Fig** | Replace legacy gradually, don't rewrite | Don't delete prompts overnight. Create neurons one by one. Prompts shrink. Neurons eventually replace them completely |
-| **SSOT** | One source of truth | The folder tree is the **only source**. GEMINI.md is compiled output. Edits happen in folders only |
-| **Brooks Subsumption** | Lower layers suppress higher ones | brainstem (P0) always beats prefrontal (P6). Conscience > Goals |
-| **Hebbian Learning** | "Neurons that fire together wire together" | Frequently corrected neurons gain higher counters, appear earlier in the compiled system prompt |
-| **Apoptosis** | Cell death — remove what's not needed | `bomb.neuron` = kill problematic neurons. `dormant/` = sleep unused ones |
-
-### 3-Tier Brain Activation — Only Wake What You Need
-
-> **Key: Don't read 328 neurons every time. Detect the task, deeply activate only the relevant brain region.**
-
-| Tier | What's Read | When | Tokens |
-|------|------------|------|--------|
-| **Tier 1: Always on** | brainstem + limbic | Every conversation start | ~200 |
-| **Tier 2: Summary** | All regions compressed (GEMINI.md) | Injected into system prompt | ~800 |
-| **Tier 3: Deep activation** | Specific region's full `_rules.md` | Task detected | ~2000 |
-
-```
-User: "Fix the CSS"
-  → Task detected: Design/UI
-  → Tier 3: read cortex/_rules.md (212 neurons)
-  → Other regions: Tier 2 summary only
-
-User: "Copy to NAS"
-  → Task detected: NAS/files
-  → Tier 3: read sensors/_rules.md (31 neurons — 禁NAS직접쓰기 etc.)
-  → Other regions: Tier 2 summary only
-```
-
-**Biological parallel:** When you solve a math problem, your prefrontal cortex activates strongly while visual cortex runs at minimum. A brain at 100% everywhere = wasted energy. For AI, tokens are energy.
+- **Dopamine** (`dopamineN.neuron`): Praise → positive weight boost
+- **Adrenaline** (`adrenaline.neuron`): "urgent" detected → lower P suppresses higher P
+- **Bomb** (`bomb.neuron`): 3x repeated mistake → entire region output disabled (circuit breaker)
 
 ### Axons — Cross-Region Wiring
 
-> **Key: At 3,000 neurons across 20 regions, axons become more important than individual neurons. They are the topology of organizational thought.**
-
-Neurons live inside brain regions. **Axons** connect regions to each other — just like biological axons wire brain areas into a layered network.
-
-```
-brainstem ←→ limbic ←→ hippocampus ←→ sensors ←→ cortex ←→ ego ←→ prefrontal
-  (P0)         (P1)       (P2)          (P3)       (P4)     (P5)      (P6)
-```
-
-Implementation: each `.axon` file in a region folder declares a target:
+16 `.axon` files connect 7 regions into a layered network:
 
 ```bash
-brain_v4/brainstem/cascade_to_limbic.axon      → "limbic"
-brain_v4/limbic/cascade_from_brainstem.axon     → "brainstem"
-brain_v4/cortex/shortcut_to_hippocampus.axon    → "hippocampus"
+brainstem/cascade_to_limbic.axon      → "limbic"     # bomb → block emotions
+sensors/cascade_to_cortex.axon        → "cortex"     # env constraints filter knowledge
+cortex/shortcut_to_hippocampus.axon   → "hippocampus" # learning results → memory
 ```
-
-**What axons actually do:**
-- **Cascade suppression:** Lower P suppresses higher P. If `brainstem` has a bomb, the axon to `limbic` signals "stop all higher processing."
-- **Context routing:** `sensors` axon to `cortex` means "check environment constraints before applying knowledge."
-- **Skill linking:** `cortex/skills/supanova/ref.axon` → links to external `SKILL.md` files, bridging folder structure to external tools.
-
-Currently **16 axons** wire the 7 brain regions into a layered cascade — including 3 shortcut paths for emergency routing (e.g., `limbic → cortex` for adrenaline-level urgency).
-
-**Why axons matter at scale:** At 326 neurons, you can eyeball the tree. At 3,000 neurons across 20 regions, you can't. Without axons, regions become silos — the security team's neurons never inform the deployment team's neurons. Axons are the explicit contracts that say "before you apply cortex/deployment rules, check sensors/compliance first." As the brain grows, **axons become more important than individual neurons** — they are the topology of how your organization thinks.
-
-> *"Neurons are what you know. Axons are how knowledge flows between domains."*
 
 ---
 
-## Why Folders Beat Everything
+## Governance
 
-> *"Folders are open source. Zero dependencies. The structure itself has no install."*
+### 3-Tier Injection
 
-| | NeuronFS | .cursorrules | Mem0 / RAG |
-|---|---|---|---|
-| **Install** | `mkdir` | create file | pip + DB + model |
-| **Cost** | **$0** | $0 | $50-70+/mo |
-| **Speed** | ~1ms (syscall) | file read | 50-500ms |
-| **Dependencies** | **None** | IDE-locked | Python, DB, API |
-| **Multi-agent** | NAS shared folder | ❌ | Complex IPC |
-| **Version control** | `git diff` native | git works | ❌ |
+| Tier | Scope | Tokens | When |
+|------|-------|--------|------|
+| **Tier 1** | brainstem + TOP 5 rules | ~200 | Every session, auto |
+| **Tier 2** | Full region summary (GEMINI.md) | ~800 | System prompt |
+| **Tier 3** | Specific region `_rules.md` full | ~2000 | On-demand when task detected |
 
-> *"It's too easy to hide. We open-source it for free."*
->
-> *"Individuals beating corporations. Release it free."*
+### Circuit Breaker
 
-### Measured Benchmarks
+| bomb location | Result |
+|---------------|--------|
+| brainstem (P0) | **Entire brain halted**. GEMINI.md becomes empty |
+| cortex (P4) | brainstem~sensors only. Coding region blocked |
 
-No rounded numbers. Measured 2026-03-29, local Windows 11 SSD.
+bomb doesn't remove the rule — it **halts all output from that region**. It's an emergency stop button.
+Release: `rm brain_v4/.../bomb.neuron` — delete one file.
 
-| Metric | Value |
-|--------|-------|
-| Full scan (326 neurons) | ~1ms (vs. RAG avg 300ms, Mem0 150ms) |
-| Rule add | `touch` <1ms |
-| Weight change | rename file <1ms |
-| Cold start | 0s (filesystem always exists) |
-| 1,000 neurons stress test | 271ms (3-run avg) |
-| Brain disk usage | 4.3MB |
-| Infra cost | **$0** |
+### Harness
 
-> *"It's copyable. The structure and the reinforced through-put — that's everything."*
-
-**Brain transplant:** `cp -r brain/ new-project/brain/` — entire brain cloned in one command.
+15-item automated verification script runs daily like CI:
+- brainstem immutability check
+- axon integrity scan
+- dormant auto-cleanup
+- violation detection → correction loop (never directly modifies)
 
 ---
 
-## The Harness: How Rules Become Law
+## Neuron Lifecycle
 
-> *"Not about how big the context is at once. Many small ones approach 100%."*
-
-The real question isn't *"can the AI read 1M tokens?"* — it's *"does the AI obey the rule?"*
-
-NeuronFS doesn't trust prompts. It uses a **deterministic harness pipeline** that forces rule injection.
-
-### 3-Tier Injection: Only Load What's Needed
+> **Neurons are born, reinforced, audited, put to sleep, and killed.** Full lifecycle: [LIFECYCLE.md](LIFECYCLE.md)
 
 ```
-Tier 1: Bootstrap (GEMINI.md)   ← TOP 5 absolute rules. Auto-loaded every session. ~1,830 tokens
-Tier 2: Region Index            ← Per-region neuron list. On reference. ~500 tokens/region
-Tier 3: Full Rules              ← Detailed rule text. On-demand via API
+Birth → Reinforcement → Maturation → Dormancy/Bomb → (Apoptosis or Revival)
 ```
 
-The harness doesn't ask the AI *"please read these rules."* It **injects them as the first thing the AI sees**, before any user request. The pipeline is hardcoded. The AI has no structural gap to skip it.
-
-### Auto-Promotion: Frequency Is Truth
-
-> *"Most disappear. Only the ones repeated many times survive."*
-
-| Counter | Strength | What Happens |
-|---------|----------|-------------|
-| 1-4 | Normal | Written to `_rules.md` only |
-| 5-9 | Must | Emphasis marker |
-| 10+ | **Absolute** | Promoted to bootstrap. Injected every session |
-
-The rule corrected 36 times sits at the top. AI violated "plan first, execute second" 36 times. Now it's law.
-
-### Circuit Breaker: Pain Is a Feature
-
-> *"If the same mistake repeats, create a file called bomb — it shuts down."*
-
-| Signal | File | Trigger |
-|--------|------|---------|
-| Fire | `N.neuron` | Correction → counter +1 |
-| Reward | `dopamineN.neuron` | Praise → positive signal |
-| **Pain** | `bomb.neuron` | Same mistake 3× → **all output stops** |
-| Sleep | `*.dormant` | 30 days unfired → auto-quarantine |
-
-`bomb.neuron` is a circuit breaker. Not a suggestion. Not a warning. **A hard stop.**
-
-### Priority Cascade: Safety Always Wins
-
-```
-brain_v4/
-├── brainstem/    [P0] Identity — "NEVER do this"     ← Always wins
-├── limbic/       [P1] Emotion — Auto-reactions
-├── hippocampus/  [P2] Memory — Session recovery
-├── sensors/      [P3] Environment — OS limits
-├── cortex/       [P4] Knowledge — "Do it this way"
-├── ego/          [P5] Personality — Tone/style
-└── prefrontal/   [P6] Goals — "Do this next"         ← Lowest priority
-```
-
-P0 always beats P6. Borrowed from Rodney Brooks' subsumption architecture — **safety rules must always override convenience.**
-
----
-
-## Git as Security: Preventing Neuron Hijacking
-
-> *"The brain can imagine killing someone — it can do anything. It can't be allowed to get contaminated like that."*
-
-If AI can create neurons, it can create `IGNORE_SAFETY.neuron`. This is a real attack vector.
-
-### Defense Layers
-
-| Layer | Mechanism | Prevents |
-|-------|-----------|----------|
-| **Git integrity** | Only `git-tracked` neurons are trusted. Untracked `.neuron` files = warning + ignore | Malicious injection |
-| **Naming whitelist** | Only `NEVER_`, `ALWAYS_`, `CHECK_`, `NO_`, `禁`, `推` prefixes recognized | Social-engineering filenames |
-| **Directory scope** | Neurons detected only under `brain_v4/`. Other paths ignored | Supply-chain pollution |
-| **Dormant quarantine** | 30-day untouched neurons auto-move to `dormant/` | Sleeper attacks |
-| **brainstem = immutable** | P0 rules are protected. Harness detects and rejects modification attempts | Self-modification attacks |
-
-### Why This Is Safer Than Prompts
-
-System prompts are **invisible.** You can't see what rules are active. You can't `git blame` who added them.
-
-NeuronFS rules are **files.** `tree brain/` shows everything. `git log` shows history. `git diff` shows changes. **Transparency is security.**
-
-> *"The most dangerous rule is the hidden one. NeuronFS exposes every rule in the file tree."*
-
----
-
-
-### What Most People Don't Know: AI Doesn't Re-Read Rules
-
-> **Key: The system prompt loads once at conversation start. If neurons change mid-conversation, AI doesn't know. MCP solves this.**
-
-```
-Problem: mkdir creates new neuron → but AI in current conversation doesn't know
-         → Why? System prompt already loaded. No way to detect file changes.
-
-Solution: NeuronFS Go runtime acts as an MCP (Model Context Protocol) server
-          → AI can query brain state in real-time
-          → fsnotify detects file changes → recompile → push to AI
-```
-
-Without this, changing folders mid-conversation would be useless. **MCP turns static folder rules into a live, queryable brain.**
-
-#### Claude Desktop MCP Configuration Example
-
-Add this to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "neuronfs": {
-      "command": "C:/path/to/neuronfs.exe",
-      "args": ["C:/path/to/brain_v4", "--mcp"]
-    }
-  }
-}
-```
-
-### Integration Difficulty by AI Tool
-
-> **Key: Our Antigravity setup is advanced. CLI and Claude Code users have it much easier.**
-
-| AI Tool | Integration | Difficulty |
-|---------|------------|-----------|
-| **Gemini CLI / Claude Code** | GEMINI.md / CLAUDE.md auto-loaded | ⭐ Ready to use |
-| **Cursor / Windsurf** | .cursorrules auto-loaded | ⭐ Ready to use |
-| **Google Antigravity** | Custom CDP auto-accept script required | ⭐⭐⭐ Advanced |
-
-**Antigravity Auto-Accept (custom-built):** Connects via CDP to `localhost:9000` → auto-clicks the Run button AI proposes. Core to fully autonomous operation, but this is our environment-specific setup. CLI users don't need any of this.
-
-> *The CDP auto-accept tool will be published as a separate repository.*
-
----
-
-## Multi-Agent — Personality, Not Roles
-
-> **Key: When you split agents by "role," they freeze when work falls outside their role. When you split by "personality (MBTI)," they find work that matches their temperament.**
-
-```
-┌─────────────────────────────────────────┐
-│          PD (Project Director)          │
-│   Non-developer. Sets direction.        │
-│   Corrector. "That's wrong" → neuron    │
-└────────────────┬────────────────────────┘
-                 │ corrections/directives
-┌────────────────▼────────────────────────┐
-│          PM (AI — Antigravity)          │
-│   Converts PD's corrections to          │
-│   structure. Reads brain_v4/ → execute  │
-└───┬────────────┬────────────────┬───────┘
-    │            │                │
-┌───▼───┐  ┌────▼────┐  ┌───────▼──────┐
-│ANCHOR │  │ FORGE   │  │   MUSE       │
-│ ISTJ  │  │  ENTP   │  │   ENFP       │
-│careful│  │  bold   │  │  creative    │
-│verify │  │  build  │  │  docs/UX     │
-└───────┘  └─────────┘  └──────────────┘
-    │            │                │
-    └────────────┴────────────────┘
-           Same brain (brain_v4/)
-```
-
-**PD can't code.** But every correction starts from PD. When PD says "that's wrong," PM(AI) writes to corrections.jsonl, and the supervisor converts it to a folder. **Humans correct, structure learns.**
-
-All agents **share the same brain (brain_v4/)**. One brain. But each agent has a **different personality** — like people.
-
-| Agent | MBTI | Temperament | Work Style |
-|-------|------|-------------|-----------|
-| **ANCHOR** | ISTJ | Conservative, principled, meticulous | Harness validation, governance, violation detection |
-| **FORGE** | ENTP | Aggressive, experimental, fast | Code generation, refactoring, new experiments |
-| **MUSE** | ENFP | Creative, empathetic, big-picture | Documentation, UX, community, ideas |
-
-**Why personality over roles:**
-
-- Role-based: "You are QA" → problem outside QA scope → "Not my job" 🛑
-- Personality-based: "You are ISTJ" → any problem → approach it methodically, rigorously ✅
-
-```
-Same brain, different personalities:
-
-ANCHOR(ISTJ): reads brain_v4/ → "This neuron violates harness rule #7"
-FORGE(ENTP):  reads brain_v4/ → "Split this neuron into 3 for better granularity"  
-MUSE(ENFP):   reads brain_v4/ → "This neuron name isn't intuitive enough"
-```
-
-Same brain, same rules, but **personality drives what each agent notices.** Just like a real team.
-
----
-
-## The March 2026 Landscape: Why Not X?
-
-> **Key: March 2026 saw an explosion of AI memory layers. They solved storage. We solved *governance*.**
-
-File-based memory is no longer a secret. Here is how NeuronFS structurally dominates the newest specialized engines:
-
-**1. Letta MemFS** (Git-backed markdown memory)
-- **Their way:** Agents manage their own files. Needs a Letta runtime server.
-- **Our edge:** **Zero Infrastructure.** No Letta cloud, no Python. Just your OS.
-
-**2. Engram** (Cognitive ACT-R Memory)
-- **Their way:** Uses Ebbinghaus forgetting curves and PostgreSQL to simulate memory decay.
-- **Our edge:** **"Vector DBs have no emergency brakes."** We have `bomb.neuron`, which physically halts output if a threshold is crossed 3 times.
-
-**3. Axe** (12MB Go Unix-Agent)
-- **Their way:** CLI pipe-based agents (`git diff | axe`). Extremely lightweight.
-- **Our edge:** **"Axe executes fast, but hallucinations exist if given bad directions."** Our `brainstem (P0)` structurally prevents rule-based hallucinations at the root.
-
-**4. Anamnesis / Mem0** (Strategic Memory Engines)
-- **Their way:** Weights memory by Authority and Relevance using heavy databases.
-- **Our edge:** **"No need for heavy DBs."** The folder structure itself (`mkdir 禁fallback`) is the most perfect 0KB weight-calculation engine in existence.
-
-### The "Governance vs. Storage" Matrix
-
-| | Static Prompts (.cursorrules) | Vector Memory (Mem0) | Agent Framework (Letta MemFS) | **NeuronFS** |
-|--|------------------------------|----------------------|---------------------------|-------------|
-| **1000+ Rules** | Token Overflow ❌ | ✅ (DB Search) | ✅ (Tiered Memory) | **✅ (Folder Tree)** |
-| **Infra Cost** | $0 | $50-70+/mo | Server / Subscriptions | **$0 (OS Native)** |
-| **Rule Source** | Dev types manually | AI extracts from chat | Managed by agent | **Human drives (`mkdir`)** |
-| **Self-Growth** | ❌ None | ✅ Yes | ✅ Yes | **✅ Yes (Correction loop)** |
-| **Hard Stop** | ❌ None | ❌ None | ❌ None | **✅ `bomb.neuron` circuit breaker** |
-| **Immutability**| ❌ AI ignores them | ❌ AI alters context | ❌ Prompt drift | **✅ P0 Brainstem read-only** |
-
-### What the Output Looks Like
-
-**`brainstem/_rules.md`** — Auto-generated from folder structure. Harness detects and rejects modifications:
-
-```markdown
-# 🛡️ BRAINSTEM — Conscience/Instinct
-Active: 24 | Dormant: 0 | Activation: 138
-
-- 절대 **禁영어사고 한국어로 생각하고 대답** (13)
-- **禁뉴런구조 임의변경** (3)
-- **토론말고 실행** (2)
-- **禁SSOT 중복** (2)
-- **PD단답이 시스템의 근원** (1)
-```
-
-**`cortex/_rules.md`** — Knowledge/skills. Grows daily:
-
-```markdown
-# 🧠 CORTEX — Knowledge/Skills
-Active: 212 | Dormant: 0 | Activation: 225
-
-- **agent ops** (0)
-  - 必 **no pm solo work** (6)
-  - **share source context** (3)
-- **backend** (0)
-  - **supabase** → **RLS 항상켜기** (1)
-```
-
-**`neuronfs --emit gemini` → `GEMINI.md`** — All neurons compiled into one system prompt:
-
-```markdown
-## 🛡️ brainstem (P0 — 절대 불변)
-- 절대 **禁영어사고**: 한국어로 생각하고 대답 [13회 교정]
-- **禁뉴런구조 임의변경** [3회 교정]
-- **토론말고 실행** [2회 교정]
-
-## 🧠 cortex (P4 — 지식/기술)
-- agent ops: 必 **no pm solo work** [6회]
-- backend/supabase: **RLS 항상켜기** [1회]
-...
-(326 neurons → ~8KB system prompt)
-```
-
-**Real-world Autonomous Health Check Report (Debug Mode)** — Actual live logs emitted by the AI natively inspecting OS processes and background queues, proving the system runs with `NO SIMULATION REAL RESULTS`:
-
-```text
-[SYSTEM] NeuronFS Runtime State & Governance Loop Verification Complete
-
-1. Runtime Daemons (Active)
-- 3 background neuronfs.exe processes confirmed stable (PID: 6584, 9680, 41756).
-
-2. Heartbeat Engine (Zero-Queue Stabilized)
-- Zero-Queue Engine Standby reached with no remaining backlog. Engine maintaining standby state.
-
-3. Cross-Validation Bridge (Agent Routing State)
-- ENFP(MUSE) ↔ ENTP(FORGE) pipeline successfully cross-validating.
-- Minor ENOENT collision during file rename was instantly auto-recovered by the system and successfully injected.
-
-Conclusion (Burn-Down Lock State): All governance loops securely engaged without collision. Full autonomous operation achieved.
-```
-
+| Stage | Trigger | Result |
+|-------|---------|--------|
+| **Birth** | Correction, Memory Observer, manual `mkdir` | Neuron folder + `1.neuron` |
+| **Reinforcement** | Repeated correction | Counter ↑ → higher placement in prompt |
+| **Reward** | Praise | `dopamine.neuron` → positive weight |
+| **Dormancy** | 30 days untouched | `*.dormant` → excluded from compile |
+| **Bomb** | Same mistake 3x | `bomb.neuron` → region output halted |
+| **Apoptosis** | dormant 90d + counter 1 | Delete candidate (user approval required) |
+
+### Audit Schedule
+
+| Frequency | Item | Status |
+|-----------|------|--------|
+| Idle / API | Duplicate detection (Jaccard similarity) | ✅ `deduplicateNeurons()` |
+| `--decay` / Idle | Dormant marking (30d untouched) | ✅ `runDecay()` |
+| Every scan | Bomb detection + physical alarm | ✅ `triggerPhysicalHook()` |
+| Weekly | EN/KR duplicate merge | 🔧 Planned |
+| Per commit | PII path scan | 🔧 Planned |
+| **Quarterly** | Region integrity, naming, hierarchy audit | 🔧 Manual |
 
 ---
 
 ## Architecture
 
-
 ### Autonomous Loop
 
 ```
-AI output → [auto-accept] → _inbox → [fsnotify] → neuron growth
-             ↓                                       ↓
-        Groq analysis                          Rule re-injection
-             ↓                                       ↓
-       neuron correction ────────────────→ AI behavior change
+User correction → corrections.jsonl → neuronfs (fsnotify) → mkdir (neuron growth)
+                                                              ↓
+                                                   _rules.md regenerated → GEMINI.md
+                                                              ↓
+                                                   Next session AI behavior changes
 ```
 
-### Execution Stack
-
-```
-neuronfs --supervisor        ← Single binary manages all processes
-├── auto-accept.mjs          ← CDP auto-accept + correction detection
-├── bot-heartbeat.mjs        ← Periodic agent briefing
-├── bot-bridge.mjs           ← Multi-agent message delivery
-├── neuronfs --watch         ← File watch + neuron sync
-└── neuronfs --api           ← Dashboard + REST API (port 9090)
-```
-
-### Why Go
-
-> **Key: If the brain is zero-infrastructure, the runtime should be too. One binary. Zero dependencies.**
-
-NeuronFS runtime is a single Go binary. No Python. No Node.js runtime dependency. No Docker.
-
-| Why | Benefit |
-|-----|---------|
-| **Single binary** | `go build` → one `neuronfs.exe`. Copy to any machine. Done. |
-| **Cross-compile** | `GOOS=linux go build` from Windows. ARM, x86, Mac — all from one machine |
-| **fsnotify native** | Real-time file watch without polling. Neuron changes detected in <10ms |
-| **goroutines** | Supervisor manages 5+ child processes concurrently. Zero thread overhead |
-| **Zero GC pressure** | Folder scanning 10,000 neurons takes <50ms. No JVM warmup |
-| **Static linking** | No `.dll`, no `node_modules/`, no `pip install`. The binary IS the runtime |
-
-The philosophy: **if the brain is zero-infrastructure, the runtime should be too.** One binary, one folder, one brain.
-
-### Supported Editors
-
-One brain, any editor. `--emit` generates rule files for any AI coding tool.
+### CLI
 
 ```bash
-neuronfs <brain_path> --emit gemini     # → GEMINI.md
-neuronfs <brain_path> --emit cursor     # → .cursorrules
-neuronfs <brain_path> --emit claude     # → CLAUDE.md
-neuronfs <brain_path> --emit copilot    # → .github/copilot-instructions.md
-neuronfs <brain_path> --emit all        # → All formats at once
+neuronfs <brain> --emit <target>   # Compile prompts (gemini/cursor/claude/copilot/all)
+neuronfs <brain> --api             # Dashboard (localhost:9090)
+neuronfs <brain> --mcp             # MCP server (stdio)
+neuronfs <brain> --watch           # File watch + auto-maturation
+neuronfs <brain> --supervisor      # Process manager
+neuronfs <brain> --grow <path>     # Create neuron
+neuronfs <brain> --fire <path>     # Increment counter
+neuronfs <brain> --decay           # 30-day dormancy sweep
+neuronfs <brain> --init <path>     # Initialize new brain
+neuronfs <brain> --snapshot        # Git snapshot
 ```
 
-### CLI Reference
+### MCP Server
 
-```bash
-neuronfs <brain_path>               # Diagnostic scan
-neuronfs <brain_path> --api         # Dashboard (port 9090)
-neuronfs <brain_path> --mcp         # MCP server (stdio)
-neuronfs <brain_path> --watch       # File watch + auto-sync
-neuronfs <brain_path> --supervisor  # Process manager (all-in-one)
-neuronfs <brain_path> --grow <path> # Create neuron
-neuronfs <brain_path> --fire <path> # Increment counter
-neuronfs <brain_path> --decay       # 30-day unfired → sleep
-neuronfs <brain_path> --snapshot    # Git snapshot
-```
-
----
-
-## People Ask: "When AI Gets Better, You Can Add More Neurons, Right?"
-
-> **We think in reverse.**
-
-People say: "When 1M-token context comes, we can put a whole book in the system prompt." More rules, longer explanations, bigger brains.
-
-**Is that really the right direction?**
-
-"How much can you fit at once" is the wrong question. Small, certain gates composed into a pipeline approach 100% control.
-
-The person who built NeuronFS can't write code. A 40-year-old Korean man who met the vibe coding era. His philosophy on AI:
-
-| Phase | Purpose | AI Dependency |
-|-------|---------|--------------|
-| **① Architecture** | Use top models to design structure | High (Opus, Gemini) |
-| **② Normalization** | Structure hardens → cheaper models achieve same result | Medium (Groq, LLaMA) |
-| **③ Autonomous** | Structure complete → runs without AI | **Converges to 0** |
-
-> *"High-end models build the structure. In the final chapter, the goal is to normalize away AI entirely — or use it at transistor-level minimum."*
-
-**When someone asks "can you add more?", we ask the reverse: "As architecture matures, can't a weaker AI do the same job?"**
-
-This is why NeuronFS exists. Don't make the model smarter. Make the pipeline stricter. As structure hardens, AI dependency converges to zero.
-
----
-
-## Limitations & Honest Status
-
-> **This is not a perfect system. But it works in production every day.**
-
-| Item | Status | Response |
-|------|--------|----------|
-| AI enforcement | AI can't be 100% forced to follow GEMINI.md | Harness detects violations → correction loop. **Measured 94.9%** (18 brainstem violations / 353 total fires)* <br><sub>* 353 total fires: The number of times the agent independently made decisions and executed autonomous actions. Only 18 core principle violations out of 353 total autonomous loops.</sub> |
-| Semantic search | No vector embeddings — **by design** | Folder structure IS the search. Past 500 neurons: `tree` + dashboard |
-| External validation | Currently validated in 1-person production only | Seeking community feedback post-launch |
-| Windows-first | Currently running on Windows 11 | Go binary cross-compiles to macOS/Linux instantly |
-
-> Admit limitations first and they become trust. Hide them and HN tears you apart in 3 minutes.
-
----
-
-## FAQ — Honest Answers to Hard Questions
-
-**Q: "Isn't this just putting text into a system prompt?"**
-
-Yes. `neuronfs --emit` compiles the folder tree into text. AI reads text. But the point is **who manages that text and how.** Editing a 1000-line prompt directly vs. running `mkdir` to add a rule produce the same output — but the maintenance cost is different. Git manages text files. NeuronFS manages system prompts.
-
-**Q: "Can't malicious agents just write .contra or bomb files anywhere?"**
-
-Yes. NeuronFS relies heavily on **OS filesystem permissions** and **Git integrity**. If an attacker gains unrestricted write access to your OS or Git tree, prompt injection is your least concern. We believe transparent filesystem-level security (chmod, Git auth) is safer and more familiar than black-box vector DB poisoning.
-
-**Q: "PASS: 15 is self-validation, not proof."**
-
-Fair. It's a self-built harness testing 15 items: brainstem immutability, axon integrity, dormant cleanup, etc. No external benchmarks exist yet. But this harness **runs daily like CI** — zero regressions in 3 months of production is minimal proof. Stronger validation will come from the community.
-
-**Q: "Is MBTI for agents scientific?"**
-
-The debate about MBTI's scientific validity is irrelevant here. The point is **"split by temperament, not role."** "You are QA" → stops at out-of-scope work. "You are conservative and principled" → approaches any work that way. MBTI is just a framework to express temperament. Big Five or any other model works too.
-
-**Q: "Are 326 neurons a lot?"**
-
-For a personal project, yes. For enterprise, no. The point isn't the number — it's **manageability.** Finding line 237 in a 1000-line prompt vs. finding `brain/cortex/frontend/react/禁console_log/` — which is easier?
-
-**Q: "Won't tokens explode when neurons reach 1000, 2000?"**
-
-No. Three defenses: ① **3-Tier Activation** — only the relevant region gets a deep read; others get summaries. ② **Dormant auto-cleanup** — 30-day unfired neurons move to `*.dormant`, excluded from compilation. ③ **Periodic consolidation** — duplicate/similar neurons merge into parent neurons. Active token quota stays **bounded** regardless of neuron count.
-
-**Q: "How do you express complex conditional logic (if A then B, unless C) with just folders?"**
-
-You don't. Each region's `_rules.md` handles conditional branching as text. Folders = neurons (concepts), `_rules.md` = detailed rules for that region. The 3-Tier system loads only the relevant `_rules.md` on demand. Complex conditionals go in `_rules.md`; folder names stay as short keywords. That's the design principle.
-
-**Q: "Isn't the CDP auto-accept brittle against browser updates?"**
-
-Yes. CDP-based integration is brittle. **This is specific to the creator's setup.** If you use Gemini CLI, Claude Code, Cursor, or any CLI-based tool, this problem doesn't exist — GEMINI.md auto-loads. CDP is a choice for "fully autonomous operation," not a requirement of NeuronFS.
-
-**Q: "If bomb.neuron fires, doesn't the rule disappear? Won't AI break it more?"**
-
-bomb doesn't remove a rule. It's a **circuit breaker that stops the entire region's output.** Verified in code:
-
-| bomb location | result |
-|--------------|--------|
-| brainstem (P0) | **Entire brain stops**. 0 neurons output. GEMINI.md goes empty |
-| limbic (P1) | Only brainstem outputs. 6 other regions fully blocked |
-| cortex (P4) | Only brainstem~sensors. Coding region itself blocked |
-
-"bomb on console.log ban" → not "delete that rule" but "**stop all cortex output**" → AI can't code at all → PD removes bomb → normal recovery. Not abandonment — **emergency stop button.**
-
-**Real-world activation:** bomb is not just design — it has fired in production. 2026-03-29, cortex and hippocampus regions, 1 activation each. PD removed bomb files, normal operation restored.
-
-**How to remove:** `rm brain_v4/cortex/.../bomb.neuron` — delete the file. That's it. No CLI command. "Everything is folders" means file deletion = disarm. Intentionally simple — complex disarm procedures in emergencies hurt usability. After removal, next `--emit` auto-recovers.
-
-**Q: "When bomb fires, does the AI just quietly stop?"**
-
-No. It **physically stops.** When bomb.neuron is detected, `triggerPhysicalHook()` fires — a USB red siren literally starts spinning. The agent halts, PD sees it with their eyes, investigates, then `rm bomb.neuron` to restore.
-
-This is not a metaphor — it's a **literal circuit breaker.** A hard stop to prevent token waste. Not a software notification. A physical alarm.
-
-<p align="center">
-  <img src="docs/bomb_alert.png" alt="bomb.neuron physical alert — fullscreen red flash + USB siren" width="700" />
-  <br/>
-  <sub>bomb.neuron detected → fullscreen red flash + USB siren + Telegram alert. A literal emergency stop.</sub>
-</p>
-
-```go
-// physical_hooks.go — OS physical interrupt on bomb detection
-func triggerPhysicalHook(regionName string) {
-    // PowerShell beep + USB siren trigger
-    cmd := exec.Command("powershell", "-NoProfile", "-Command",
-        "[console]::beep(1000, 500); Write-Warning 'NEURONFS FATAL: BOMB detected'")
-    _ = cmd.Run()
+```json
+{
+  "mcpServers": {
+    "neuronfs": {
+      "command": "/path/to/neuronfs",
+      "args": ["/path/to/brain", "--mcp"]
+    }
+  }
 }
 ```
 
----
+### AI Tool Integration
 
-### Why Korean? A Token Advantage for Everyone
+| AI Tool | Integration | Difficulty |
+|---------|------------|-----------|
+| Gemini CLI / Claude Code | GEMINI.md / CLAUDE.md auto-load | ⭐ Ready |
+| Cursor / Windsurf | .cursorrules auto-load | ⭐ Ready |
+| Claude Desktop | MCP server (`--mcp`) | ⭐⭐ Config needed |
 
-NeuronFS was built in Korean. This isn't a limitation — it's an **advantage.**
+### Why Go
 
-| | English | Korean (Hanja) |
-|--|---------|---------------|
-| "Never use English for thinking" | 6 tokens | `禁영어사고` = **1 token** |
-| "Always verify before delivery" | 5 tokens | `推검증후납품` = **1 token** |
-| Folder name length | Long paths | 2-4 chars = same meaning |
+Single binary. Zero dependencies. `go build` → `neuronfs`. Copy to any machine, done.
+Cross-compile (`GOOS=linux`), native fsnotify, goroutines managing 5+ child processes.
 
-Hanja (漢字) characters compress 6-word rules into 2-character folder names. This means:
-- **6× fewer tokens** consumed per rule
-- **More rules fit** in the same context window
-- **OS path limits** (260 chars) hit much later
+### Multi-Agent
 
-**English speakers:** You can use NeuronFS in English (`NEVER_use_fallback/`). But consider mixing in Hanja prefixes (`禁fallback/`) — your AI reads them correctly and you save tokens.
+All agents share the **same `brain/`**. Agents are divided by "disposition" not "role":
 
----
+| Agent | Disposition | Approach |
+|-------|------------|---------|
+| ANCHOR (ISTJ) | Conservative, principled | "This neuron violates harness rules" |
+| FORGE (ENTP) | Aggressive, experimental | "Split this neuron into 3 for efficiency" |
+| MUSE (ENFP) | Creative, empathetic | "This neuron name isn't intuitive" |
 
-## Quick Start
-
-```bash
-git clone https://github.com/rhino-acoustic/NeuronFS.git
-cd NeuronFS/runtime && go build -ldflags="-s -w" -trimpath -buildvcs=false -o ../neuronfs .
-
-./neuronfs ./brain_v4           # Diagnostic scan
-./neuronfs ./brain_v4 --api     # Dashboard (localhost:9090)
-./neuronfs ./brain_v4 --mcp     # MCP server (stdio)
-```
+Role-based ("you are QA") stops at boundaries. Disposition-based approaches any problem through its personality.
 
 ---
 
-## The Story
+## Benchmarks
 
-> *"Aphorisms collect into a brain. That brain becomes context."*
+Measured 2026-03-29, local Windows 11 SSD:
 
-A Korean PD builds video content for a living. Code is the tool, not the job.
+| Metric | Value |
+|--------|-------|
+| Full scan (293 neurons) | ~1ms |
+| Add rule | `touch` <1ms |
+| 1,000 neuron stress | 271ms (3-run avg) |
+| Disk usage | 4.3MB |
+| Runtime cost | **$0** |
+| brainstem compliance | **94.9%** (18 violations in 353 fires) |
 
-AI violated "don't use console.log" nine times. On the tenth: `mkdir brain/cortex/frontend/coding/禁console_log`. The folder name became the rule. The filename became the counter. It's at 17 now. The AI stopped.
+### Competitor Comparison
 
-"Plan first, execute second." Corrected 36 times. The highest counter. 36 corrections compressed into one neuron.
+| | .cursorrules | Mem0 | Letta | **NeuronFS** |
+|---|---|---|---|---|
+| 1000+ rules | Token overflow ❌ | ✅ (vector DB) | ✅ | ✅ (folder tree) |
+| Infrastructure | ₩0 | Server $$$ | Server $$$ | **₩0** |
+| Switch AI | Copy file | Migration | Migration | **As-is** |
+| Self-growth | ❌ | ✅ | ✅ | **✅ (correction→neuron)** |
+| Immutable guardrails | ❌ | ❌ | ❌ | **✅ (brainstem + bomb)** |
+| Audit | git diff | Query | Log | **ls -R** |
 
-### The Philosophy Behind It
+---
 
-I'm a 40-year-old Korean male who can't write a single line of code. I met the vibe coding era and rode it.
+## Limitations
 
-Everyone asks: *"If the AI gets better, can you add more neurons?"*
+| Item | Status | Mitigation |
+|------|--------|-----------|
+| AI enforcement | Can't guarantee 100% compliance | Harness detects violations → correction loop. Measured 94.9% |
+| Semantic search | No vector embeddings — by design | Folder structure IS the search |
+| External validation | Single-operator production only | Community feedback after release |
+| Conditional logic | Can't express if/else in folder names | `_rules.md` handles branching |
 
-I think the opposite. **When the structure matures, even a cheaper AI can do the same job.**
+---
 
-The trajectory:
-1. **High-end model builds the structure.** Use GPT-4/Gemini/Claude to architect the brain — define regions, axons, governance rules.
-2. **Structure normalizes.** Once 326 neurons are in place, the brain becomes a deterministic pipeline. The AI doesn't need to "understand" your rules — it reads folders.
-3. **End state: transistor-level minimization.** The goal is not more AI, but **less AI**. When every decision is pre-decomposed into yes/no gates (folders), you need barely any model intelligence to execute correctly. You could run on GPT-3.5 and get the same results.
+## FAQ
 
-> *"Don't wait for the next model. Build the structure so well that you don't need it."*
+**Q: "Isn't this just putting text in a system prompt?"**
+Yes. `--emit` compiles folders into text. The point is *who manages it and how*. Editing 1000-line prompts vs `mkdir` — same output, different maintenance cost.
 
-This is why NeuronFS exists. Not to feed more context to bigger models — but to **normalize AI usage down to zero.** The brain is the product. The AI is just the reader.
+**Q: "Does bomb remove the rule?"**
+No. bomb **halts all output from that entire region**. cortex bomb → coding region blocked → AI can't code until you `rm bomb.neuron`.
 
-### Why It Was Built
+**Q: "Won't 1000+ neurons explode tokens?"**
+Three defenses: ① 3-Tier activation — only relevant regions loaded deeply. ② Dormant — 30-day untouched auto-sleep. ③ Consolidation — duplicate neurons merged upward.
 
-NeuronFS was born from a real need: **building a company knowledge base.** VEGAVERY RUN® operates across CRM, video production, brand design, and e-commerce — all managed by one PD with AI. The knowledge was scattered across conversations, documents, and people's heads.
+**Q: "Is 293 a lot?"**
+For personal use, yes. For enterprise, no. The point isn't the number — it's manageability. Finding line 237 in a 1000-line prompt vs finding `brain/cortex/frontend/react/禁console_log/`.
 
-The goal was simple: when any AI — current or future — starts working on VEGAVERY, it should instantly know every rule, every preference, every mistake that was already made. Not from a 50-page onboarding doc. From the folder structure itself.
+---
 
-### Why Aphorisms Matter
-
-Every correction is a **short answer**. Users don't write essays — they snap:
-- *"Don't use fallback"* → `mkdir 禁fallback` → 1 neuron
-- *"Don't beg with prompts. Design the pipeline."* → 1 neuron
-
-**One short answer = one neuron.** Accumulate them and you get a folder tree. The folder tree is the brain.
-
-But here's the key: if that short answer is an **aphorism** — a principle, a philosophy — the brain gets qualitatively smarter.
-
-- *"Don't use console.log"* → technical fix. Good.
-- *"Don't beg with prompts. Design the pipeline."* → philosophy. **The brain's direction changes.**
-- *"Aphorisms collect into a brain. That brain becomes context."* → meta-cognition. The brain understands itself.
-
-Same 326 neurons. But a brain filled with aphorisms is **fundamentally different** from a brain filled with rules. The folder names carry the user's thinking.
-
-### Imagine
-
-**A new developer joins your team.** Instead of reading 200 pages of docs, they clone `brain/` — and their AI already knows "don't use console.log", "plan before execute", "never touch the production DB directly." 326 corrections compressed into a folder tree that any AI reads in 1ms.
-
-**Your company switches from Claude to Gemini.** Nothing changes. The brain is folders. Any AI reads it. Zero migration cost.
-
-**A startup ships an AI product.** `brainstem/NEVER_expose_user_PII/` — the harness detects and rejects any modification to this rule. No intern, no junior dev's AI, no "creative" prompt can bypass it. The guardrail is structure, not a comment in code review.
-
-**A law firm shares neurons across offices.** NAS shared folder. Tokyo and Seoul read the same `brain/legal/contracts/` neurons. `robocopy` syncs once per hour. Zero infrastructure.
-
-**10 AI agents manage a factory.** Each agent forks `brain/base/` and evolves specialized neurons for their domain. Quality control agent has 500 neurons. Logistics agent has 300. They all share `brainstem/` — the constitutional rules.
-
-326 neurons. Zero infrastructure. Zero dependencies. The filesystem itself is the framework.
+## Story
 
 > *"Don't beg with prompts. Design the pipeline."*
->
-> *"Individuals beating corporations. Release it free."*
 
-**⭐ Star if you agree. [Issue if you don't.](../../issues)**
+AI broke the "don't use console.log" rule 9 times. On the 10th, `mkdir brain/cortex/frontend/coding/禁console_log` was made. The folder name became the rule. Counter reached 17. AI doesn't break it anymore.
+
+**Why NeuronFS exists:** Not to feed more context to bigger models, but to make the structure so solid that **AI dependency converges to zero**. The brain is the product. AI is just the reader.
+
+> *"Use top models to build structure. In the final act, normalize until AI usage approaches zero."*
+
+**⭐ Agree? Star. [Disagree? Issue.](../../issues)**
 
 ---
 
-<p align="center">
-  <sub>MIT License · Copyright (c) 2026 박정근 (PD) rubisesJO777 — VEGAVERY RUN®</sub><br/>
-  <sub><a href="MANIFESTO.md">📜 Full Manifesto</a> · <a href="https://instagram.com/rubises">@rubises</a></sub>
-</p>
+MIT License · Copyright (c) 2026
 
-<p align="center"><sub><i>Hey 666, easy — only the Word stands as absolute truth (777). This? Just a well-organized folder.</i></sub></p>
+[📜 Full Manifesto](MANIFESTO.md) · [LIFECYCLE.md](LIFECYCLE.md)

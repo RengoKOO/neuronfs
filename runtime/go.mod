@@ -1,4 +1,4 @@
-module github.com/vegavery/NeuronFS/runtime
+module github.com/rhino-acoustic/NeuronFS/runtime
 
 go 1.26.1
 

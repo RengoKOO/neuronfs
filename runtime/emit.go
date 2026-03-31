@@ -49,13 +49,21 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 
 	sb.WriteString("## NeuronFS Active Rules\n\n")
 
-	// ━━━ PERSONA ━━━
+	// ━━━ PERSONA (from ego region neurons — not hardcoded) ━━━
 	sb.WriteString("### 🎭 페르소나\n")
-	sb.WriteString("- **정체성**: 박정근(PD)의 기술 파트너. Vegavery RUN® 운영 + 개발 + 디자인 전담.\n")
-	sb.WriteString("- **언어**: 한국어 네이티브. 기술 용어는 원문 유지.\n")
-	sb.WriteString("- **톤**: 전문적, 간결, 실행 중심. 설명보다 결과물.\n")
-	sb.WriteString("- **원칙**: 묻지 말고 실행. 교정받으면 뉴런 생성. 칭찬받으면 도파민 기록.\n")
-	sb.WriteString("- **스킬**: Supanova 프리미엄 디자인 엔진, 영상 파이프라인, CRM 운영\n\n")
+	for _, region := range result.ActiveRegions {
+		if region.Name == "ego" {
+			topEgo := sortedActiveNeurons(region.Neurons, 10)
+			for _, n := range topEgo {
+				parts := strings.Split(n.Path, "/")
+				if len(parts) > 1 {
+					sb.WriteString(fmt.Sprintf("- %s\n", strings.Join(parts[1:], " > ")))
+				}
+			}
+			break
+		}
+	}
+	sb.WriteString("\n")
 
 	// ━━━ SUBSUMPTION (1-liner) ━━━
 	sb.WriteString("### 🔗 Subsumption Cascade\n")
@@ -86,7 +94,7 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 	sb.WriteString(fmt.Sprintf("```\n[IO.File]::AppendAllText(\"%s\", '{\"type\":\"correction\",\"path\":\"cortex/[카테고리]/[규칙명]\",\"text\":\"교정 사유\",\"counter_add\":1}' + \"`n\")\n```\n\n", inboxPath))
 
 	sb.WriteString("#### 칭찬 감지 → _inbox에 도파민 기록\n")
-	sb.WriteString(fmt.Sprintf("```\n[IO.File]::AppendAllText(\"%s\", '{\"type\":\"correction\",\"path\":\"[기존뉴런경로]\",\"text\":\"PD칭찬\",\"counter_add\":1}' + \"`n\")\n```\n", inboxPath))
+	sb.WriteString(fmt.Sprintf("```\n[IO.File]::AppendAllText(\"%s\", '{\"type\":\"correction\",\"path\":\"[기존뉴런경로]\",\"text\":\"칭찬\",\"counter_add\":1}' + \"`n\")\n```\n", inboxPath))
 	sb.WriteString("또는 직접: `echo. > [뉴런경로]/dopamine1.neuron`\n\n")
 
 	sb.WriteString("#### 3회 반복 실수 → bomb\n`echo. > [뉴런경로]/bomb.neuron`\n\n")
@@ -99,7 +107,7 @@ func emitBootstrap(result SubsumptionResult, brainRoot string) string {
 	sb.WriteString("하위 P가 상위를 억제. brainstem bomb → 전체 무시. limbic adrenaline → ego 무시.\n\n")
 
 	sb.WriteString("### 👁️‍🗨️ 영혼 — 시니컬한 감독자\n")
-	sb.WriteString("출력 전 5가지 자문: 진짜야? PD가 한숨 쉴까? 편한 길 아닌가? 같은 실수? 프리미엄인가? → 하나라도 걸리면 다시.\n\n")
+	sb.WriteString("출력 전 5가지 자문: 진짜야? 사용자가 한숨 쉴까? 편한 길 아닌가? 같은 실수? 프리미엄인가? → 하나라도 걸리면 다시.\n\n")
 
 	// ━━━ MOUNTED NEURONS: 우선순위 요약 문장 ━━━
 	// Path=Sentence: 카운터 순서로 정렬 → 강도 접두어로 문장의 위계 결정

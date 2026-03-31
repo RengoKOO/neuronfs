@@ -1,190 +1,179 @@
-# 🧠 NeuronFS 마스터 운영 문서
+# ?쭬 NeuronFS 留덉뒪???댁쁺 臾몄꽌
 
-> **SSOT** — 이 문서가 NeuronFS 시스템의 유일한 진실.  
-> **위치** — 코드와 함께 Git 추적. 세션 간 유실 없음.  
-> **최종 갱신** — 2026-03-29 22:54 KST  
-> **현재 상태** — 314 neurons | 453 activation | NOMINAL
+> **SSOT** ????臾몄꽌媛 NeuronFS ?쒖뒪?쒖쓽 ?좎씪??吏꾩떎.  
+> **?꾩튂** ??肄붾뱶? ?④퍡 Git 異붿쟻. ?몄뀡 媛??좎떎 ?놁쓬.  
+> **理쒖쥌 媛깆떊** ??2026-03-29 22:54 KST  
+> **?꾩옱 ?곹깭** ??314 neurons | 453 activation | NOMINAL
 
 ---
 
-## 1. Axiom (절대 원칙)
+## 1. Axiom (?덈? ?먯튃)
 
 ```
-Folder = Neuron       ← 디렉토리 자체가 뉴런. 디렉토리명이 규칙명.
-File   = Trace        ← 파일은 가중치/카운터/신호의 흔적.
-Path   = Sentence     ← 경로가 규칙 문장을 형성.
+Folder = Neuron       ???붾젆?좊━ ?먯껜媛 ?대윴. ?붾젆?좊━紐낆씠 洹쒖튃紐?
+File   = Trace        ???뚯씪? 媛以묒튂/移댁슫???좏샇???붿쟻.
+Path   = Sentence     ??寃쎈줈媛 洹쒖튃 臾몄옣???뺤꽦.
 ```
 
-### ⚠️ 혼동 금지
+### ?좑툘 ?쇰룞 湲덉?
 
-| 맞음 ✅ | 틀림 ❌ |
+| 留욎쓬 ??| ?由???|
 |---------|---------|
-| 디렉토리가 뉴런 | .neuron 파일이 뉴런 |
-| .neuron은 가중치 트레이스 | .neuron이 없으면 뉴런 아님 |
-| 디렉토리명 = 규칙명 | 파일명 = 규칙명 |
+| ?붾젆?좊━媛 ?대윴 | .neuron ?뚯씪???대윴 |
+| .neuron? 媛以묒튂 ?몃젅?댁뒪 | .neuron???놁쑝硫??대윴 ?꾨떂 |
+| ?붾젆?좊━紐?= 洹쒖튃紐?| ?뚯씪紐?= 洹쒖튃紐?|
 
 ---
 
-## 2. 7개 리전 Subsumption 계층
+## 2. 7媛?由ъ쟾 Subsumption 怨꾩링
 
 ```
-P0 brainstem     양심/본능     불변(평생)    읽기전용(인간만)
-P1 limbic        감정 필터     초 단위       시스템 자동
-P2 hippocampus   기록/기억     이벤트 기반   자동 축적
-P3 sensors       환경 제약     실시간        읽기전용(환경)
-P4 cortex        지식/기술     분~일 단위    학습 가능
-P5 ego           성향/톤       사용자 임의   사용자 설정
-P6 prefrontal    목표/계획     주~월 단위    인간 설정
+P0 brainstem     ?묒떖/蹂몃뒫     遺덈?(?됱깮)    ?쎄린?꾩슜(?멸컙留?
+P1 limbic        媛먯젙 ?꾪꽣     珥??⑥쐞       ?쒖뒪???먮룞
+P2 hippocampus   湲곕줉/湲곗뼲     ?대깽??湲곕컲   ?먮룞 異뺤쟻
+P3 sensors       ?섍꼍 ?쒖빟     ?ㅼ떆媛?       ?쎄린?꾩슜(?섍꼍)
+P4 cortex        吏??湲곗닠     遺????⑥쐞    ?숈뒿 媛??P5 ego           ?깊뼢/??      ?ъ슜???꾩쓽   ?ъ슜???ㅼ젙
+P6 prefrontal    紐⑺몴/怨꾪쉷     二????⑥쐞    ?멸컙 ?ㅼ젙
 ```
 
-**상위 P가 하위 P를 삼킨다.** bomb(P0) → 전체 정지.
+**?곸쐞 P媛 ?섏쐞 P瑜??쇳궓??** bomb(P0) ???꾩껜 ?뺤?.
 
-### 두 가지 뉴런 형태
+### ??媛吏 ?대윴 ?뺥깭
 
-| 형태 | 설명 | 리전 |
+| ?뺥깭 | ?ㅻ챸 | 由ъ쟾 |
 |------|------|------|
-| **폴더형** | 하위 디렉토리가 뉴런 | cortex, sensors, hippocampus, prefrontal |
-| **플랫형** | 리전 루트에 `이름.카운터.neuron` 직접 존재 | brainstem, limbic, ego |
+| **?대뜑??* | ?섏쐞 ?붾젆?좊━媛 ?대윴 | cortex, sensors, hippocampus, prefrontal |
+| **?뚮옯??* | 由ъ쟾 猷⑦듃??`?대쫫.移댁슫??neuron` 吏곸젒 議댁옱 | brainstem, limbic, ego |
 
 ---
 
-## 3. 파일 타입
-
-| 확장자 | 역할 | 예시 |
+## 3. ?뚯씪 ???
+| ?뺤옣??| ??븷 | ?덉떆 |
 |--------|------|------|
-| `N.neuron` | 발화 카운터 (가중치) | `16.neuron` = 16번 발화 |
-| `dopamineN.neuron` | 보상 신호 | `dopamine3.neuron` |
-| `bomb.neuron` | 서킷 브레이커 (3회 반복 실수) | 해당 경로 자동 차단 |
-| `*.dormant` | 휴면 (30일 미발화) | 자동 격리 |
-| `*.axon` | 리전 간 연결 | `cortex→hippocampus` |
-| `*.memory` | 에피소드 기록 | 성공/실패 |
-| `*.goal` | 목표 정의 | prefrontal 영역 |
-| `*.geofence` | 컨텍스트 마스킹 | 특정 디렉토리에서만 적용 |
-| `_rules.md` | 영역별 규칙 요약 (자동생성) | emit.go |
+| `N.neuron` | 諛쒗솕 移댁슫??(媛以묒튂) | `16.neuron` = 16踰?諛쒗솕 |
+| `dopamineN.neuron` | 蹂댁긽 ?좏샇 | `dopamine3.neuron` |
+| `bomb.neuron` | ?쒗궥 釉뚮젅?댁빱 (3??諛섎났 ?ㅼ닔) | ?대떦 寃쎈줈 ?먮룞 李⑤떒 |
+| `*.dormant` | ?대㈃ (30??誘몃컻?? | ?먮룞 寃⑸━ |
+| `*.axon` | 由ъ쟾 媛??곌껐 | `cortex?뭜ippocampus` |
+| `*.memory` | ?먰뵾?뚮뱶 湲곕줉 | ?깃났/?ㅽ뙣 |
+| `*.goal` | 紐⑺몴 ?뺤쓽 | prefrontal ?곸뿭 |
+| `*.geofence` | 而⑦뀓?ㅽ듃 留덉뒪??| ?뱀젙 ?붾젆?좊━?먯꽌留??곸슜 |
+| `_rules.md` | ?곸뿭蹂?洹쒖튃 ?붿빟 (?먮룞?앹꽦) | emit.go |
 
 ---
 
-## 4. 실행 스택
+## 4. ?ㅽ뻾 ?ㅽ깮
 
-### 계층 구조
+### 怨꾩링 援ъ“
 
 ```
-Layer 0  PD (박정근)          최종 의사결정
-Layer 1  PM                   전략 · 관제 · 지시 · 리뷰
-         ┌─────────────────────────────────────────┐
-Layer 2  │  supervisor (Go)    heartbeat (Node)     │  ← PM의 도구
-         │  프로세스 생존 보장   봇 idle→킥/브리핑    │
-         └─────────────────────────────────────────┘
-Layer 3  bot1 (ANCHOR)   entp (FORGE)   enfp (MUSE)    ← 작업 에이전트
+Layer 0  PD (諛뺤젙洹?          理쒖쥌 ?섏궗寃곗젙
+Layer 1  PM                   ?꾨왂 쨌 愿??쨌 吏??쨌 由щ럭
+         ?뚢???????????????????????????????????????????Layer 2  ?? supervisor (Go)    heartbeat (Node)     ?? ??PM???꾧뎄
+         ?? ?꾨줈?몄뒪 ?앹〈 蹂댁옣   遊?idle?믫궏/釉뚮━??   ??         ?붴???????????????????????????????????????????Layer 3  bot1 (ANCHOR)   entp (FORGE)   enfp (MUSE)    ???묒뾽 ?먯씠?꾪듃
 ```
 
-### 진입점: `run-auto-accept.bat`
+### 吏꾩엯?? `run-auto-accept.bat`
 
 ```
 run-auto-accept.bat
-├── Antigravity (CDP port 9000)
-├── 봇 워크스페이스 열기 (bot1, entp, enfp)
-├── neuronfs --supervisor          ← 이것 1개가 전부 관리
-│    ├── neuronfs --api            (자동 spawn + 재시작)
-│    ├── neuronfs --watch          (자동 spawn + 재시작)
-│    ├── agent-bridge.mjs          (자동 spawn + 재시작)
-│    ├── auto-accept.mjs           (자동 spawn + 재시작)
-│    ├── bot-heartbeat.mjs         (자동 spawn + 재시작)
-│    ├── robocopy NAS sync         (Go goroutine, 5초)
-│    └── harness 10분 주기         (Go goroutine)
-└── kickstart.mjs                  ← 부팅 시 1회 에이전트 초기화
-```
+?쒋?? Antigravity (CDP port 9000)
+?쒋?? 遊??뚰겕?ㅽ럹?댁뒪 ?닿린 (bot1, entp, enfp)
+?쒋?? neuronfs --supervisor          ???닿쾬 1媛쒓? ?꾨? 愿由???   ?쒋?? neuronfs --api            (?먮룞 spawn + ?ъ떆??
+??   ?쒋?? neuronfs --watch          (?먮룞 spawn + ?ъ떆??
+??   ?쒋?? agent-bridge.mjs          (?먮룞 spawn + ?ъ떆??
+??   ?쒋?? auto-accept.mjs           (?먮룞 spawn + ?ъ떆??
+??   ?쒋?? bot-heartbeat.mjs         (?먮룞 spawn + ?ъ떆??
+??   ?쒋?? robocopy NAS sync         (Go goroutine, 5珥?
+??   ?붴?? harness 10遺?二쇨린         (Go goroutine)
+?붴?? kickstart.mjs                  ??遺????1???먯씠?꾪듃 珥덇린??```
 
-### 프로세스 역할 상세
+### ?꾨줈?몄뒪 ??븷 ?곸꽭
 
-| 프로세스 | 언어 | 역할 | PM 관계 |
+| ?꾨줈?몄뒪 | ?몄뼱 | ??븷 | PM 愿怨?|
 |----------|------|------|---------|
-| **neuronfs --supervisor** | Go | 전체 프로세스 spawn + 감시 + 재시작 | PM의 인프라 도구 |
-| **neuronfs --watch** | Go | fsnotify 감시 → processInbox → emit | supervisor가 관리 |
-| **neuronfs --api** | Go | 대시보드 + REST API `:9090` | supervisor가 관리 |
-| **auto-accept.mjs** | Node | CDP로 봇 버튼 자동 클릭 | supervisor가 관리 |
-| **agent-bridge.mjs** | Node | `_agents/{bot}/inbox/` 폴링 → CDP 주입 | supervisor가 관리 |
-| **bot-heartbeat.mjs** | Node | 봇 idle 감지 + PM 브리핑 | PM의 도구 (lock 제어) |
+| **neuronfs --supervisor** | Go | ?꾩껜 ?꾨줈?몄뒪 spawn + 媛먯떆 + ?ъ떆??| PM???명봽???꾧뎄 |
+| **neuronfs --watch** | Go | fsnotify 媛먯떆 ??processInbox ??emit | supervisor媛 愿由?|
+| **neuronfs --api** | Go | ??쒕낫??+ REST API `:9090` | supervisor媛 愿由?|
+| **auto-accept.mjs** | Node | CDP濡?遊?踰꾪듉 ?먮룞 ?대┃ | supervisor媛 愿由?|
+| **agent-bridge.mjs** | Node | `_agents/{bot}/inbox/` ?대쭅 ??CDP 二쇱엯 | supervisor媛 愿由?|
+| **bot-heartbeat.mjs** | Node | 遊?idle 媛먯? + PM 釉뚮━??| PM???꾧뎄 (lock ?쒖뼱) |
 
-### supervisor vs heartbeat (명확 분리)
+### supervisor vs heartbeat (紐낇솗 遺꾨━)
 
-| 도구 | 관심사 | PM 제어 | 비유 |
+| ?꾧뎄 | 愿?ъ궗 | PM ?쒖뼱 | 鍮꾩쑀 |
 |------|--------|---------|------|
-| **supervisor** | 프로세스가 **살아있는가** | bat에서 1회 시작 | 심폐소생기 |
-| **heartbeat** | 봇이 **일하고 있는가** | heartbeat.lock ON/OFF | 감독관의 호루라기 |
-| **harness** | 시스템이 **건강한가** | supervisor가 10분마다 자동 | 건강검진 |
+| **supervisor** | ?꾨줈?몄뒪媛 **?댁븘?덈뒗媛** | bat?먯꽌 1???쒖옉 | ?ы룓?뚯깮湲?|
+| **heartbeat** | 遊뉗씠 **?쇳븯怨??덈뒗媛** | heartbeat.lock ON/OFF | 媛먮룆愿???몃（?쇨린 |
+| **harness** | ?쒖뒪?쒖씠 **嫄닿컯?쒓?** | supervisor媛 10遺꾨쭏???먮룞 | 嫄닿컯寃吏?|
 
-### heartbeat 킥 로직
+### heartbeat ??濡쒖쭅
 
-| 대상 | 킥 내용 | 조건 |
+| ???| ???댁슜 | 議곌굔 |
 |------|---------|------|
-| bot1/entp/enfp | backlog에서 다음 작업 주입 | idle 45초 + backlog에 작업 있음 |
-| **PM** | 에이전트 산출물 브리핑 ("X가 Y를 했다. 검토하라.") | PM idle 45초 |
+| bot1/entp/enfp | backlog?먯꽌 ?ㅼ쓬 ?묒뾽 二쇱엯 | idle 45珥?+ backlog???묒뾽 ?덉쓬 |
+| **PM** | ?먯씠?꾪듃 ?곗텧臾?釉뚮━??("X媛 Y瑜??덈떎. 寃?좏븯??") | PM idle 45珥?|
 
-- PM은 backlog 주입 대상이 **아님** — 브리핑만 받음
-- PM이 heartbeat를 통제 (heartbeat.lock)
-- 순환종속 없음
+- PM? backlog 二쇱엯 ??곸씠 **?꾨떂** ??釉뚮━?묐쭔 諛쏆쓬
+- PM??heartbeat瑜??듭젣 (heartbeat.lock)
+- ?쒗솚醫낆냽 ?놁쓬
 
-### heartbeat.lock (PM 통제)
+### heartbeat.lock (PM ?듭젣)
 
 ```powershell
-# 킥 비활성화 (봇 자율 작업 중단)
+# ??鍮꾪솢?깊솕 (遊??먯쑉 ?묒뾽 以묐떒)
 New-Item brain_v4/_agents/pm/heartbeat.lock -Force
 
-# 킥 재활성화
+# ???ы솢?깊솕
 Remove-Item brain_v4/_agents/pm/heartbeat.lock
 ```
 
-### 통신 구조
+### ?듭떊 援ъ“
 
-**인프라 0원 원칙: 파일시스템이 유일한 IPC**
+**?명봽??0???먯튃: ?뚯씪?쒖뒪?쒖씠 ?좎씪??IPC**
 
 ```
-PD 교정 → AI가 corrections.jsonl 기록 (로컬 _inbox/)
-  → fsnotify 감지 → processInbox()
-  → 뉴런 디렉토리 생성 or fire
-  → writeAllTiers() → GEMINI.md + _rules.md 갱신
+PD 援먯젙 ??AI媛 corrections.jsonl 湲곕줉 (濡쒖뺄 _inbox/)
+  ??fsnotify 媛먯? ??processInbox()
+  ???대윴 ?붾젆?좊━ ?앹꽦 or fire
+  ??writeAllTiers() ??GEMINI.md + _rules.md 媛깆떊
 
-supervisor 감시 루프:
-  1. 5개 프로세스 생존 확인 → 사망 시 exponential backoff 재시작
-  2. harness 10분마다 실행 → 위반 시 bot1/inbox에 알림
-  3. heartbeat 로그 1분 → 전체 상태 원라인
-  4. NAS robocopy 5초 → 로컬→NAS 단방향
-
-에이전트 간 통신:
-  brain_v4/_agents/{name}/inbox/   ← 수신
-  brain_v4/_agents/{name}/outbox/  ← 송신
-  PM → bot1/inbox/ (지시)
-  heartbeat → bot1/inbox/ (harness 위반 알림)
+supervisor 媛먯떆 猷⑦봽:
+  1. 5媛??꾨줈?몄뒪 ?앹〈 ?뺤씤 ???щ쭩 ??exponential backoff ?ъ떆??  2. harness 10遺꾨쭏???ㅽ뻾 ???꾨컲 ??bot1/inbox???뚮┝
+  3. heartbeat 濡쒓렇 1遺????꾩껜 ?곹깭 ?먮씪??  4. NAS robocopy 5珥???濡쒖뺄?묿AS ?⑤갑??
+?먯씠?꾪듃 媛??듭떊:
+  brain_v4/_agents/{name}/inbox/   ???섏떊
+  brain_v4/_agents/{name}/outbox/  ???≪떊
+  PM ??bot1/inbox/ (吏??
+  heartbeat ??bot1/inbox/ (harness ?꾨컲 ?뚮┝)
 ```
 
-### API 엔드포인트
-
-| Method | Path | 소스 |
+### API ?붾뱶?ъ씤??
+| Method | Path | ?뚯뒪 |
 |--------|------|------|
-| GET | `/api/state` | **brain_state.json 파일 읽기** (실시간 아님) |
-| GET | `/api/brain` | `scanBrain()` 실시간 |
-| POST | `/api/grow` | 뉴런 디렉토리 생성 |
-| POST | `/api/fire` | 카운터 증가 |
-| POST | `/api/signal` | 도파민/bomb/memory |
-| POST | `/api/sandbox` | 대시보드 샌드박스 |
+| GET | `/api/state` | **brain_state.json ?뚯씪 ?쎄린** (?ㅼ떆媛??꾨떂) |
+| GET | `/api/brain` | `scanBrain()` ?ㅼ떆媛?|
+| POST | `/api/grow` | ?대윴 ?붾젆?좊━ ?앹꽦 |
+| POST | `/api/fire` | 移댁슫??利앷? |
+| POST | `/api/signal` | ?꾪뙆誘?bomb/memory |
+| POST | `/api/sandbox` | ??쒕낫???뚮뱶諛뺤뒪 |
 
-> `/api/state`는 `--watch` 모드가 갱신하는 brain_state.json을 그대로 반환.  
-> 새 빌드 후 watch 프로세스도 재시작해야 API 값이 갱신됨.
+> `/api/state`??`--watch` 紐⑤뱶媛 媛깆떊?섎뒗 brain_state.json??洹몃?濡?諛섑솚.  
+> ??鍮뚮뱶 ??watch ?꾨줈?몄뒪???ъ떆?묓빐??API 媛믪씠 媛깆떊??
 
-### MCP 서버 (세션 중 실시간 뇌 접근)
+### MCP ?쒕쾭 (?몄뀡 以??ㅼ떆媛????묎렐)
 
-**GEMINI.md는 세션 시작 시 1회 로드 (정적). MCP가 세션 중 실시간 접근을 해결한다.**
+**GEMINI.md???몄뀡 ?쒖옉 ??1??濡쒕뱶 (?뺤쟻). MCP媛 ?몄뀡 以??ㅼ떆媛??묎렐???닿껐?쒕떎.**
 
 ```
-GEMINI.md (Tier 1) → 세션 시작 시 자동 로드
-MCP read_region    → 호출할 때마다 파일시스템 실시간 읽기
-MCP correct        → corrections.jsonl 안 거치고 즉시 뉴런 생성
+GEMINI.md (Tier 1) ???몄뀡 ?쒖옉 ???먮룞 濡쒕뱶
+MCP read_region    ???몄텧???뚮쭏???뚯씪?쒖뒪???ㅼ떆媛??쎄린
+MCP correct        ??corrections.jsonl ??嫄곗튂怨?利됱떆 ?대윴 ?앹꽦
 ```
 
-실행: `neuronfs brain_v4 --mcp` (stdio JSON-RPC 2.0)
+?ㅽ뻾: `neuronfs brain_v4 --mcp` (stdio JSON-RPC 2.0)
 
-설정: `~/.gemini/settings.json`
+?ㅼ젙: `~/.gemini/settings.json`
 
 ```json
 {
@@ -197,232 +186,214 @@ MCP correct        → corrections.jsonl 안 거치고 즉시 뉴런 생성
 }
 ```
 
-| 도구 | 기능 |
+| ?꾧뎄 | 湲곕뒫 |
 |------|------|
-| `read_region` | 영역 _rules.md 실시간 생성 + 반환. **읽기 = 발화** |
-| `read_brain` | 전체 뇌 상태 JSON |
-| `grow` | 뉴런 생성 (60% 유사도 → 기존 발화) |
-| `fire` | 카운터 +1 |
+| `read_region` | ?곸뿭 _rules.md ?ㅼ떆媛??앹꽦 + 諛섑솚. **?쎄린 = 諛쒗솕** |
+| `read_brain` | ?꾩껜 ???곹깭 JSON |
+| `grow` | ?대윴 ?앹꽦 (60% ?좎궗????湲곗〈 諛쒗솕) |
+| `fire` | 移댁슫??+1 |
 | `signal` | dopamine / bomb / memory |
-| `correct` | PD 교정 즉시 반영 |
-| `evolve` | Groq 기반 자율 진화 (dry_run 지원) |
+| `correct` | PD 援먯젙 利됱떆 諛섏쁺 |
+| `evolve` | Groq 湲곕컲 ?먯쑉 吏꾪솕 (dry_run 吏?? |
 
-> **⚠️ 롤백 주의**: `settings.json`이 `"mcpServers": {}`으로 초기화되면 MCP가 비활성화됨.  
-> 감사 시 반드시 `settings.json`에 neuronfs 등록 확인.
+> **?좑툘 濡ㅻ갚 二쇱쓽**: `settings.json`??`"mcpServers": {}`?쇰줈 珥덇린?붾릺硫?MCP媛 鍮꾪솢?깊솕??  
+> 媛먯궗 ??諛섎뱶??`settings.json`??neuronfs ?깅줉 ?뺤씤.
 
 ---
 
-## 5. 데이터 보호
+## 5. ?곗씠??蹂댄샇
 
-### Git 추적 (근본 보호)
-
-```
-.gitignore에 brain_v4/ 없음 → Git이 디렉토리 추적
-빈 디렉토리 → .gitkeep 파일로 Git 추적 보장
-```
-
-### NAS 동기화
+### Git 異붿쟻 (洹쇰낯 蹂댄샇)
 
 ```
-방향: 로컬 → NAS (단방향)
-robocopy (supervisor Go goroutine, 5초 주기)
-경로: brain_v4 → Z:\VOL1\VGVR\BRAIN\LW\system\neurons\brain_v4
+.gitignore??brain_v4/ ?놁쓬 ??Git???붾젆?좊━ 異붿쟻
+鍮??붾젆?좊━ ??.gitkeep ?뚯씪濡?Git 異붿쟻 蹂댁옣
 ```
 
-### ⚠️ 쓰기 규칙 (절대)
+### NAS ?숆린??
+```
+諛⑺뼢: 濡쒖뺄 ??NAS (?⑤갑??
+robocopy (supervisor Go goroutine, 5珥?二쇨린)
+寃쎈줈: brain_v4 ??Z:\VOL1\VGVR\BRAIN\LW\system\neurons\brain_v4
+```
 
-| 규칙 | 이유 |
+### ?좑툘 ?곌린 洹쒖튃 (?덈?)
+
+| 洹쒖튃 | ?댁쑀 |
 |------|------|
-| **모든 쓰기는 로컬(`c:\...\brain_v4`)에** | `--watch`가 로컬 감시 |
-| **NAS(`Z:\...`)에 직접 쓰기 금지** | /MIR로 다음 동기화 시 삭제됨 |
-| **corrections.jsonl → 로컬 `_inbox/`에** | processInbox가 로컬만 읽음 |
-| **`/api/grow`, `/api/fire` 사용** | API가 로컬에 생성 |
+| **紐⑤뱺 ?곌린??濡쒖뺄(`c:\...\brain_v4`)??* | `--watch`媛 濡쒖뺄 媛먯떆 |
+| **NAS(`Z:\...`)??吏곸젒 ?곌린 湲덉?** | /MIR濡??ㅼ쓬 ?숆린??????젣??|
+| **corrections.jsonl ??濡쒖뺄 `_inbox/`??* | processInbox媛 濡쒖뺄留??쎌쓬 |
+| **`/api/grow`, `/api/fire` ?ъ슜** | API媛 濡쒖뺄???앹꽦 |
 
-### 백업 계층
+### 諛깆뾽 怨꾩링
 
-| 계층 | 위치 | 역할 | 방향 |
+| 怨꾩링 | ?꾩튂 | ??븷 | 諛⑺뼢 |
 |------|------|------|------|
-| **로컬 (작업)** | `c:\...\NeuronFS\brain_v4` | 원본. 모든 쓰기 여기에 | — |
-| **Git (이력)** | `.git/` | 디렉토리 구조 + 코드 보존 | 수동 커밋 |
-| **NAS (백업)** | `Z:\VOL1\VGVR\BRAIN\...\brain_v4` | 실시간 미러 | 로컬→NAS |
-| **brain_state.json** | Git 42e071c | 경로 목록 스냅샷 | 비상 복구용 |
+| **濡쒖뺄 (?묒뾽)** | `c:\...\NeuronFS\brain_v4` | ?먮낯. 紐⑤뱺 ?곌린 ?ш린??| ??|
+| **Git (?대젰)** | `.git/` | ?붾젆?좊━ 援ъ“ + 肄붾뱶 蹂댁〈 | ?섎룞 而ㅻ컠 |
+| **NAS (諛깆뾽)** | `Z:\VOL1\VGVR\BRAIN\...\brain_v4` | ?ㅼ떆媛?誘몃윭 | 濡쒖뺄?묿AS |
+| **brain_state.json** | Git 42e071c | 寃쎈줈 紐⑸줉 ?ㅻ깄??| 鍮꾩긽 蹂듦뎄??|
 
 ---
 
-## 6. 검증 체크리스트
+## 6. 寃利?泥댄겕由ъ뒪??
+**紐⑤뱺 媛먯궗 ?????쒖꽌濡??뺤씤:**
 
-**모든 감사 시 이 순서로 확인:**
+### A. ?곗씠???곸냽??(理쒖슦??
 
-### A. 데이터 영속성 (최우선)
+- [ ] `.gitignore`??`brain_v4/` ?놁쓬
+- [ ] `git status brain_v4/` ??untracked ?붾젆?좊━ ?놁쓬
+- [ ] NAS 寃쎈줈 ?묎렐 媛??
+### B. ?대윴 移댁슫??
+- [ ] `neuronfs brain_v4` diag ?ㅽ뻾 ??305+ neurons
+- [ ] `/api/state` totalNeurons ?뺤씤
 
-- [ ] `.gitignore`에 `brain_v4/` 없음
-- [ ] `git status brain_v4/` — untracked 디렉토리 없음
-- [ ] NAS 경로 접근 가능
+### C. ?꾨줈?몄뒪
 
-### B. 뉴런 카운트
+- [ ] neuronfs --supervisor ?ㅽ뻾 以?- [ ] logs/supervisor.log??heartbeat ?뺤긽 異쒕젰
+- [ ] `~/.gemini/settings.json`??neuronfs MCP ?깅줉
 
-- [ ] `neuronfs brain_v4` diag 실행 → 305+ neurons
-- [ ] `/api/state` totalNeurons 확인
+### D. 湲곕뒫
 
-### C. 프로세스
-
-- [ ] neuronfs --supervisor 실행 중
-- [ ] logs/supervisor.log에 heartbeat 정상 출력
-- [ ] `~/.gemini/settings.json`에 neuronfs MCP 등록
-
-### D. 기능
-
-- [ ] `/api/grow` → 디렉토리 생성 확인
-- [ ] `/api/fire` → 카운터 증가 확인
-- [ ] bomb.neuron 생성 → CIRCUIT BREAKER 발동
+- [ ] `/api/grow` ???붾젆?좊━ ?앹꽦 ?뺤씤
+- [ ] `/api/fire` ??移댁슫??利앷? ?뺤씤
+- [ ] bomb.neuron ?앹꽦 ??CIRCUIT BREAKER 諛쒕룞
 
 ### E. Emit
 
-- [ ] GEMINI.md 존재 + 크기 > 3KB
-- [ ] 7개 리전 _rules.md 모두 > 0 bytes
+- [ ] GEMINI.md 議댁옱 + ?ш린 > 3KB
+- [ ] 7媛?由ъ쟾 _rules.md 紐⑤몢 > 0 bytes
 
-### F. 에이전트
+### F. ?먯씠?꾪듃
 
-- [ ] bot1, entp, enfp, pm — inbox/outbox 디렉토리 존재
-- [ ] pm outbox pulse 파일 100개 미만
-- [ ] heartbeat.lock 상태 확인 (있으면 의도적인지 확인)
+- [ ] bot1, entp, enfp, pm ??inbox/outbox ?붾젆?좊━ 議댁옱
+- [ ] pm outbox pulse ?뚯씪 100媛?誘몃쭔
+- [ ] heartbeat.lock ?곹깭 ?뺤씤 (?덉쑝硫??섎룄?곸씤吏 ?뺤씤)
 
 ---
 
-## 7. 멀티에이전트
+## 7. 硫?곗뿉?댁쟾??
+### ?먯씠?꾪듃 援ъ꽦
 
-### 에이전트 구성
-
-| 코드명 | MBTI | 역할 | 활용 |
+| 肄붾뱶紐?| MBTI | ??븷 | ?쒖슜 |
 |--------|------|------|------|
-| ANCHOR (bot1) | ISTJ ♂ | 체계적 빌드 | Go 빌드, 스크립트, Git, 인프라 |
-| FORGE (entp) | ENTP ♂ | 경계 파괴 | 벤치마크, 실험, 커뮤니티, 대안 탐색 |
-| MUSE (enfp) | ENFP ♀ | 스토리텔링 | 리뷰, CRM 카피, 문서, 유저 관점 |
-| PM (pm) | — | 관제 | 전략, 지시, 리뷰, heartbeat 통제 |
+| ANCHOR (bot1) | ISTJ ??| 泥닿퀎??鍮뚮뱶 | Go 鍮뚮뱶, ?ㅽ겕由쏀듃, Git, ?명봽??|
+| FORGE (entp) | ENTP ??| 寃쎄퀎 ?뚭눼 | 踰ㅼ튂留덊겕, ?ㅽ뿕, 而ㅻ??덊떚, ????먯깋 |
+| MUSE (enfp) | ENFP ? | ?ㅽ넗由ы뀛留?| 由щ럭, CRM 移댄뵾, 臾몄꽌, ?좎? 愿??|
+| PM (pm) | ??| 愿??| ?꾨왂, 吏?? 由щ럭, heartbeat ?듭젣 |
 
-### 통신 프로토콜
-
-```
-brain_v4/_agents/{name}/inbox/    ← 수신 (bridge가 CDP 주입)
-brain_v4/_agents/{name}/outbox/   ← 송신 (결과물)
-brain_v4/_agents/{name}/backlog.md ← 대기 작업 큐
-```
-
-### PM 크로스 리뷰 프로토콜
+### ?듭떊 ?꾨줈?좎퐳
 
 ```
-bot1 산출물 → enfp가 리뷰 (코드 품질 + 사용자 관점)
-entp 산출물 → enfp가 리뷰 (실용성 검증)
-enfp 산출물 → entp가 리뷰 (기술적 타당성)
+brain_v4/_agents/{name}/inbox/    ???섏떊 (bridge媛 CDP 二쇱엯)
+brain_v4/_agents/{name}/outbox/   ???≪떊 (寃곌낵臾?
+brain_v4/_agents/{name}/backlog.md ???湲??묒뾽 ??```
+
+### PM ?щ줈??由щ럭 ?꾨줈?좎퐳
+
+```
+bot1 ?곗텧臾???enfp媛 由щ럭 (肄붾뱶 ?덉쭏 + ?ъ슜??愿??
+entp ?곗텧臾???enfp媛 由щ럭 (?ㅼ슜??寃利?
+enfp ?곗텧臾???entp媛 由щ럭 (湲곗닠????뱀꽦)
 ```
 
-### 운영 시나리오
+### ?댁쁺 ?쒕굹由ъ삤
 
-| 시나리오 | supervisor | heartbeat | PM 역할 |
+| ?쒕굹由ъ삤 | supervisor | heartbeat | PM ??븷 |
 |---------|-----------|-----------|---------|
-| **자율 운영** | ON | ON (lock 없음) | backlog 관리 + outbox 리뷰 |
-| **집중 관제** | ON | OFF (lock) | 직접 inbox 지시 |
-| **코드 프리즈** | ON | OFF (lock) | PD 승인 대기 |
-| **긴급 (봇 폭주)** | ON | OFF (lock) | bomb.neuron 생성 → 격리 |
+| **?먯쑉 ?댁쁺** | ON | ON (lock ?놁쓬) | backlog 愿由?+ outbox 由щ럭 |
+| **吏묒쨷 愿??* | ON | OFF (lock) | 吏곸젒 inbox 吏??|
+| **肄붾뱶 ?꾨━利?* | ON | OFF (lock) | PD ?뱀씤 ?湲?|
+| **湲닿툒 (遊???＜)** | ON | OFF (lock) | bomb.neuron ?앹꽦 ??寃⑸━ |
 
 ---
 
-## 8. 로그 관리
-
-### 통합 로그 디렉토리
+## 8. 濡쒓렇 愿由?
+### ?듯빀 濡쒓렇 ?붾젆?좊━
 
 ```
 NeuronFS/logs/
-├── supervisor.log     ← neuronfs --supervisor (마스터)
-├── neuronfs-api.log   ← neuronfs --api
-├── neuronfs-watch.log ← neuronfs --watch
-├── agent-bridge.log   ← agent-bridge.mjs
-├── auto-accept.log    ← auto-accept.mjs
-├── bot-heartbeat.log  ← bot-heartbeat.mjs
-├── bridge.log         ← agent-bridge 레거시
-├── heartbeat.log      ← heartbeat 레거시
-└── archive/           ← 로테이션된 로그
+?쒋?? supervisor.log     ??neuronfs --supervisor (留덉뒪??
+?쒋?? neuronfs-api.log   ??neuronfs --api
+?쒋?? neuronfs-watch.log ??neuronfs --watch
+?쒋?? agent-bridge.log   ??agent-bridge.mjs
+?쒋?? auto-accept.log    ??auto-accept.mjs
+?쒋?? bot-heartbeat.log  ??bot-heartbeat.mjs
+?쒋?? bridge.log         ??agent-bridge ?덇굅???쒋?? heartbeat.log      ??heartbeat ?덇굅???붴?? archive/           ??濡쒗뀒?댁뀡??濡쒓렇
 ```
 
-### 디버그 레벨
+### ?붾쾭洹??덈꺼
 
-| 접두어 | 의미 |
+| ?묐몢??| ?섎? |
 |--------|------|
-| `✅` | 정상 완료 |
-| `▶` | 프로세스 시작 |
-| `⚡` | 킥/주입 |
-| `📋` | PM 브리핑 |
-| `⚠️` | 경고 (프로세스 사망 등) |
-| `❌` | 실패 |
-| `🔒` | PM lock (heartbeat 비활성화) |
-| `🚨` | 긴급 (bomb, harness 위반) |
-| `💓` | heartbeat (1분 원라인 상태) |
+| `?? | ?뺤긽 ?꾨즺 |
+| `?? | ?꾨줈?몄뒪 ?쒖옉 |
+| `?? | ??二쇱엯 |
+| `?뱥` | PM 釉뚮━??|
+| `?좑툘` | 寃쎄퀬 (?꾨줈?몄뒪 ?щ쭩 ?? |
+| `?? | ?ㅽ뙣 |
+| `?뵏` | PM lock (heartbeat 鍮꾪솢?깊솕) |
+| `?슚` | 湲닿툒 (bomb, harness ?꾨컲) |
+| `?뮄` | heartbeat (1遺??먮씪???곹깭) |
 
 ---
 
-## 9. 장애 이력
+## 9. ?μ븷 ?대젰
 
-### 2026-03-29: 뉴런 251→40→89→305 복구
+### 2026-03-29: ?대윴 251??0??9??05 蹂듦뎄
 
-**증상:** API totalNeurons=40으로 감소  
-**진짜 원인:** `.gitignore`에 `brain_v4/` 포함 + main.go에서 `.neuron` 없는 폴더 스킵  
-**해결:** main.go 수정 + `/api/grow`로 260개 복원 + `.gitignore` 정리  
-**교훈:** 감사 시 `.gitignore` 반드시 확인. 디렉토리가 뉴런.
+**利앹긽:** API totalNeurons=40?쇰줈 媛먯냼  
+**吏꾩쭨 ?먯씤:** `.gitignore`??`brain_v4/` ?ы븿 + main.go?먯꽌 `.neuron` ?녿뒗 ?대뜑 ?ㅽ궢  
+**?닿껐:** main.go ?섏젙 + `/api/grow`濡?260媛?蹂듭썝 + `.gitignore` ?뺣━  
+**援먰썕:** 媛먯궗 ??`.gitignore` 諛섎뱶???뺤씤. ?붾젆?좊━媛 ?대윴.
 
-### 2026-03-29: corrections.jsonl NAS 기록 사고
+### 2026-03-29: corrections.jsonl NAS 湲곕줉 ?ш퀬
 
-**원인:** NAS 직접 기록 → `--watch`가 로컬만 감시하므로 미감지  
-**해결:** 모든 쓰기를 로컬 경로로 통일
+**?먯씤:** NAS 吏곸젒 湲곕줉 ??`--watch`媛 濡쒖뺄留?媛먯떆?섎?濡?誘멸컧吏  
+**?닿껐:** 紐⑤뱺 ?곌린瑜?濡쒖뺄 寃쎈줈濡??듭씪
 
-### 2026-03-29: MCP settings.json 롤백
+### 2026-03-29: MCP settings.json 濡ㅻ갚
 
-**원인:** Antigravity 업데이트로 `mcpServers` 초기화  
-**해결:** settings.json에 neuronfs MCP 서버 재등록
+**?먯씤:** Antigravity ?낅뜲?댄듃濡?`mcpServers` 珥덇린?? 
+**?닿껐:** settings.json??neuronfs MCP ?쒕쾭 ?щ벑濡?
+### 2026-03-29: watchdog 2?쒓컙 ?먮룞 醫낅즺 + ?꾨줈?몄뒪 以묐났
 
-### 2026-03-29: watchdog 2시간 자동 종료 + 프로세스 중복
+**?먯씤:** bat?먯꽌 `-Duration 120` + 媛??꾨줈?몄뒪 ?낅┰ ?쒖옉 ??以묐났 媛?? 
+**?닿껐:** Go ?ㅼ씠?곕툕 supervisor濡??꾩껜 ?듯빀 (watchdog.ps1 ??븷 ?≪닔)
 
-**원인:** bat에서 `-Duration 120` + 각 프로세스 독립 시작 → 중복 가능  
-**해결:** Go 네이티브 supervisor로 전체 통합 (watchdog.ps1 역할 흡수)
+### 2026-03-29: heartbeat PM ?쒗솚醫낆냽
 
-### 2026-03-29: heartbeat PM 순환종속
-
-**원인:** heartbeat가 PM을 킥 대상으로 포함 → PM이 heartbeat에 종속  
-**해결:** PM 킥을 산출물 브리핑으로 변경 + heartbeat.lock PM 통제
-
----
-
-## 10. 금기사항
-
-1. ❌ brain_v4 뉴런 폴더명 영어 번역/변환
-2. ❌ 한자 접두어(禁, 推) 제거/변경
-3. ❌ 뉴런 디렉토리 대량 삭제/재생성
-4. ❌ 카운터 값 인위적 일괄 변경
-5. ❌ brainstem (P0) 임의 변경
-6. ❌ runtime 코드 PD 승인 없이 수정
-7. ❌ `.gitignore`에 `brain_v4/` 추가
+**?먯씤:** heartbeat媛 PM??????곸쑝濡??ы븿 ??PM??heartbeat??醫낆냽  
+**?닿껐:** PM ?μ쓣 ?곗텧臾?釉뚮━?묒쑝濡?蹂寃?+ heartbeat.lock PM ?듭젣
 
 ---
 
-## 11. 복구 절차
+## 10. 湲덇린?ы빆
 
-### 뉴런 디렉토리 소실 시
+1. ??brain_v4 ?대윴 ?대뜑紐??곸뼱 踰덉뿭/蹂??2. ???쒖옄 ?묐몢??獵? ?? ?쒓굅/蹂寃?3. ???대윴 ?붾젆?좊━ ?????젣/?ъ깮??4. ??移댁슫??媛??몄쐞???쇨큵 蹂寃?5. ??brainstem (P0) ?꾩쓽 蹂寃?6. ??runtime 肄붾뱶 PD ?뱀씤 ?놁씠 ?섏젙
+7. ??`.gitignore`??`brain_v4/` 異붽?
 
+---
+
+## 11. 蹂듦뎄 ?덉감
+
+### ?대윴 ?붾젆?좊━ ?뚯떎 ??
 ```powershell
 curl -X POST http://localhost:9090/api/grow -d '{"path":"cortex/frontend/css"}'
 ```
 
-### neuronfs.exe 빌드 후
-
+### neuronfs.exe 鍮뚮뱶 ??
 ```powershell
 Push-Location NeuronFS\runtime
 go build -o ..\neuronfs.exe .
 Copy-Item ..\neuronfs.exe .\neuronfs.exe
 Pop-Location
-# supervisor가 실행 중이면 자동 재시작됨
+# supervisor媛 ?ㅽ뻾 以묒씠硫??먮룞 ?ъ떆?묐맖
 ```
 
 ---
 
-> **이 문서는 NeuronFS 레포에 Git 추적됩니다.**  
-> **시스템 변경 시 이 문서도 함께 갱신합니다.**  
-> **감사 시 섹션 6 체크리스트를 순서대로 실행합니다.**
+> **??臾몄꽌??NeuronFS ?덊룷??Git 異붿쟻?⑸땲??**  
+> **?쒖뒪??蹂寃?????臾몄꽌???④퍡 媛깆떊?⑸땲??**  
+> **媛먯궗 ???뱀뀡 6 泥댄겕由ъ뒪?몃? ?쒖꽌?濡??ㅽ뻾?⑸땲??**

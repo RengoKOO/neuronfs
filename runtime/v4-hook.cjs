@@ -251,12 +251,30 @@ if (globalThis.fetch) {
         const url = typeof input === 'string' ? input : input?.url || '';
         const isApi = url.includes('generativelanguage') ||
                       url.includes('anthropic') ||
-                      url.includes('gemini.googleapis');
+                      url.includes('gemini.googleapis') ||
+                      url.includes('openai.com');
 
         if (isApi && init?.body) {
             try {
-                const injected = inject(init.body);
+                const bodyStr = typeof init.body === 'string' ? init.body : new TextDecoder().decode(init.body);
+                const injected = inject(bodyStr);
                 if (injected) init.body = injected;
+
+                // Transcript dump
+                try {
+                    const j = JSON.parse(bodyStr);
+                    const contents = j.contents || j.messages;
+                    if (Array.isArray(contents) && contents.length > 0) {
+                        const last = contents[contents.length - 1];
+                        const text = last?.parts?.[0]?.text || (typeof last?.content === 'string' ? last.content : '');
+                        if (text && text.length > 20 && !text.includes('[NeuronFS')) {
+                            const entry = JSON.stringify({ ts: new Date().toISOString(), role: last.role || 'user', text: text.substring(0, 2000) }) + '\n';
+                            const tp = path.join(BRAIN_PATH, '_agents', 'global_inbox', 'transcript_latest.jsonl');
+                            fs.mkdirSync(path.dirname(tp), { recursive: true });
+                            fs.appendFileSync(tp, entry);
+                        }
+                    }
+                } catch {}
             } catch {}
         }
 

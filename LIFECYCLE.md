@@ -155,6 +155,65 @@
 
 ---
 
+## 와치독 생애주기 (Watchdog Lifecycle)
+
+> **와치독이 죽으면 뇌가 죽는다.** 그리고 아무도 모른다.
+
+### 아키텍처: 3계층 감시
+
+```
+[OS 자동시작]              ← 예약 작업 / 서비스 (와치독의 와치독)
+    │
+    └── [Supervisor]       ← neuronfs --supervisor (프로세스 매니저)
+           │
+           ├── neuronfs-api     ← --api (대시보드 + heartbeat + idle engine)
+           ├── neuronfs-watch   ← --watch (fsnotify 폴더 감시)
+           └── auto-accept      ← node (CDP 전사)
+```
+
+### 각 계층의 역할
+
+| 계층 | 이름 | 죽으면? | 자동복구? |
+|------|------|---------|----------|
+| **L0** | OS 예약 작업 | 재부팅 시 아무것도 안 뜸 | ✅ OS가 보장 |
+| **L1** | Supervisor | heartbeat/idle/watch 전멸 | ❌ L0 필요 |
+| **L2** | neuronfs-api | heartbeat+idle 정지 | ✅ L1이 재시작 |
+| **L2** | neuronfs-watch | 폴더 변경 감지 불가 | ✅ L1이 재시작 |
+| **L2** | auto-accept | CDP 전사 중단 | ✅ L1이 재시작 |
+
+### 자기 감시 메커니즘
+
+| 항목 | 방법 | 구현 |
+|------|------|------|
+| Supervisor 상태 로그 | `logs/supervisor.log` 60초 주기 | ✅ `svStatus()` |
+| 자식 프로세스 crash 감지 | exit code 감시 → 지수 백오프 재시작 | ✅ `svSupervise()` |
+| Harness 위반 탐지 | 10분 주기 harness.ps1 실행 | ✅ `svHarness()` |
+| **Supervisor 자체 생존** | **OS 예약 작업이 감시** | 🔧 등록 필요 |
+| **Heartbeat 로그 mtime** | `_transcripts/` 갱신 여부로 전체 시스템 판단 | ✅ 구현 |
+
+### 현재 문제 (2026-03-31 감사 결과)
+
+```
+❌ OS 자동시작 (L0) — 예약 작업 미등록. 재부팅 시 전 시스템 사망
+❌ Supervisor (L1) — 프로세스 미실행. 모든 자식 죽음
+❌ bot-heartbeat.mjs — 삭제됨 (Go로 대체했으나 Go도 미실행)
+❌ agent-bridge.mjs — 삭제됨 (supervisor가 없는 파일 실행 시도 → crash loop)
+```
+
+### 해결: L0 등록
+
+```powershell
+# Windows 예약 작업으로 supervisor를 OS 부팅 시 자동시작
+$action = New-ScheduledTaskAction `
+  -Execute "C:\Users\BASEMENT_ADMIN\NeuronFS\runtime\neuronfs.exe" `
+  -Argument "C:\Users\BASEMENT_ADMIN\NeuronFS\brain_v4 --supervisor"
+$trigger = New-ScheduledTaskTrigger -AtLogOn
+$settings = New-ScheduledTaskSettingsSet -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -TaskName "NeuronFS-Supervisor" -Action $action -Trigger $trigger -Settings $settings
+```
+
+---
+
 ## Heartbeat 자율 루프 (Autonomous Loop)
 
 > **심장이 멈추면 뇌도 죽는다.** Heartbeat는 AI가 유휴 상태일 때 자동으로 뇌를 진화시킨다.

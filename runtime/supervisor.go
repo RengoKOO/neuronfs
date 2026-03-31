@@ -68,28 +68,25 @@ func svLog(msg string) {
 func runSupervisor(brainRoot string) {
 	nfsRoot := filepath.Dir(brainRoot)
 	nfsExe, _ := os.Executable()
-	rtDir := filepath.Join(nfsRoot, "runtime")
 	logDir := filepath.Join(nfsRoot, "logs")
 	os.MkdirAll(logDir, 0755)
 	svLogPath = filepath.Join(logDir, "supervisor.log")
 	harnessScript := filepath.Join(nfsRoot, "harness.ps1")
 	userHome := filepath.Dir(nfsRoot)
 	aaDir := filepath.Join(userHome, "auto-accept")
-	nasBrain := `Z:\VOL1\VGVR\BRAIN\LW\system\neurons\brain_v4`
+	nasBrain := os.Getenv("NEURONFS_NAS_BRAIN")
 
 	fmt.Println("")
 	fmt.Println("╔══════════════════════════════════════════════════╗")
-	fmt.Println("║  NeuronFS Supervisor v1.0 — Go Native           ║")
-	fmt.Println("║  프로세스 자동재시작 + PM heartbeat 제어          ║")
+	fmt.Println("║  NeuronFS Supervisor v2.0 — Self-Monitoring      ║")
+	fmt.Println("║  프로세스 자동재시작 + heartbeat + 자기 감시      ║")
 	fmt.Println("╚══════════════════════════════════════════════════╝")
 	fmt.Println("")
 
 	children := []*ChildSpec{
 		{Name: "neuronfs-api", Cmd: nfsExe, Args: []string{brainRoot, "--api"}, Dir: nfsRoot, Enabled: true},
 		{Name: "neuronfs-watch", Cmd: nfsExe, Args: []string{brainRoot, "--watch"}, Dir: nfsRoot, Enabled: true},
-		{Name: "agent-bridge", Cmd: "node", Args: []string{filepath.Join(rtDir, "agent-bridge.mjs")}, Dir: rtDir, Enabled: true},
 		{Name: "auto-accept", Cmd: "node", Args: []string{filepath.Join(aaDir, "auto-accept.mjs")}, Dir: aaDir, Enabled: svPathExists(filepath.Join(aaDir, "auto-accept.mjs"))},
-		{Name: "bot-heartbeat", Cmd: "node", Args: []string{filepath.Join(rtDir, "bot-heartbeat.mjs")}, Dir: rtDir, Enabled: true},
 	}
 
 	svLog("🚀 Supervisor 시작")
@@ -124,7 +121,7 @@ func runSupervisor(brainRoot string) {
 		}(child)
 	}
 
-	if svPathExists(nasBrain) {
+	if nasBrain != "" && svPathExists(nasBrain) {
 		go svNasSync(brainRoot, nasBrain, stopCh)
 		svLog("🔄 NAS 동기화 활성 (5초)")
 	}

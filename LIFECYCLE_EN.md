@@ -155,6 +155,65 @@ Birth → Reinforcement → Maturation → Dormancy/Bomb → (Apoptosis or Reviv
 
 ---
 
+## Watchdog Lifecycle
+
+> **When the watchdog dies, the brain dies.** And nobody notices.
+
+### Architecture: 3-Layer Monitoring
+
+```
+[OS Auto-Start]            ← Scheduled Task / Service (watchdog's watchdog)
+    │
+    └── [Supervisor]       ← neuronfs --supervisor (process manager)
+           │
+           ├── neuronfs-api     ← --api (dashboard + heartbeat + idle engine)
+           ├── neuronfs-watch   ← --watch (fsnotify folder watch)
+           └── auto-accept      ← node (CDP transcript)
+```
+
+### Layer Responsibilities
+
+| Layer | Name | If dead? | Auto-recovery? |
+|-------|------|----------|----------------|
+| **L0** | OS Scheduled Task | Nothing starts on reboot | ✅ OS guaranteed |
+| **L1** | Supervisor | heartbeat/idle/watch all dead | ❌ Needs L0 |
+| **L2** | neuronfs-api | heartbeat+idle stopped | ✅ L1 restarts |
+| **L2** | neuronfs-watch | No folder change detection | ✅ L1 restarts |
+| **L2** | auto-accept | CDP transcript stopped | ✅ L1 restarts |
+
+### Self-Monitoring Mechanisms
+
+| Item | Method | Status |
+|------|--------|--------|
+| Supervisor status log | `logs/supervisor.log` every 60s | ✅ `svStatus()` |
+| Child crash detection | Exit code watch → exponential backoff restart | ✅ `svSupervise()` |
+| Harness violation scan | 10-min harness.ps1 execution | ✅ `svHarness()` |
+| **Supervisor self-survival** | **OS scheduled task monitors** | 🔧 Registration needed |
+| **Heartbeat log mtime** | `_transcripts/` update check = whole system judge | ✅ Implemented |
+
+### Issues Found (2026-03-31 Audit)
+
+```
+❌ OS Auto-Start (L0) — No scheduled task. System dies on reboot
+❌ Supervisor (L1) — Not running. All children dead
+❌ bot-heartbeat.mjs — Deleted (replaced by Go, but Go not running either)
+❌ agent-bridge.mjs — Deleted (supervisor tried non-existent file → crash loop)
+```
+
+### Fix: Register L0
+
+```powershell
+# Register supervisor as OS login auto-start
+$action = New-ScheduledTaskAction `
+  -Execute "C:\path\to\neuronfs.exe" `
+  -Argument "C:\path\to\brain_v4 --supervisor"
+$trigger = New-ScheduledTaskTrigger -AtLogOn
+$settings = New-ScheduledTaskSettingsSet -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -TaskName "NeuronFS-Supervisor" -Action $action -Trigger $trigger -Settings $settings
+```
+
+---
+
 ## Heartbeat Autonomous Loop
 
 > **When the heart stops, the brain dies.** Heartbeat auto-evolves the brain when AI is idle.

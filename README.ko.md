@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat-square&logo=go" />
   <img src="https://img.shields.io/badge/Infra-$0-brightgreen?style=flat-square" />
-  <img src="https://img.shields.io/badge/Neurons-364-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Neurons-293-blue?style=flat-square" />
   <img src="https://img.shields.io/badge/Zero_Dependencies-black?style=flat-square" />
   <img src="https://img.shields.io/badge/MIT-green?style=flat-square" />
 </p>
@@ -12,7 +12,17 @@
   <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 3D 대시보드 라이브 데모</strong></a>
 </p>
 
-<p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 매니페스토</a></p>
+<p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 매니페스토</a> · <a href="LIFECYCLE.md">🧬 생애주기</a></p>
+
+> **⚠️ v4.1 (2026-03-31) — 범용 사용을 위한 개선 진행중**
+>
+> **수정 완료:** 뉴런 마이그레이션 (307→293), 개인정보 전면 제거, supervisor v2.0 (삭제된 mjs 스크립트 제거), heartbeat/idle engine 문서화, 와치독 생애주기 감사
+>
+> **진행중:** OS 자동시작 등록 (L0), 전사 청크 자동 뉴런화, 영/한 중복 자동 병합, PII git-hook 스캐너, 빈 폴더 격리
+>
+> **Breaking:** `brain_v4/`가 git에서 제외됨 — 사용자는 `neuronfs --init`로 자체 뇌 생성 필요. Supervisor가 더 이상 Node.js 스크립트에 의존하지 않음.
+>
+> 전체 변경 이력: [LIFECYCLE.md](LIFECYCLE.md) · [LIFECYCLE_EN.md](LIFECYCLE_EN.md)
 
 # 🧠 NeuronFS
 ### *파일시스템 네이티브 계층형 규칙 메모리 — 에이전트 프롬프트 컴파일러*

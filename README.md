@@ -12,7 +12,17 @@
   <a href="https://dashboarddeploy-six.vercel.app/"><strong>🔥 Live 3D Dashboard Demo</strong></a>
 </p>
 
-<p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a></p>
+<p align="center"><a href="README.ko.md">🇰🇷 한국어</a> · <a href="README.md">🇺🇸 English</a> · <a href="MANIFESTO.md">📜 Manifesto</a> · <a href="LIFECYCLE.md">🧬 Lifecycle</a></p>
+
+> **⚠️ v4.1 (2026-03-31) — Hardening for general use in progress**
+>
+> **Fixed:** Neuron migration (307→293), PII purge, supervisor v2.0 (dead mjs scripts removed), heartbeat/idle engine documented, watchdog lifecycle audited
+>
+> **In Progress:** OS auto-start registration (L0), transcript chunk auto-neuronize, EN/KR duplicate auto-merge, PII git-hook scanner, empty folder quarantine
+>
+> **Breaking:** `brain_v4/` excluded from git — users must `neuronfs --init` to create their own brain. Supervisor no longer depends on Node.js scripts.
+>
+> Full changelog: [LIFECYCLE.md](LIFECYCLE.md) · [LIFECYCLE_EN.md](LIFECYCLE_EN.md)
 
 # 🧠 NeuronFS
 ### *A filesystem-native hierarchical rule memory & prompt compiler for AI agents.*

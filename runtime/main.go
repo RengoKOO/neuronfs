@@ -1927,6 +1927,11 @@ func runHeartbeatLoop(brainRoot string) {
 	todoDir := filepath.Join(brainRoot, "prefrontal", "todo")
 	transcriptsDir := filepath.Join(brainRoot, "_transcripts")
 
+	// Antigravity session logs
+	antigravityBrain := filepath.Join(filepath.Dir(brainRoot), ".gemini", "antigravity", "brain")
+	var lastLogFile string
+	var lastLogSize int64
+
 	lastInjection := time.Time{} // 마지막 주입 시각
 
 	for {
@@ -1976,8 +1981,65 @@ func runHeartbeatLoop(brainRoot string) {
 			continue
 		}
 
-		// ── Priority 1: Pending reports (적층형 보고 큐) ──
+		// ── Priority 0: Memory Observer (전사 기반 뉴런화) ──
 		var nextPrompt string
+		if entries, err := os.ReadDir(antigravityBrain); err == nil {
+			// Find latest session overview.txt
+			var latestFile string
+			var latestTime int64
+			for _, s := range entries {
+				if !s.IsDir() {
+					continue
+				}
+				op := filepath.Join(antigravityBrain, s.Name(), ".system_generated", "logs", "overview.txt")
+				if info, err := os.Stat(op); err == nil {
+					if info.ModTime().UnixMilli() > latestTime {
+						latestTime = info.ModTime().UnixMilli()
+						latestFile = op
+					}
+				}
+			}
+
+			if latestFile != "" {
+				info, _ := os.Stat(latestFile)
+				currentSize := info.Size()
+				const chunkSize int64 = 3000
+
+				// Reset if file changed
+				if lastLogFile != latestFile {
+					lastLogFile = latestFile
+					lastLogSize = max64(0, currentSize-chunkSize)
+				}
+
+				if currentSize-lastLogSize >= chunkSize {
+					f, err := os.Open(latestFile)
+					if err == nil {
+						buf := make([]byte, currentSize-lastLogSize)
+						f.ReadAt(buf, lastLogSize)
+						f.Close()
+						lastLogSize = currentSize
+
+						recentLogs := string(buf)
+						nextPrompt = fmt.Sprintf(`[MEMORY_OBSERVER %s] 아래는 최근 시스템 대화 로그 (%d바이트)이다.
+---
+%s
+---
+위 로그에서 뉴런화되지 않은 중요 아키텍처 결정(암묵적 룰, 해결책)을 찾아라.
+발견되면 [Folder-as-Neuron] 온톨로지에 맞춰:
+1. mkdir brain_v4/[region]/[카테고리]/[행동_강령]
+2. 최종 리프 폴더에만 touch 1.neuron
+새로운 룰이 없으면 "로그 스캔 완료: 추출할 뉴런 없음"이라 보고하라.`,
+							time.Now().Format("15:04"), len(buf), recentLogs)
+						fmt.Printf("[HEARTBEAT] 📡 MEMORY_OBSERVER: %d bytes from session log\n", len(buf))
+					}
+				} else {
+					fmt.Printf("[HEARTBEAT] 📡 로그 청크 미달 (%d/%d bytes)\n", currentSize-lastLogSize, chunkSize)
+				}
+			}
+		}
+
+		// ── Priority 1: Pending reports (적층형 보고 큐) ──
+		if nextPrompt == "" {
 		reportsDir := filepath.Join(brainRoot, "_inbox", "reports")
 		if reportEntries, err := os.ReadDir(reportsDir); err == nil && len(reportEntries) > 0 {
 			// Find highest priority: urgent > normal > low
@@ -2009,6 +2071,7 @@ func runHeartbeatLoop(brainRoot string) {
 					break
 				}
 			}
+		}
 		}
 
 		// ── Priority 2: System health check (5분마다 1회) ──
@@ -2064,8 +2127,8 @@ func runHeartbeatLoop(brainRoot string) {
 	}
 }
 
-func min(a, b int) int {
-	if a < b {
+func max64(a, b int64) int64 {
+	if a > b {
 		return a
 	}
 	return b

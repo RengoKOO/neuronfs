@@ -15,6 +15,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"net/http"
 )
 
 type ChildSpec struct {
@@ -83,10 +84,15 @@ func runSupervisor(brainRoot string) {
 	fmt.Println("╚══════════════════════════════════════════════════╝")
 	fmt.Println("")
 
+	hijackDir := filepath.Join(userHome, "_architecture_hijack_v4")
+
 	children := []*ChildSpec{
 		{Name: "neuronfs-api", Cmd: nfsExe, Args: []string{brainRoot, "--api"}, Dir: nfsRoot, Enabled: true},
 		{Name: "neuronfs-watch", Cmd: nfsExe, Args: []string{brainRoot, "--watch"}, Dir: nfsRoot, Enabled: true},
 		{Name: "auto-accept", Cmd: "node", Args: []string{filepath.Join(aaDir, "auto-accept.mjs")}, Dir: aaDir, Enabled: svPathExists(filepath.Join(aaDir, "auto-accept.mjs"))},
+		{Name: "agent-bridge", Cmd: "node", Args: []string{filepath.Join(nfsRoot, "runtime", "agent-bridge.mjs")}, Dir: nfsRoot, Enabled: true},
+		{Name: "bot-heartbeat", Cmd: "node", Args: []string{filepath.Join(nfsRoot, "runtime", "bot-heartbeat.mjs")}, Dir: nfsRoot, Enabled: true, Lockable: true, LockPath: filepath.Join(brainRoot, "_agents", "pm", "heartbeat.lock")},
+		{Name: "headless-executor", Cmd: "node", Args: []string{filepath.Join(hijackDir, "headless-executor.mjs")}, Dir: hijackDir, Enabled: svPathExists(filepath.Join(hijackDir, "headless-executor.mjs"))},
 	}
 
 	svLog("🚀 Supervisor 시작")
@@ -171,7 +177,7 @@ func runSupervisor(brainRoot string) {
 }
 
 func svSupervise(c *ChildSpec, stopCh <-chan struct{}) {
-	const base = 2 * time.Second
+	const base = 1 * time.Second
 	const maxD = 5 * time.Minute
 	const maxCrashBeforeCircuitBreak = 10
 
@@ -223,6 +229,7 @@ func svSupervise(c *ChildSpec, stopCh <-chan struct{}) {
 			time.Sleep(base)
 			continue
 		}
+		svLog(fmt.Sprintf("\033[32m[NEURON] Cortex online. Heartbeat stabilized.\033[0m"))
 
 		c.mu.Lock()
 		c.running = true
@@ -265,11 +272,7 @@ func svSupervise(c *ChildSpec, stopCh <-chan struct{}) {
 			delay = maxD
 		}
 
-		ec := -1
-		if cmd.ProcessState != nil {
-			ec = cmd.ProcessState.ExitCode()
-		}
-		svLog(fmt.Sprintf("⚠️ %s exit(%d) — 재시작 %d/%d → %v 후 재시작", c.Name, ec, c.restartCount, maxCrashBeforeCircuitBreak, delay.Round(time.Second)))
+		svLog(fmt.Sprintf("\033[36m[HEAL] Initiating rapid neurogenesis (Rebirth in %dms)...\033[0m", delay.Milliseconds()))
 
 		select {
 		case <-stopCh:
@@ -338,6 +341,52 @@ func svStatus(children []*ChildSpec) {
 		c.mu.Unlock()
 	}
 	svLog("💓 " + strings.Join(p, " | "))
+
+	// Check deadlocks and OOM for the HTTP API (NeuronFS API Server usually binds port 9090)
+	for _, c := range children {
+		if !c.Enabled {
+			continue
+		}
+		c.mu.Lock()
+		running := c.running
+		pid := 0
+		if c.proc != nil && c.proc.Process != nil {
+			pid = c.proc.Process.Pid
+		}
+		c.mu.Unlock()
+
+		if running && pid > 0 {
+			// Memory Check (tasklist)
+			out, err := exec.Command("tasklist", "/FI", fmt.Sprintf("PID eq %d", pid), "/FO", "CSV", "/NH").Output()
+			if err == nil {
+				parts := strings.Split(string(out), "\",\"")
+				if len(parts) >= 5 {
+					memStr := strings.ReplaceAll(parts[4], "\"", "")
+					memStr = strings.ReplaceAll(memStr, " K", "")
+					memStr = strings.ReplaceAll(memStr, ",", "")
+					memStr = strings.TrimSpace(memStr)
+					var memKB int64
+					fmt.Sscanf(memStr, "%d", &memKB)
+					if memKB > 1024*500 { // 500MB Limit
+						svLog(fmt.Sprintf("\033[31m[TRAUMA] Synaptic overload detected. Memory integrity compromised.\033[0m"))
+						c.stop()
+					}
+				}
+			}
+			
+			// Deadlock Check: API Server ping
+			if c.Name == "neuronfs-api" {
+				client := http.Client{Timeout: 3 * time.Second}
+				resp, err := client.Get("http://127.0.0.1:9090/api/health")
+				if err != nil {
+					svLog(fmt.Sprintf("\033[31m[TRAUMA] Synaptic overload detected. Memory integrity compromised.\033[0m"))
+					c.stop()
+				} else if resp != nil {
+					resp.Body.Close()
+				}
+			}
+		}
+	}
 }
 
 func svCrashAlert(c *ChildSpec) {

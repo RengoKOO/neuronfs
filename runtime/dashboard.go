@@ -200,14 +200,14 @@ func startDashboard(brainRoot string, port int) {
 
 	// GET / — Dashboard HTML (exact match "/" or fallback for non-API paths)
 	mux.HandleFunc("/", withCORSDashboard(func(w http.ResponseWriter, r *http.Request) {
-		// Serve dashboard HTML for root, ignore favicon etc silently
-		if r.URL.Path != "/" && !strings.HasPrefix(r.URL.Path, "/api/") {
-			// Return empty 204 for favicon, manifest etc to suppress 404 in console
-			if r.URL.Path == "/favicon.ico" || r.URL.Path == "/manifest.json" {
-				w.WriteHeader(204)
-				return
-			}
+		// Serve dashboard HTML for root and all non-API routes (SPA support)
+		if strings.HasPrefix(r.URL.Path, "/api/") {
 			http.NotFound(w, r)
+			return
+		}
+		// Return empty 204 for favicon, manifest etc to suppress 404 in console
+		if r.URL.Path == "/favicon.ico" || r.URL.Path == "/manifest.json" {
+			w.WriteHeader(204)
 			return
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

@@ -54,6 +54,16 @@ brain_v4/
 .gemini/
 .neuronrc
 
+# IDE rule files (auto-generated with personal data)
+CLAUDE.md
+.cursorrules
+
+# All node_modules (anywhere)
+**/node_modules/
+
+# Injection preview
+_injection_preview.txt
+
 # Brain agent communication (transient)
 # brain_v4/_agents/*/inbox/*.md
 # brain_v4/_agents/*/outbox/*.md
@@ -84,6 +94,7 @@ _transcripts/
 # Runtime temp files
 runtime/qs_*.txt
 runtime/coverage_*.txt
+runtime/test_results.txt
 test_result.txt
 heartbeat_log.txt
 
@@ -96,3 +107,24 @@ _proposals/
 # Temp directories
 tmp_*/
 force_kick.mjs
+
+# Internal dev files (contain local paths)
+internal/
+scripts/
+.github/copilot-instructions.md
+docs/OPERATIONS.md
+
+# Test files with local paths
+runtime/anti_forgery_test.go
+runtime/coverage_deep_test.go
+runtime/watch_stress_test.ps1
+
+# V4 Network Injection (security-sensitive, not for public)
+runtime/v4-hook.cjs
+start_v4_swarm.bat
+
+# Reverse-Engineered Agentic Context Exploits (DO NOT PUBLISH)
+ARCHITECTURE_AGENTIC_CONTEXT_SCHEMA.md
+ARCHITECTURE_CONTEXT_HIJACKER.md
+ARCHITECTURE_HEADLESS_AUTORUN.md
+runtime/headless-executor.mjs

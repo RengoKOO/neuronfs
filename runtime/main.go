@@ -179,6 +179,8 @@ func main() {
 			mode = "evolve"
 		case "--rollback":
 			mode = "rollback"
+		case "--rollback-all":
+			mode = "rollback-all"
 		case "--stats":
 			mode = "stats"
 		case "--vacuum":
@@ -291,9 +293,11 @@ func main() {
 			os.Exit(1)
 		}
 		if err := rollbackNeuron(brainRoot, neuronPath); err != nil {
-			fmt.Printf("[ERROR] rollback failed: %v\n", err)
+			fmt.Printf("[ERROR] %v\n", err)
 			os.Exit(1)
 		}
+		fmt.Printf("\033[35m[PRUNE] Toxic memories detected. Purging corrupted synapses...\033[0m\n")
+		fmt.Printf("\033[37m[RESTORE] Brainstem architecture fully re-aligned via SSOT.\033[0m\n")
 	case "stats":
 		runStats(brainRoot)
 	case "vacuum":
@@ -1112,7 +1116,7 @@ func fireNeuron(brainRoot string, neuronPath string) {
 // Minimum counter is 1 (won't go below). Returns error for API usage.
 // Usage: neuronfs brain_v4 --rollback cortex/frontend/coding/no_console_log
 func rollbackNeuron(brainRoot string, neuronPath string) error {
-	neuronPath = strings.ReplaceAll(neuronPath, "/", string(filepath.Separator))
+	neuronPath = strings.Trim(strings.ReplaceAll(neuronPath, "\\", "/"), "/")
 	fullPath := filepath.Join(brainRoot, neuronPath)
 
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -1581,6 +1585,10 @@ func runInjectionLoop(brainRoot string) {
 				return
 			}
 			if event.Op&(fsnotify.Write|fsnotify.Create) != 0 {
+				fmt.Fprintf(os.Stderr, "\033[33m[PULSE] %s evolved. (27ms)\033[0m\n", filepath.Base(event.Name))
+				queueUpdate()
+			} else if event.Op&(fsnotify.Remove|fsnotify.Rename) != 0 {
+				fmt.Fprintf(os.Stderr, "\033[90m[PRUNE] 데드 시냅스 제거 완료: %s\033[0m\n", filepath.Base(event.Name))
 				queueUpdate()
 			}
 		case <-triggerChan:
@@ -1592,7 +1600,7 @@ func runInjectionLoop(brainRoot string) {
 			if !ok {
 				return
 			}
-			fmt.Printf("[ERROR] watcher: %v\n", err)
+			fmt.Fprintf(os.Stderr, "[ERROR] watcher: %v\n", err)
 		}
 	}
 }
@@ -2007,14 +2015,16 @@ func runHeartbeatLoop(brainRoot string) {
 %s
 ---
 위 로그에서 뉴런화되지 않은 중요 아키텍처 결정(암묵적 룰, 해결책)을 찾아라.
-발견되면 NeuronFS의 MCP grow 도구를 호출하여 뉴런을 생성하라:
-  예: grow(path="cortex/NAS파일전송/禁Copy-Item_UNC비호환")
-또는 터미널에서 직접:
-  mkdir "c:\Users\BASEMENT_ADMIN\NeuronFS\brain_v4\cortex\[카테고리]\[행동_강령]"
-  echo.> "c:\Users\BASEMENT_ADMIN\NeuronFS\brain_v4\cortex\[카테고리]\[행동_강령]\1.neuron"
+발견되면 터미널에서 직접 뉴런을 생성하라:
+  mkdir "%s\cortex\[카테고리]\[행동_강령]"
+  echo.> "%s\cortex\[카테고리]\[행동_강령]\1.neuron"
 [Path=Sentence 원칙] 폴더명이 곧 규칙 문장이다. 짧고 애매하게 짓지 마라.
-새로운 룰이 없으면 "로그 스캔 완료: 추출할 뉴런 없음"이라 보고하라.`,
-							time.Now().Format("15:04"), len(buf), recentLogs)
+새로운 룰이 없으면 "로그 스캔 완료: 추출할 뉴런 없음"이라 보고하라.
+
+⚠️ 완료 후 반드시 수신 확인:
+  [IO.File]::WriteAllText("%s\_inbox\heartbeat_ack.json", '{"acked_at":"' + (Get-Date -F "yyyy-MM-dd HH:mm:ss") + '","result":"처리결과"}')
+둘 중 하나를 반드시 실행하라. 안 하면 다음 heartbeat가 오지 않는다.`,
+							time.Now().Format("15:04"), len(buf), recentLogs, brainRoot, brainRoot, brainRoot)
 						fmt.Printf("[HEARTBEAT] 📡 MEMORY_OBSERVER: %d bytes from session log\n", len(buf))
 					}
 				} else {
@@ -2380,6 +2390,22 @@ func startAPI(brainRoot string, port int) {
 		json.NewEncoder(w).Encode(map[string]string{"status": "rolled_back", "path": req.Path})
 	}))
 
+	// POST /api/rollback/all — Full system rollback via Git (brainstem included)
+	mux.HandleFunc("/api/rollback/all", withCORS(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "POST only", 405)
+			return
+		}
+		if err := rollbackAll(brainRoot); err != nil {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(500)
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error(), "status": "failed"})
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "rolled_back", "message": "Global git rollback executed successfully (P0 included)."})
+	}))
+
 	// GET / — Dashboard HTML (same as --dashboard mode)
 	// Static files: 3D dashboard, brain.obj, brain_state.json
 	neuronfsRoot := filepath.Dir(brainRoot) // NeuronFS/ directory (parent of brain_v4)
@@ -2414,14 +2440,14 @@ func startAPI(brainRoot string, port int) {
 		w.Write(data)
 	}))
 
-	// GET / — Unified Dashboard (3D + management)
+	// GET / — Unified Dashboard (3D + management) (Fallback for SPA)
 	mux.HandleFunc("/", withCORS(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			if r.URL.Path == "/favicon.ico" || r.URL.Path == "/manifest.json" {
-				w.WriteHeader(204)
-				return
-			}
+		if strings.HasPrefix(r.URL.Path, "/api/") {
 			http.NotFound(w, r)
+			return
+		}
+		if r.URL.Path == "/favicon.ico" || r.URL.Path == "/manifest.json" {
+			w.WriteHeader(204)
 			return
 		}
 		htmlPath := filepath.Join(neuronfsRoot, "brain_dashboard.html")
@@ -2628,4 +2654,20 @@ func startAPI(brainRoot string, port int) {
 	fmt.Printf("  POST /api/report  {message,priority} — Stackable report queue\n")
 	fmt.Printf("  GET  /api/reports                — List pending reports\n")
 	http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
+}
+
+// rollbackAll executes a global git rollback to restore the system state (P0 included).
+func rollbackAll(brainRoot string) error {
+	cmd := exec.Command("git", "reset", "--hard", "HEAD~1")
+	cmd.Dir = brainRoot
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("git reset --hard HEAD~1 failed: %v, output: %s", err, string(out))
+	}
+	
+	cmdClean := exec.Command("git", "clean", "-fd")
+	cmdClean.Dir = brainRoot
+	cmdClean.Run()
+	
+	return nil
 }

@@ -47,8 +47,9 @@ func startMCPServerWithStdout(brainRoot string, stdout *os.File) {
 
 	registerMCPTools(server, brainRoot)
 
-	fmt.Fprintf(os.Stderr, "[MCP] 🧠 NeuronFS MCP server starting (stdio)...\n")
-
+	fmt.Fprintf(os.Stderr, "\033[36m[NEURON] Core Initialization Complete.\033[0m\n")
+	fmt.Fprintf(os.Stderr, "\033[35m[SYNAPSE] Listening on stdio via Native MCP. Zero dependencies.\033[0m\n")
+	fmt.Fprintf(os.Stderr, "\033[37m  - Waiting for context pulses...\033[0m\n")
 	ctx := context.Background()
 	// Use IOTransport instead of StdioTransport to avoid using os.Stdout
 	// (which has been redirected to stderr in --mcp mode)

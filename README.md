@@ -272,7 +272,7 @@ User correction → corrections.jsonl → neuronfs (fsnotify) → mkdir (neuron 
 ### CLI
 
 ```bash
-neuronfs <brain> --emit <target>   # Compile prompts (gemini/cursor/claude/copilot/all)
+neuronfs <brain> --emit <target>   # Compile prompts (gemini/cursor/claude/copilot/codex/all)
 neuronfs <brain> --api             # Dashboard (localhost:9090)
 neuronfs <brain> --watch           # File watch + auto-recompile
 neuronfs <brain> --supervisor      # Process manager
@@ -328,6 +328,7 @@ That's it. No MCP server, no config files, no dependencies. The hook reads your 
 | Gemini CLI | GEMINI.md (`--emit gemini`) | At session start |
 | Claude Code | CLAUDE.md (`--emit claude`) | At session start |
 | GitHub Copilot | copilot-instructions.md (`--emit copilot`) | At session start |
+| Codex | AGENTS.md (`--emit codex`) | At session start |
 
 ### Why Go
 

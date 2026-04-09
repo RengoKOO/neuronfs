@@ -720,6 +720,7 @@ var emitTargetMap = map[string]EmitTarget{
 	"cursor":  {Name: "Cursor", FileName: ".cursorrules"},
 	"claude":  {Name: "Claude", FileName: "CLAUDE.md"},
 	"copilot": {Name: "Copilot", FileName: "copilot-instructions.md", SubDir: ".github"},
+	"codex":   {Name: "Codex", FileName: "AGENTS.md"},
 	"generic": {Name: "Generic", FileName: ".neuronrc"},
 }
 
@@ -769,8 +770,8 @@ func writeAllTiersForTargets(brainRoot string, target string) {
 			targetPath = filepath.Join(projectRoot, et.FileName)
 		}
 
-		// For gemini target, use the existing inject logic (preserves non-NeuronFS content)
-		if t == "gemini" {
+		// Preserve surrounding instructions for tools that already use a hand-maintained file.
+		if t == "gemini" || t == "codex" {
 			doInjectToFile(targetPath, bootstrap)
 		} else {
 			// For other targets, write the full bootstrap content directly

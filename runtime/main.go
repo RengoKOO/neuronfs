@@ -10,7 +10,7 @@
 // USAGE:
 //   neuronfs <brain_path>              — diagnostics
 //   neuronfs <brain_path> --emit       — output rules to stdout
-//   neuronfs <brain_path> --emit <target> — emit to editor file (gemini/cursor/claude/copilot/generic/all)
+//   neuronfs <brain_path> --emit <target> — emit to editor file (gemini/cursor/claude/copilot/codex/generic/all)
 //   neuronfs <brain_path> --inject     — write rules to GEMINI.md
 //   neuronfs <brain_path> --watch      — watch + auto-inject
 //   neuronfs <brain_path> --dashboard  — web dashboard on :9090
@@ -139,7 +139,7 @@ func main() {
 	mode := "diag"
 	port := 9090
 	dryRun := false
-	emitTarget := "" // --emit target: gemini, cursor, claude, copilot, generic, all
+	emitTarget := "" // --emit target: gemini, cursor, claude, copilot, codex, generic, all
 	for i, arg := range os.Args {
 		switch arg {
 		case "--emit":
@@ -147,7 +147,7 @@ func main() {
 			// Check if next arg is an emit target (not a flag)
 			if i+1 < len(os.Args) && !strings.HasPrefix(os.Args[i+1], "--") {
 				candidate := strings.ToLower(os.Args[i+1])
-				if candidate == "gemini" || candidate == "cursor" || candidate == "claude" || candidate == "copilot" || candidate == "generic" || candidate == "all" {
+				if candidate == "gemini" || candidate == "cursor" || candidate == "claude" || candidate == "copilot" || candidate == "codex" || candidate == "generic" || candidate == "all" {
 					emitTarget = candidate
 					mode = "emit-target" // file output mode
 				}

@@ -298,7 +298,7 @@ func TestRollbackNeuron_NotFound(t *testing.T) {
 
 // ━━━ TEST 23: EmitTarget — mapping validation ━━━
 func TestEmitTarget_Mapping(t *testing.T) {
-	expected := []string{"gemini", "cursor", "claude", "copilot", "generic"}
+	expected := []string{"gemini", "cursor", "claude", "copilot", "codex", "generic"}
 	for _, key := range expected {
 		et, ok := emitTargetMap[key]
 		if !ok {
@@ -318,7 +318,7 @@ func TestEmitTarget_Mapping(t *testing.T) {
 		t.Fatalf("copilot SubDir should be .github, got: %s", emitTargetMap["copilot"].SubDir)
 	}
 
-	t.Logf("OK: all 5 emit targets correctly mapped")
+	t.Logf("OK: all 6 emit targets correctly mapped")
 }
 
 // ━━━ TEST 24: EmitTarget — writeAllTiersForTargets cursor ━━━
@@ -349,6 +349,40 @@ func TestEmitTarget_CursorOutput(t *testing.T) {
 }
 
 // ━━━ TEST 25: EmitTarget — writeAllTiersForTargets all ━━━
+func TestEmitTarget_CodexPreservesExistingAgents(t *testing.T) {
+	dir := setupTestBrain(t)
+
+	projectRoot := filepath.Dir(dir)
+	agentsPath := filepath.Join(projectRoot, "AGENTS.md")
+	initial := "# Project Instructions\n\n<!-- NEURONFS:START -->\nold content\n<!-- NEURONFS:END -->\n\n## Manual Notes\nKeep this section.\n"
+	if err := os.WriteFile(agentsPath, []byte(initial), 0644); err != nil {
+		t.Fatalf("failed to seed AGENTS.md: %v", err)
+	}
+
+	writeAllTiersForTargets(dir, "codex")
+
+	contentBytes, err := os.ReadFile(agentsPath)
+	if err != nil {
+		t.Fatalf("failed to read AGENTS.md: %v", err)
+	}
+	content := string(contentBytes)
+
+	if !strings.Contains(content, "# Project Instructions") {
+		t.Fatal("lost existing AGENTS.md header")
+	}
+	if !strings.Contains(content, "## Manual Notes\nKeep this section.") {
+		t.Fatal("lost existing AGENTS.md footer content")
+	}
+	if !strings.Contains(content, "NEURONFS:START") || !strings.Contains(content, "NEURONFS:END") {
+		t.Fatal("expected injected NeuronFS markers in AGENTS.md")
+	}
+	if strings.Contains(content, "old content") {
+		t.Fatal("old injected AGENTS.md content was not replaced")
+	}
+
+	t.Logf("OK: --emit codex injects into AGENTS.md while preserving manual content")
+}
+
 func TestEmitTarget_AllOutput(t *testing.T) {
 	dir := setupTestBrain(t)
 
@@ -361,6 +395,7 @@ func TestEmitTarget_AllOutput(t *testing.T) {
 	checks := map[string]string{
 		"cursor":  filepath.Join(projectRoot, ".cursorrules"),
 		"claude":  filepath.Join(projectRoot, "CLAUDE.md"),
+		"codex":   filepath.Join(projectRoot, "AGENTS.md"),
 		"generic": filepath.Join(projectRoot, ".neuronrc"),
 	}
 
@@ -376,7 +411,7 @@ func TestEmitTarget_AllOutput(t *testing.T) {
 		t.Fatalf("copilot file not created: %s", copilotPath)
 	}
 
-	t.Logf("OK: --emit all creates all 5 target files")
+	t.Logf("OK: --emit all creates all 6 target files")
 }
 
 // ━━━ TEST 26: doInjectToFile — preserves existing content ━━━
@@ -417,7 +452,7 @@ func TestEmitTarget_UnknownNoCrash(t *testing.T) {
 
 	// Verify no files were created at project root
 	projectRoot := filepath.Dir(dir)
-	for _, name := range []string{".cursorrules", "CLAUDE.md", ".neuronrc"} {
+	for _, name := range []string{".cursorrules", "CLAUDE.md", "AGENTS.md", ".neuronrc"} {
 		path := filepath.Join(projectRoot, name)
 		if _, err := os.Stat(path); err == nil {
 			t.Fatalf("unexpected file created for unknown target: %s", name)
